@@ -1,0 +1,184 @@
+/* .navbar{
+    background: #c8bdab !important;
+} */
+.navbar img{
+    width: 170px;
+}
+
+.userw {
+  font-size: 0;
+}
+
+.userw:first-letter {
+  font-size: 15px;
+  text-transform: uppercase;
+}
+
+.form-label-2{color: #605c5c;}
+.form-control-2 {
+    display: block;
+    width: 100%;
+    padding: 0rem .75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border:none;
+    border-bottom: 1px solid #ced4da;
+    outline: none;
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+
+.form-control-2::placeholder{
+  color:rgb(219, 221, 224);
+}
+
+.form-group input.line , select.line , textarea.line{
+    border-bottom: 1px solid #888 !important;
+    background: transparent !important;
+    border: 0;
+    /* outline: none; */
+  }
+  input.line:focus,
+  select.line:focus,
+  textarea.line:focus{
+    outline:none !important;
+    outline-offset: 0;
+    box-shadow: none;
+  }
+  input.line:active{
+    outline:none !important;
+    outline-offset: 0 !important;
+  }
+
+        /* .mesa{
+            border:solid 1px red;
+        } */
+        /* #tbody td{
+            border:1px solid red;
+        } */
+        #tbody tr{
+            vertical-align:middle;
+            color: #555859eb;
+        }
+        .td-amount{
+            /* border:1px solid red; */
+            width:28%;
+        }
+        .btn-amount{
+            background: none;
+            border: #cacad0 1px solid;
+            font-weight: 700;
+            padding: 6px;
+        }
+        .mierda{
+            display: flex;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+        .mesa1{
+            width:16.6666%;
+        } 
+        img{
+            width:100%;
+        } 
+        .wrapper-mesa{
+            border: solid 1px #a7a7ae;
+            border-radius: 8px; 
+        }
+        .wrapper-mesa:hover{
+            background: rgb(219, 219, 219);
+        }
+        .table-tag{
+            position: absolute;
+            border-radius: 50%;
+            color: white;
+            background: black;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            font-weight: 600;
+        }
+        .wrapper-tabs{
+            margin:50px 100px 0px
+        }
+        @media only screen and (max-width: 1024px) {
+            /* .mesa1{
+                width:20%;
+            }  */
+            .wrapper-tabs{
+                margin:25px 50px 0px;
+            }
+        }
+
+        @media only screen and (max-width: 991px) {
+            .dropdown-menu-end{
+                left:0px !important;
+                width:300px;
+            }
+        }
+
+        @media only screen and (max-width: 900px) {
+            .mesa1{
+                width:20%;
+            } 
+            .wrapper-tabs{
+                margin:25px 50px 0px;
+            }
+        }
+        @media only screen and (max-width: 640px) {
+            .mesa1{
+                width:25%;
+            } 
+            .wrapper-tabs{
+                margin:25px 0px 0px;
+            }
+        }
+        @media only screen and (max-width: 576px) {
+            .td-amount{
+                width:26%;
+            }
+            #tbody td{
+                padding:0 !important;
+            }
+        }
+        @media only screen and (max-width: 478px) {
+            .td-amount{
+                width:29%;
+            } 
+        }
+        @media only screen and (max-width: 436px) {
+            .td-amount{
+                width:32%;
+            } 
+        }
+        @media only screen and (max-width: 390px) {
+            .td-amount{
+                width:39%;
+            } 
+        }
+
+/*************BELL ANIMATION*******/
+.bell-item{
+    animation: 7 vibra 1s;
+}
+
+@keyframes vibra{
+    0%{
+        transform: rotate(30deg);
+    }
+    25%{
+        transform: rotate(0deg);
+    }
+    50%{
+        transform: rotate(-30deg);
+    }
+    75%{
+        transform: rotate(0deg);
+    }
+    100%{
+        transform: rotate(30deg);
+    }
+}

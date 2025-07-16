@@ -1,0 +1,230 @@
+/* body{
+    padding-top:4.2rem !important;
+    padding-bottom:4.2rem !important; */
+    /* background:rgba(0, 0, 0, 0.76); */
+    /* background:#C8BDAB8A !important; */
+/* } */
+a{
+    text-decoration:none !important;
+}
+     h1,h2,h3{
+     font-family: 'Kaushan Script', cursive !important;
+     }
+      .myform{
+        position: relative;
+        display: -ms-flexbox;
+        /* display: flex; */
+        padding: 1rem;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        width: 100%;
+        pointer-events: auto;
+        background-color: #F7F7F7D1;
+        background-clip: padding-box;
+        border: 1px solid rgba(217, 212, 212, 0.08);
+        border-radius: 1.1rem;
+        outline: 0;
+        max-width: 500px;
+     }
+     .myform img{
+      width: 250px;
+      height: 250px;
+      }
+     
+     .tx-tfm{
+     text-transform:uppercase;
+     }
+     .mybtn{
+     border-radius:50px;
+     }
+    
+     .login-or {
+     position: relative;
+     color: #aaa;
+     margin-top: 10px;
+     margin-bottom: 10px;
+     padding-top: 10px;
+     padding-bottom: 10px;
+     }
+     .span-or {
+     display: block;
+     position: absolute;
+     left: 50%;
+     top: -2px;
+     margin-left: -25px;
+     background-color: #fff;
+     width: 50px;
+     text-align: center;
+     }
+     .hr-or {
+     height: 1px;
+     margin-top: 0px !important;
+     margin-bottom: 0px !important;
+     }
+     .google {
+     color:#666;
+     width:100%;
+     height:40px;
+     text-align:center;
+     outline:none;
+     border: 1px solid lightgrey;
+     }
+      form .error {
+     color: #ff0000;
+     }
+     #second{display:none;}
+
+/***************mis estilos****************/
+.errors{
+   color:red;
+   font-size: 17px;
+}
+.main-yovis{
+   background:#FBF7F7 !important;  
+}
+
+.btn-new{
+   background:#83776B !important;
+   color:#fff;
+}
+
+.btn-new:hover{
+   background: #B9AEA3C7 !important;
+}
+/* .card-yovi{
+   cursor: pointer;
+} */
+.card-body-yovis{
+   border-radius: .25rem;
+   border: 1px solid #dfd4d4 !important;
+   background: #E9D6D0DB;
+   text-align: center;
+   color: white;
+   padding: 20px 1px;
+}
+.card-body-yovis:hover{
+   background: #B79C93DB;
+}
+/* .card-body-yovis i{
+   width:75%;
+} */
+.footer-yovis{
+   border:none;
+   text-align: center;
+}
+.fa-yovis{
+   font-size: 5rem;
+}
+
+.title-yovis{
+   color:#727b7bfc;
+}
+
+#tablaP tr th{
+   color: #534747;
+   font-weight: 600;
+}
+
+/* #tbody tr td{
+   color: #645a57 !important;
+   text-align: center;
+} */
+
+.img-logo-yovis{
+   width:50%;
+   margin:0 auto;
+   display: block;
+}
+.select2-container{
+   width:100% !important;
+}
+
+.loader {
+   transform: rotateZ(45deg);
+   perspective: 1000px;
+   border-radius: 50%;
+   width: 48px;
+   height: 48px;
+   color: #998080;
+ }
+   .loader:before,
+   .loader:after {
+     content: '';
+     display: block;
+     position: absolute;
+     top: 0;
+     left: 0;
+     width: inherit;
+     height: inherit;
+     border-radius: 50%;
+     transform: rotateX(70deg);
+     animation: 1s spin linear infinite;
+   }
+   .loader:after {
+     color: #ff008c;
+     transform: rotateY(70deg);
+     animation-delay: .4s;
+   }
+
+ @keyframes rotate {
+   0% {
+     transform: translate(-50%, -50%) rotateZ(0deg);
+   }
+   100% {
+     transform: translate(-50%, -50%) rotateZ(360deg);
+   }
+ }
+
+ @keyframes rotateccw {
+   0% {
+     transform: translate(-50%, -50%) rotate(0deg);
+   }
+   100% {
+     transform: translate(-50%, -50%) rotate(-360deg);
+   }
+ }
+
+ @keyframes spin {
+   0%,
+   100% {
+     box-shadow: .2em 0px 0 0px currentcolor;
+   }
+   12% {
+     box-shadow: .2em .2em 0 0 currentcolor;
+   }
+   25% {
+     box-shadow: 0 .2em 0 0px currentcolor;
+   }
+   37% {
+     box-shadow: -.2em .2em 0 0 currentcolor;
+   }
+   50% {
+     box-shadow: -.2em 0 0 0 currentcolor;
+   }
+   62% {
+     box-shadow: -.2em -.2em 0 0 currentcolor;
+   }
+   75% {
+     box-shadow: 0px -.2em 0 0 currentcolor;
+   }
+   87% {
+     box-shadow: .2em -.2em 0 0 currentcolor;
+   }
+ }
+
+@media screen and (max-width: 768px) {
+   .img-logo-yovis{
+      width:100%;
+   }
+}
+@media screen and (max-width: 600px) {
+   /* … */
+   .fa-yovis {
+      font-size: 3rem !important;
+      
+    }
+    .card-body-yovis{
+      padding: 10px 1px;
+    }
+ }
+ 

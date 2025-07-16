@@ -1,0 +1,54 @@
+<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+    <li class="nav-item">
+        <a class="nav-link active" aria-current="page" href="{{ route('home') }}">Panel</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" aria-current="page" href="{{ url('salon') }}">Salones</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ route('pay.index') }}">Caja</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ route('room.index') }}">Salas y mesas</a>
+    </li>
+
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        Staff
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <li><a class="dropdown-item" href="{{ route('customers.index') }}">Clientes</a></li>
+            <li><a class="dropdown-item" href="{{ route('users.index') }}">Usuarios</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#">Something else here</a></li>
+        </ul>
+    </li>
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        Productos
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <li><a class="dropdown-item" href="{{ route('products.index') }}">Producto</a></li>
+            <li><a class="dropdown-item" href="{{ route('categories.index') }}">Categorias</a></li>
+            <li><a class="dropdown-item" href="{{ route('providers.index') }}">Proveedores</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#">Something else here</a></li>
+        </ul>
+    </li>
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Atenciones
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <li><a class="dropdown-item" href="{{ route('attentions.index', ['type' => '00']) }}">Ticket</a></li>
+            <li><a class="dropdown-item" href="{{ route('attentions.index', ['type' => '03']) }}">Boletas</a></li>
+            <li><a class="dropdown-item" href="{{ route('attentions.index', ['type' => '01']) }}">Facturas</a></li>
+            <li><a class="dropdown-item" href="{{ route('summary.index') }}">Resumenes</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#">Something else here</a></li>
+        </ul>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+    </li>    
+</ul>
