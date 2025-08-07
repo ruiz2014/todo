@@ -58,13 +58,14 @@
         /* #tbody td{
             border:1px solid red;
         } */
-        #tbody tr{
+        /* #tbody tr{ //este vale 5 agosto 
             vertical-align:middle;
             color: #555859eb;
-        }
-        .td-amount{
+        } */
+        .td-amount{ 
+            line-height: 40px;
             /* border:1px solid red; */
-            width:28%;
+            /* width:28%; */
         }
         .btn-amount{
             background: none;
@@ -104,6 +105,27 @@
         .wrapper-tabs{
             margin:50px 100px 0px
         }
+
+    /*TABLE RESPONSIVE CON COLUMNA FIJA Y SCROLL*/
+
+    .table th:first-child,
+    .table td:first-child {
+      position: sticky;
+      left: 0;
+      background-color: #f8f9fa; /* Example background color */
+      z-index: 1; /* Ensure it stays on top of other content */
+    }
+
+    .table td{
+        /* text-align: center; */
+        vertical-align: middle;
+    }
+    
+
+
+
+
+
         @media only screen and (max-width: 1024px) {
             /* .mesa1{
                 width:20%;
@@ -136,7 +158,13 @@
                 margin:25px 0px 0px;
             }
         }
-        @media only screen and (max-width: 576px) {
+
+        @media only screen and (max-width: 583px){
+            .xs-margin {
+                margin-bottom: 5px;
+            }
+        }
+        /* @media only screen and (max-width: 576px) {
             .td-amount{
                 width:26%;
             }
@@ -158,7 +186,7 @@
             .td-amount{
                 width:39%;
             } 
-        }
+        } */
 
 /*************BELL ANIMATION*******/
 .bell-item{

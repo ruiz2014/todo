@@ -55,7 +55,7 @@ trait BillingConfigurationTrait {
         ->setCodLocal('0000'); // Codigo de establecimiento asignado por SUNAT, 0000 por defecto.
 
         $company = (new Company())
-        ->setRuc('20123456789')
+        ->setRuc('20608894447')
         ->setRazonSocial('GREEN SAC')
         ->setNombreComercial('GREEN')
         ->setAddress($address);

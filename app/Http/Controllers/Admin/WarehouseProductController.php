@@ -26,7 +26,7 @@ class WarehouseProductController extends Controller
         if(session()->has('notification')) {
             $noty_id=request()->session()->get('notification');
             $noty = Notification::find($noty_id);
-            // dd($noty);
+            // dd($noty, $noty_id);
             // $noty = 'Esto se descontrolo tanto';
         }
         $url = $request->path();
@@ -73,6 +73,11 @@ class WarehouseProductController extends Controller
     public function viewHistory(Request $request, $id){
         // dd(request()->session()->get('wh'));
         $request->session()->keep(['wh']);
+
+        if(!session()->has('wh')) {
+            return back()->with('danger', 'Hubo algun error vuelva a intentarlo por favor... .');
+        }
+
         $wh_id = request()->session()->get('wh');
         $locals = Local::pluck('local_name', 'id');
        
@@ -138,6 +143,7 @@ class WarehouseProductController extends Controller
         $role = request()->session()->get('role');
         $title = 'Se creo un Producto desde almacen';
         $notes = 'Se Creo el producto '.$prod->name.' con el stock '.$request->stock.' parab su aprobacion ..';
+        // dd($request->session()->get('company_id'), $request->session()->get('user_id'), $role, $title);
         $notify_id = Notification::create(['company_id'=>$request->session()->get('company_id'), 'user_id'=>$request->session()->get('user_id'), 'local_id'=>0, 'from_role_id'=>$role, 'to_role_id'=>1, 'title'=>$title, 'notes'=>$notes]);
         $request->session()->flash('notification', $notify_id->id);
         
@@ -211,6 +217,9 @@ class WarehouseProductController extends Controller
     public function transferStock(Request $request){
         /*VALIDAR SI EXISTE EL PRODUCTO EN EL LOCAL A ENVIAR ..... SI NO ES ASI DEBE AVISAr que no existe el producto */
             $request->session()->keep(['wh']);
+            if(!session()->has('wh')) {
+                return back()->with('danger', 'Hubo algun error vuelva a intentarlo por favor... .');
+            }
 
             $validated = $request->validate([
                 'local_id' => 'required|numeric',

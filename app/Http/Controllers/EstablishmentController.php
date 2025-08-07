@@ -16,7 +16,7 @@ class EstablishmentController extends Controller
      */
     public function index(Request $request): View
     {
-        $establishments = Establishment::paginate();
+        $establishments = Establishment::where('company_id', request()->session()->get('company_id'))->paginate();
 
         return view('establishment.index', compact('establishments'))
             ->with('i', ($request->input('page', 1) - 1) * $establishments->perPage());

@@ -5,6 +5,7 @@
 @endsection
 
 @section('content')
+<!-- ESTA PARTE NO VALE LA PENA QUE VOLVAMOS A INTENTAR ES MEJOR QUE TERMINEMOS -->
     <section class="content container-fluid">
         <div class="row">
             <div class="col-md-12">

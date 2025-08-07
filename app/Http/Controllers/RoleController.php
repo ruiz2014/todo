@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admin\Role;
+use App\Models\Admin\Staff\Establishment;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Http\Requests\RoleRequest;
@@ -16,8 +17,11 @@ class RoleController extends Controller
      */
     public function index(Request $request): View
     {
-        $roles = Role::paginate();
-
+        // Mostrar si es super usuario 
+        
+        $roles = Role::where('company_id', request()->session()->get('company_id'))->paginate();
+        // dd(request()->session()->get('company_id'), $roles, Role::class);
+        // 
         return view('role.index', compact('roles'))
             ->with('i', ($request->input('page', 1) - 1) * $roles->perPage());
     }
@@ -28,8 +32,9 @@ class RoleController extends Controller
     public function create(): View
     {
         $role = new Role();
+        $establishments = Establishment::where('company_id', request()->session()->get('company_id'))->get();
 
-        return view('role.create', compact('role'));
+        return view('role.create', compact('role', 'establishments'));
     }
 
     /**
@@ -37,6 +42,8 @@ class RoleController extends Controller
      */
     public function store(RoleRequest $request): RedirectResponse
     {
+        // dd($request->validated(), $request->session()->get('company_id'));
+        
         Role::create($request->validated() +['company_id'=> $request->session()->get('company_id')]);
 
         return Redirect::route('roles.index')
@@ -59,8 +66,9 @@ class RoleController extends Controller
     public function edit($id): View
     {
         $role = Role::find($id);
+        $establishments = Establishment::where('company_id', request()->session()->get('company_id'))->get();
 
-        return view('role.edit', compact('role'));
+        return view('role.edit', compact('role', 'establishments'));
     }
 
     /**

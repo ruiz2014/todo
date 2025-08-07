@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('roles', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('company_id')->default(1);
-            $table->unsignedInteger('establishments_id');
+            $table->unsignedInteger('establishment_id');
             $table->string('name', 100);
             $table->softDeletes();
             $table->timestamps();

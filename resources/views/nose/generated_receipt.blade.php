@@ -23,7 +23,7 @@
                 <div class="list-group animate__animated animate__fadeInLeft">
                 <a href="#" class="list-group-item list-group-item-action active">
                     <div class="d-flex w-100 justify-content-between">
-                    <h5 class="mb-1">{{ $attention->id }} </h5>
+                    <h5 class="mb-1">{{ $attention->voucher->name}} </h5>
                     <!-- <small>3 days ago</small> -->
                     </div>
                     <p class="amount mb-0">{{ $attention->identifier }}</p>
@@ -31,7 +31,7 @@
                 </a>
                 <a href="#" class="list-group-item list-group-item-action">
                     <div class="d-flex w-100 justify-content-between">
-                    <h5 class="mb-1">{{ $attention->id }}</h5>
+                    <h5 class="mb-1">{{ $attention->customer->name }}</h5>
                     <!-- <small class="text-muted">3 days ago</small> -->
                     </div>
                     <p class="amount mb-1">Forma de Pago</p>
@@ -90,11 +90,11 @@
                         <div class="col-6 col-md-6">
                             <h6 class="mb-2">Cliente:</h6>
                             <div>
-                                <strong>{{ $attention->id }}</strong>
+                                <strong>{{ $attention->customer->name }}</strong>
                             </div>
-                            <div>Direccion: {{ $attention->id }}</div>
-                            <div>Email: {{ $attention->id }}</div>
-                            <div>Phone: {{ $attention->id }}</div>
+                            <div>Direccion: {{ $attention->customer->address }}</div>
+                            <div>Email: {{ $attention->customer->email }}</div>
+                            <div>Phone: {{ $attention->customer->phone }}</div>
                         </div>
 
                     </div>
@@ -115,8 +115,8 @@
                             @foreach($temps as $temp)    
                                 <tr>
                                     <td class="text-left">1</td>
-                                    <td class="item_name">{{ $temp->id }}</td>
-                                    <td class="item_desc d-none d-sm-table-cell">{{ $temp->id }}</td>
+                                    <td class="item_name">{{ $temp->product->name }}</td>
+                                    <td class="item_desc d-none d-sm-table-cell">{{ $temp->product->description }}</td>
 
                                     <td class="text-right">{{ $temp->price }}</td>
                                     <td class="text-right">{{ $temp->amount }}</td>

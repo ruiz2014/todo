@@ -18,17 +18,22 @@ class LoginController extends Controller
 {
     public function login(LoginRequest $req){
         // dd("llego a loggin");
+        $message = 'Usuario no registrado o no tiene un rol asignado...';
         $email = $req->email;
         $pass = $req->password;
 
         $user =  User::where('email', $email)->first();
         
-        if(isset($user->rol)){
+        if($user){
+            // dd(Auth::user()->rol);
+            $rol = $user->id == 1 ? 1 : ($user->rol == 2 ? $user->rol : null);
+            // $rol = $user->id == 1 ? 
+            // dd($rol);
             $local = 0;
             $workplace = 0;
             $company = $user->company_id;
              
-            if($user->rol > 2){
+            if(isset($user->rol) && $user->rol > 2){
                 /*****************ARREGLAR ESTA PARTE***************** */
                 $workplace = BelongLocal::where('user_id', $user->id)->first(['establishment_id', 'local_id']);
                 // dd($workplace);
@@ -38,16 +43,16 @@ class LoginController extends Controller
                 $local = $workplace->local_id;
                 $workplace = $workplace->establishment_id;
                 $company = $user->company_id; 
+                $rol = $user->rol;
             }
-
 
             if(Hash::check($pass, $user->password2)){
                 Auth::login($user);
                 $req->session()->regenerate();
                 // Session::put('local_id', $local); 
 
-                session(['company_id'=>$company, 'local_id' => $local, 'workplace' => $workplace, 'user_id'=>Auth::user()->id, 'role'=>Auth::user()->rol ]);
-                switch (Auth::user()->rol) {
+                session(['company_id'=>$company, 'local_id' => $local, 'workplace' => $workplace, 'user_id'=>Auth::user()->id, 'role'=>$rol]);
+                switch ($rol) {
                     case 1:
                         return redirect()->route('admin'); 
                     // case 2:
@@ -64,35 +69,37 @@ class LoginController extends Controller
                 }
                 // return redirect('salon')->with('status', 'You are loggead');
             }
-        }
-        
-        if(Auth::attempt(['email' => $email, 'password' => $pass])){
-            $req->session()->regenerate();
 
-            session(['company_id'=>$company, 'local_id' => $local, 'workplace' => $workplace, 'user_id'=>Auth::user()->id, 'role'=>Auth::user()->rol]); 
-            switch (Auth::user()->rol) {
-                case 1:    
-                    return redirect()->route('admin');
-                case 5:
-                    return redirect()->route('warehouses.index');
-                default:
-                    return redirect()->route('home');
+            if(Auth::attempt(['email' => $email, 'password' => $pass])){
+                $req->session()->regenerate();
+
+                session(['company_id'=>$company, 'local_id' => $local, 'workplace' => $workplace, 'user_id'=>Auth::user()->id, 'role'=>$rol]); 
+                switch ($rol) {
+                    case 1:    
+                        return redirect()->route('admin');
+                    case 5:
+                        return redirect()->route('warehouses.index');
+                    default:
+                        return redirect()->route('home');
+                }
+                // return redirect()->intended('salon')->with('status', 'You are loggead');
+                // return redirect('salon')->with('status', 'You are loggead');
+
+                // redirect()->intended()->with();
+                // return redirect()->route('warehouses.index');
             }
-            // return redirect()->intended('salon')->with('status', 'You are loggead');
-            // return redirect('salon')->with('status', 'You are loggead');
 
-            // redirect()->intended()->with();
-            // return redirect()->route('warehouses.index');
+            throw ValidationException::withMessages([
+                'email' => __('auth.failed')
+            ]);
+            
+            $message = 'Error en el Usuario o en la contraseña...';
         }
-
-        throw ValidationException::withMessages([
-            'email' => __('auth.failed')
-        ]);
         
-        return redirect('login');
+        return redirect('/')->with('danger', $message );
     }
 
-    public function logout(Request $req, Redirector $redirect){
+    public function logout(Request $req, Redirector $redirect){        
         Auth::logout();
         $req->session()->invalidate();
         $req->session()->regenerateToken();

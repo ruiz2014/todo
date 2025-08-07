@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\WarehouseProductController;
 use App\Http\Controllers\Admin\LocalProductController;
 use App\Http\Controllers\Tool\CommonController;
 use App\Http\Controllers\Biller\AttentionController;
+use App\Http\Controllers\Biller\SumaryController;
 use App\Http\Controllers\EstablishmentController;
 use App\Http\Controllers\PaymentMethodController;
 
@@ -38,10 +39,10 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::get('panel', [HomeController::class, 'index'])->name('home');
 
-Route::get('attention', [AttentionController::class, 'index'])->name('attention.index');
+// Route::get('attention', [AttentionController::class, 'index'])->name('attention.index');
 
 Route::resource('warehouses', WarehouseController::class);
-Route::resource('locals', TiendaocalController::class);
+Route::resource('locals', LocalController::class);
 
 Route::resource('products', ProductController::class);
 Route::resource('categories', CategoryController::class);
@@ -50,6 +51,8 @@ Route::get('user/register', [RegisterController::class, 'create'])->name('regist
 Route::post('user/register', [RegisterController::class, 'store'])->name('register.store');
 Route::get('user/editPassword/{id}', [RegisterController::class, 'editPassword'])->name('register.edit');
 Route::post('user/updatePassword/{id}', [RegisterController::class, 'updatePassword'])->name('register.update');
+
+Route::patch('user/admin/{user}', [UserController::class, 'updateAdmin'])->name('users.updateAdmin');
 Route::resource('users', UserController::class);
 
 Route::get('warehouse_products/{id}', [WarehouseProductController::class, 'whProducts'])->name('whp.show');
@@ -75,7 +78,7 @@ Route::get('tool/establishment/{id}', [CommonController::class, 'getEstablishmen
 Route::get('local_products', [LocalProductController::class, 'index'])->name('lp.index');
 
 
-Route::get('shop', [ShopController::class, 'index'])->name('Tienda');
+Route::get('shop', [ShopController::class, 'index'])->name('shop.index');
 Route::post('add_order', [ShopController::class, 'addOrder']);
 Route::post('delete_order', [ShopController::class, 'deleteOrder']);
 Route::post('modify_amount', [ShopController::class, 'modifyAmount']);
@@ -98,3 +101,12 @@ Route::resource('companies', CompanyController::class);
 Route::resource('establishments', EstablishmentController::class);
 Route::resource('roles', RoleController::class);
 Route::resource('sectors', SectorController::class);
+
+Route::get('attentions/{type}', [AttentionController::class, 'index'])->name('attentions.index');
+
+Route::get('sumary/create/{fecha?}', [SumaryController::class, 'create'])->name('sumary.create');
+Route::get('sumary/{fecha?}', [SumaryController::class, 'index'])->name('sumary.index');
+Route::post('sumary/search', [SumaryController::class, 'search'])->name('sumary.search');
+Route::post('sumary/accion', [SumaryController::class, 'sumary'])->name('sumary'); 
+
+Route::view('pichi', 'pru');

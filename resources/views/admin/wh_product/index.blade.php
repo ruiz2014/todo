@@ -67,10 +67,10 @@
                             </span>
 
                              <div class="float-right">
-                                <a href="{{ route('whp.temp') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
-                                  {{ __('Create New') }}
+                                <!-- <a href="route('whp.temp') }}" class="btn btn-primary btn-sm float-right"  data-placement="left"> -->
+                                   <!-- __('Create New') }} -->
                                 </a>
-                                <a href="" id=""  class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModal3"><ion-icon name="cart-outline"></ion-icon>Trans</a>
+                                <a href="" id=""  class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModal3"><ion-icon name="cart-outline"></ion-icon>Crear Producto</a>
                               </div>
                         </div>
                     </div>
@@ -116,7 +116,7 @@
                                             <td>
                                             <a href="{{ route('whp.view', $product->product_id) }}">Ver historial</a>
                                                 <a id="pr-{{ $product->product_id }}" class="btn btn-sm btn-primary prod-id" href="" data-bs-toggle="modal" data-bs-target="#exampleModal"><ion-icon name="eye"></ion-icon>Agregar</a>
-                                                <a href="" id="{{ $product->product_id }}%{{$product->name}}"  class="btn btn-sm btn-warning opt-prod" data-bs-toggle="modal" data-bs-target="#exampleModal2"><ion-icon name="cart-outline"></ion-icon>Trans</a>
+                                                <a href="" id="{{ $product->product_id }}%{{$product->name}}"  class="btn btn-sm btn-warning opt-prod" data-bs-toggle="modal" data-bs-target="#exampleModal2"><ion-icon name="cart-outline"></ion-icon>No sirve</a>
                                             </td>
                                         </tr>
                                     @endforeach

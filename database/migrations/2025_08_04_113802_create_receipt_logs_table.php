@@ -11,12 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('establishments', function (Blueprint $table) {
+        Schema::create('receipt_logs', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('company_id')->default(1);
-            $table->unsignedTinyInteger('type');
+            $table->unsignedInteger('local_id');
             $table->unsignedInteger('user_id');
-            $table->string('name', 95);
+            $table->string('receipt_code', 30)->nullable();
+            $table->string('identifier', 30)->nullable();
+            $table->string('ticket', 50)->nullable();
+            $table->unsignedTinyInteger('receipt_type');
             $table->timestamps();
         });
     }
@@ -26,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('establishments');
+        Schema::dropIfExists('receipt_logs');
     }
 };

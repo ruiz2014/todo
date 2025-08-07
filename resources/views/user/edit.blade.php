@@ -11,16 +11,40 @@
 
                 <div class="card card-default">
                     <div class="card-header">
-                        <span class="card-title">{{ __('Update') }} User</span>
+                        
+
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+
+                            <span class="card-title">
+                                {{ __('Update') }} User
+                            </span>
+
+                             <div class="float-right">
+                                <a class="btn btn-primary btn-sm float-right"  data-placement="left" href="{{ route('register.edit', $user->id) }}">
+                                    Actualizar Password
+                                </a>
+                              </div>
+                        </div>
                     </div>
                     <div class="card-body bg-white">
-                        <form method="POST" action="{{ route('users.update', $user->id) }}"  role="form" enctype="multipart/form-data">
+
+                    @if(is_null($user->rol) || $user->rol > 2)
+                        <form method="POST" action="{{ route('users.update', $user->id) }}"  role="form">
                             {{ method_field('PATCH') }}
                             @csrf
 
                             @include('user.form')
 
                         </form>
+                    @else
+                        <form method="POST" action="{{ route('users.updateAdmin', $user->id) }}"  role="form">
+                            {{ method_field('PATCH') }}
+                            @csrf
+
+                            @include('user.adminform')
+
+                        </form>
+                    @endif    
                     </div>
                 </div>
             </div>

@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('establishments', function (Blueprint $table) {
+        Schema::create('vouchers', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('company_id')->default(1);
-            $table->unsignedTinyInteger('type');
             $table->unsignedInteger('user_id');
-            $table->string('name', 95);
+            $table->string('name', 50);
+            $table->string('sunat_code', 10)->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('establishments');
+        Schema::dropIfExists('vouchers');
     }
 };

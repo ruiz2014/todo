@@ -86,6 +86,26 @@
                             <li><a class="dropdown-item" href="#">Something else here</a></li>
                         </ul>
                     </li> 
+
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Atenciones
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="{{ route('attentions.index', ['type' => '00']) }}">Ticket</a></li>
+                            <li><a class="dropdown-item" href="{{ route('attentions.index', ['type' => '03']) }}">Boletas</a></li>
+                            <li><a class="dropdown-item" href="{{ route('attentions.index', ['type' => '01']) }}">Facturas</a></li>
+                            <li><a class="dropdown-item" href="{{ route('sumary.index') }}">Resumenes</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        </ul>
+                    </li>
+
+
+
+
+
                     <li class="nav-item dropdown">
                         <a class="nav-link" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <span id="bell" class="d-block" style="height:20px;width:20px;">
@@ -146,7 +166,8 @@
     <!-- </div> -->
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/ionicons@latest/dist/ionicons.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/ionicons@latest/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://cdn.jsdelivr.net/npm/ionicons@latest/dist/ionicons/ionicons.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <script>
@@ -217,6 +238,7 @@
                     @break
 
                 @default
+                // alert("este es ")
                     title = '{{ $noty->title }}';
                     message = '{{ $noty->notes }}';
             @endswitch

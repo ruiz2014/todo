@@ -77,15 +77,23 @@
                     @endif
 
                     <div class="card-body bg-white">
+                        <form class="d-flex">
+                                <div class="input-group">
+                                    <input name="search" class="form-control form-control-sm" value="{{ $text }}" type="search" placeholder="Search" aria-label="Search">
+                                    <button class="btn btn-primary px-4" type="submit">
+                                        <i class="bi bi-search"></i>
+                                    </button>
+                                </div>
+                            </form>
                         <div class="table-responsive">
+                            
                             <table class="table table-striped table-hover">
                                 <thead class="thead">
                                     <tr>
-                                        <th>No</th>
-                                        <th >Name</th>
-                                        <th >Description</th>
-                                        <th >Price</th>
-                                        <th >Category Id</th>
+                                        <th >Nombre</th>
+                                        <th >Descripcion</th>
+                                        <th >Precio</th>
+                                        <th >Categoria</th>
                                         <th >Stock</th>
                                         <th></th>
                                     </tr>
@@ -93,15 +101,14 @@
                                 <tbody>
                                     @foreach ($local_products as $product)
                                         <tr>
-                                            <td></td>
                                             <td >{{ $product->name }}</td>
                                             <td >{{ $product->description }}</td>
                                             <td >{{ $product->price }}</td>
-                                            <td >{{ $product->category_id }}</td>
+                                            <td >{{ $product->category_name}}</td>
                                             <td >{{ $product->stock }}</td>
                                             <td>
-                                                <a class="btn btn-sm btn-primary" href=""><ion-icon name="eye"></ion-icon></a>
-                                                <a href="" id="{{ $product->product_id }}%{{$product->name}}"  class="btn btn-sm btn-warning opt-prod" data-bs-toggle="modal" data-bs-target="#exampleModal"><ion-icon name="cart-outline"></ion-icon></a>
+                                                <a class="btn btn-sm btn-primary xs-margin" href=""><ion-icon name="eye"></ion-icon></a>
+                                                <a href="" id="{{ $product->product_id }}%{{$product->name}}"  class="xs-margin btn btn-sm btn-warning opt-prod" data-bs-toggle="modal" data-bs-target="#exampleModal"><ion-icon name="cart-outline"></ion-icon></a>
                                             </td>
                                         </tr>
                                     @endforeach

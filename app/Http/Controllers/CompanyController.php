@@ -40,17 +40,21 @@ class CompanyController extends Controller
      */
     public function store(CompanyRequest $request): RedirectResponse
     {
+        // dd(User::find(1)->exists());
         $company = Company::create($request->validated());
-// dd($company, $company->id);
-        $user = User::create([
-            'name' => $company->document,
-            'email' => $company->document.'@init.com',
-            'password' => Hash::make($company->document),
-            'rol' => 2,
-            'company_id'=> $company->id,
-            'password2' => Hash::make('@secret2024.'),
-        ]);
 
+        if($company->id !== 1){
+            $user = User::create([
+                'name' => $company->document,
+                'email' => $company->document.'@init.com',
+                'password' => Hash::make($company->document),
+                'rol' => 2,
+                'company_id'=> $company->id,
+                'password2' => Hash::make('@secret2024.'),
+            ]);
+        }
+        // return User::find(1);
+        // dd($company, $company->id);
         return Redirect::route('companies.index')
             ->with('success', 'Company created successfully.');
     }

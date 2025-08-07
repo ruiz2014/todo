@@ -8,5 +8,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Role extends Model
 {
     use SoftDeletes;
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'company_id', 'establishment_id'];
+
+    protected function scopeRoles($query)
+    {
+        return $query->where('id', '!=', 1);
+    }
 }

@@ -189,7 +189,7 @@
                     @endif
 
                     <div class="card-body bg-white">
-                        <!-- <div class="table-responsive">
+                        <div class="table-responsive">
                             <table id="table" class="table table-striped table-hover">
                                 <thead class="thead">
                                     <tr>
@@ -204,23 +204,7 @@
 
                                 </tbody>
                             </table>
-                        </div> -->
-
-                        <table class="table_shop">
-                            <!-- <caption>Consolas</caption> -->
-                            <thead>
-                                <tr>
-                                    <th>Producto</th>
-                                    <th>Cantidad</th>
-                                    <th>Precio uni.</th>
-                                    <th>Total</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody id="tbody">
-                                
-                            </tbody>
-                        </table>
+                        </div>
                     </div>
                 </div>
           
@@ -267,54 +251,56 @@
                 <button id="btn-generate" class="btn btn-outline-primary" >Generar Comprobante</button>
             </div>
         </div>
-    </div>
 
-    <div class="container-fluid">
-        <div style="overflow-x: auto;">
-                <table class="table">
+
+
+
+        <table class="table_shop">
+            <caption>Consolas</caption>
             <thead>
                 <tr>
-                <th>Sticky Column Header</th>
-                <th>Column 2</th>
-                <th>Column 3</th>
-                <th>Column 3</th>
-                <th>Column 3</th>
-                
-                <!-- More columns -->
+                    <th>Consola</th>
+                    <th>Precio</th>
+                    <th>Ventas</th>
+                    <th>Fecha de lanzamiento</th>
+                    <th></th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="tbody">
                 <tr>
-                    <td>Sticky Row 1 Data</td>
-                    <td>Row 1 Data 2</td>
-                    <td>Row 1 Data 3</td>
-                    <td>Row 1 Data 3</td>
-                    <td>Row 1 Data 3</td>
-                <!-- More columns -->
+                    <td data-label="Consola">Play Station 3</td>
+                    <td data-label="Precio">$8000</td>
+                    <td data-label="Ventas">800000</td>
+                    <td data-label="Fecha de lanzamiento">10/01/2012</td>
+                    <td></td>
                 </tr>
-                <!-- More rows -->
+                <tr>
+                    <td data-label="Consola">Play Station 3</td>
+                    <td data-label="Precio">$8000</td>
+                    <td data-label="Ventas">800000</td>
+                    <td data-label="Fecha de lanzamiento">10/01/2012</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td data-label="Consola">Play Station 3</td>
+                    <td data-label="Precio">$8000</td>
+                    <td data-label="Ventas">800000</td>
+                    <td data-label="Fecha de lanzamiento">10/01/2012</td>
+                    <td></td>
+                </tr>
             </tbody>
-            </table>
-        </div>    
+        </table>
+
+
+
+        
+    </div>
+
+    <div class="container">
+        
     </div>
 
     <style>
-
-    /* .table th:first-child,
-    .table td:first-child {
-      position: sticky;
-      left: 0;
-      background-color: #f8f9fa; /* Example background color */
-     /* z-index: 1; /* Ensure it stays on top of other content */
-    /*} */
-
-
-
-
-
-
-
-
     .result{
         background: #fcfdff;
         z-index: 1;
@@ -583,7 +569,7 @@
             }
 
             function validar(){
-                let cuenta =  $('.table_shop').find('tbody tr').length;
+                let cuenta =  $('#table').find('tbody tr').length;
                 if(cuenta === 0){
                     Swal.fire({
                         icon: "error",
@@ -625,23 +611,23 @@
                     console.log(i) 
                     tax(i.price * i.amount, op);
                     body += `<tr>
-                            <td data-label="Producto">
+                            <td data-label="Consola">
                                 ${i.name}
                             </td>
-                            <td data-label="Cantidad" class="td-amount">
+                            <td data-label="Consola" class="td-amount">
                                 <button class="btn btn-outline-secondary btn-amount" id="btn_add_${i.id}" onclick="modifyAmount(${i.id}, ${i.price}, 'add')" style="position:relative;top:2px;"><ion-icon name="add-outline"></ion-icon></button>
                                     <span id="amount_${i.id}">${i.amount}</span>
                                 <button class="btn btn-outline-secondary btn-amount" onclick="modifyAmount(${i.id}, ${i.price}, 'sub')" style="position:relative;top:2px;"> <ion-icon name="remove-outline"></ion-icon> </button>
                             </td>
-                            <td data-label="Precio uni."> 
+                            <td style="width:10%;" data-label="Consola"> 
                                 ${i.price}
                             </td>        
-                            <td data-label="Total" id="operation_${i.id}">
+                            <td data-label="Consola" id="operation_${i.id}">
                             ${i.price * i.amount}
                             </td>
-                            <td>
-                                <div class="btn-group d-block">
-                                    <button type="button" class="btn btn-outline-danger w-100" onclick="eliminarFila(${i.id})"><ion-icon name="trash-outline" style="position:relative;top:3px;left:0px;"></ion-icon></button>  
+                            <td data-label="Consola">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-outline-danger" onclick="eliminarFila(${i.id})"><ion-icon name="trash-outline" style="position:relative;top:3px;left:0px;"></ion-icon></button>  
                                 </div>
                             </td>
                         </tr>`; 

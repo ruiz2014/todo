@@ -39,17 +39,17 @@ class CompanyHelper
         $name = 'panel';
 
         $sector = Sector::select('sectors.name as name', 'sectors.id')->join('companies as co', 'sectors.id', '=', 'co.sector_id')->where('co.id', Session::get('company_id'))->first();
-    
+    // dd($sector);
         if($sector){
             $name = $sector->name;
             switch($sector->id){
-                case 1 :
+                case 2 :
                     $url = 'shop';
                     break;
-                case 2 : 
+                case 3 : 
                     $url = 'restaurant';
                     break;
-                case 3 :
+                case 4 :
                     $url = 'hotel';
                     break;  
                 default :

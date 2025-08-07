@@ -61,7 +61,6 @@
         </div>
     </div>
 
-    
     <div class="col-md-12 mt20 mt-2">
         <button type="submit" class="btn btn-primary">{{ __('Submit') }}</button>
     </div>
@@ -69,33 +68,35 @@
 @section('script')  
     <script>
         let establishment = document.getElementById('establishment');
-        // let local = document.getElementById('local');
         let rol = document.getElementById('rol');
         let local = document.getElementById('local');
+        let type = null; 
         establishment.addEventListener('change', ()=>{
             const id = establishment.value;
+            alert(id);
             local.innerHTML = '<option value="">Seleccione Establecimiento</option>';
-            // alert("hola");
             fetch(`{{ url('tool/role/${id}') }}`)
             .then(response => response.json())
             .then(data => {
-                console.log(data)
+                console.log(data.type)
                 rol.innerHTML = '<option value="">Seleccione Rol</option>';
                  // Agregar nuevas opciones
-                data.forEach(data => {
+                type = data.type;
+                Object.values(data.roles).forEach(data => {
                     const option = document.createElement('option');
                     option.value = data.id;
                     option.textContent = data.name;
                     rol.appendChild(option);
                 });
             })
-
         });
         
         rol.addEventListener('change', ()=>{
-            const id = rol.value;
-            
-            fetch(`{{ url('tool/establishment/${id}') }}`)
+            // const id = rol.value;
+            alert(type);
+            // const est_id = establishment.value;
+            const est_id = type;
+            fetch(`{{ url('tool/establishment/${est_id}') }}`)
             .then(response => response.json())
             .then(data => {
                 console.log(data)

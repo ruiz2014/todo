@@ -97,10 +97,11 @@ class CommonController extends Controller
 
     public function getRole(Request $request){
         $id = $request->id;
-
-        $roles = Role::select('id', 'name as name', )->where('establishment_id', $id)->get();
+        // return response()->json($id);
+        $type = DB::table('establishments')->where('id', $id)->value('type');
+        $roles = Role::select('id', 'name as name')->where('establishment_id', $id)->get();
       
-        return response()->json($roles);
+        return response()->json(['roles'=> $roles, 'type'=> $type]);
     }
 
     public function getEstablishment(Request $request){
@@ -108,11 +109,11 @@ class CommonController extends Controller
 
         $establishment = '';
         switch($id){
-            case 4:
-                $establishment = Warehouse::select('id', 'warehouse_name as name', )->get();
+            case 2:
+                $establishment = Warehouse::select('id', 'warehouse_name as name', )->where('company_id', request()->session()->get('company_id'))->get();
                 break;
             default :
-                $establishment = Local::select('id', 'local_name as name', )->get();
+                $establishment = Local::select('id', 'local_name as name', )->where('company_id', request()->session()->get('company_id'))->get();
         }
 
         return response()->json($establishment);

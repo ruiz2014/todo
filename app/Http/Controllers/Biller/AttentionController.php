@@ -11,7 +11,10 @@ use App\Models\Admin\Product;
 
 class AttentionController extends Controller
 {
-    public function index(){
-        dd("aqui tipo");
+    public function index(Request $request, $type){
+        $types = Attention::where('sunat_code', $type)->get();
+
+        return view('biller.voucher.index', compact('types'));
     }
 }
+

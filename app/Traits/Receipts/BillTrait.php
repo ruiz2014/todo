@@ -4,6 +4,7 @@ namespace App\Traits\Receipts;
 use App\Models\Usuario;
 // use App\Models\Sale\Sale;
 use App\Models\Biller\Attention;
+use App\Models\Biller\TempSale;
 // use App\Traits\Sunat\SunatTrait;
 use App\Traits\BillingConfigurationTrait;
 use App\Traits\BillingToolsTrait;
@@ -37,15 +38,15 @@ trait BillTrait {
 
     public function setBill($code){
 
-
-
         $response = [
             'success' => false,
             'alert' => 'danger',
             'message' => 'No se encontro ninguna orden ',
             'cdr' => null,
             'nameId' => '',
-            'attentionId' => null
+            'attentionId' => null,
+            'update' => false,
+            'error' => false
         ];
 
         if (!Attention::where('document_code', $code)->exists()) {
@@ -56,25 +57,18 @@ trait BillTrait {
         try {  
             
             $items = [];
- 
-            $codigo ='';
-            $mensaje = '';
             
             $sale_data = $this->getSale($code);  //TRAIT BillingToolsTrait
             $sale_items = $this->getDetails('temp_sales', $code);
-            // $band = 0;
-            // $message = '';
-
-            // dd($sale_data, $sale_items);
 
             if(!$sale_items->isEmpty()){
-                // dd($sale_data);
+
                 $serie = $this->formatSerie($sale_data->serie, $sale_data->sunat_code);
                 $number = str_pad($sale_data->numeration, 8, "0", STR_PAD_LEFT);
 
                 $invoice = $this->setInvoice($sale_data, $serie, $number);
                 $items = $this->setItems($sale_items);
-                // dd($invoice, $items);
+
                 $convertNumberToLetters = new NumeroALetras();
                 $numberToLetters = $convertNumberToLetters->convertir($sale_data->total, 'soles');
                 $invoice->setDetails($items)
@@ -86,8 +80,6 @@ trait BillTrait {
 
                 $see = $this->config(); //AQUI EMPIEZA .................................
 
-//  dd($invoice, $items, $see, $see->getFactory());
-
                 $xmlSigned = $this->xmlSigned($see->getXmlSigned($invoice));//TRAIT BILLTOOL
                 $hash=$this->getHashXml($xmlSigned); //TRAIT BILLTOOL
                 $xml_id=$this->getIdXml($xmlSigned); //TRAIT BILLTOOL
@@ -97,29 +89,42 @@ trait BillTrait {
 
                 $result = $see->send($invoice);
 
-                // dd($invoice, $items, $see, $see->getFactory(), $xmlSigned, $see->getFactory()->getLastXml());
-                dd($hash, $xml_id, $see, $see->getFactory(), $result);
+                $validated = $this->validateResult($result, $response);
 
+                if($validated['error']){ //SI HUBO PROBLEMA EN EL ENVIO "HTTP" SE ANULA 
 
-
-                $result = $this->sendSunat($invoice, 1);
-                // ---$xmlId = $this->getIdXml($this->see->getFactory()->getLastXml());//$this->getIdDocXml($invoice, $this->see); 
-                // $hash = $this->getHashSign($invoice, $this->see); //TRAIT SalesToolsTrait
-                //---$hash = $this->getHashXml($this->see->getFactory()->getLastXml());  //TRAIT SalesToolsTrait
-                // dd($hash.' '.$xmlId);
-
-                $resume = '01|'.$this->serie.'|'.$this->number.'|'.round($this->igv, 2).'|'.round($this->total, 2).'|'.$sale_data->date_f.'|'.$sale_data->code_sunat.'|'.$sale_data->document; //$this->getResume($code);
-                $check = $this->checkStatusSuccess($result, $invoice);
-                // dd($check);
-
-                if($check){
-                    $this->cdr = $this->getCdr($result, $invoice); 
-                    $this->code = (int)$this->cdr->getCode();
+                    Attention::where('id', $sale_data->id)->update(['hash'=>$hash, 'identifier'=>$xml_id, 'resume' => $resumen, 'cdr'=>$validated['cdr'], 'message'=>$validated['message'], 'dispatched'=>1]);
+                    return $validated;
                 }
                 
-                $resp = array('band'=> $check, 'identifier'=>$xmlId, 'hash'=> $hash, 'resume'=> $resume, 'cdr'=>$this->cdr,'code'=> $this->code, 'message'=> $this->message);
-                // dd($resp);
-                return $resp;
+                $cdr = $result->getCdrResponse();
+                $code_cdr = (int)$cdr->getCode();
+
+                list($message, $alert, $update_ts) = $this->validateCrd($code_cdr);
+
+                // Log_Receipt::create([ 'user_id'=>1, 'customer_id'=>$attentionData->customer_id, 'document_code'=>$order, 'identifier'=>$xml, 'total'=>$total, 'hash'=>$hash, 'resume'=>$resumen, 'cdr'=>$code]);
+                // Log_Receipt::create([ 'user_id'=>1, 'customer_id'=>$attentionData->customer_id, 'document_code'=>$order, 'identifier'=>$xml, 'total'=>$total, 'hash'=>$hash, 'resume'=>$resumen, 'cdr'=>$code]);
+                // Log_Receipt::create([ 'user_id'=>1, 'customer_id'=>$attentionData->customer_id, 'document_code'=>$order, 'identifier'=>$xml, 'total'=>$total, 'hash'=>$hash, 'resume'=>$resumen, 'cdr'=>$code]);    
+
+                $message .=''.$cdr->getDescription().PHP_EOL;
+
+                if($update_ts){ TempSale::where('code', $code)->update(['status'=> 2]); }
+                
+                Attention::where('id', $sale_data->id)->update(['hash'=>$hash, 'identifier'=>$xml_id, 'resume' => $resumen, 'cdr'=>$code_cdr, 'message'=>$message, 'dispatched'=>1, 'received'=>1, 'completed'=>1]);
+
+                $response = [
+                    'success' => true,
+                    'alert' => $alert,
+                    'message' => $message,
+                    'cdr' => $code_cdr,
+                    'nameId' => $xml_id,
+                    'attentionId' => $sale_data->id,
+                    'update' => $update_ts
+                ];
+
+                // dd($hash, $xml_id, $see, $see->getFactory(), $result, $validated, $response, $message, $alert, $response);
+                return $response;
+                
             }
             else{
                 dd('no hay');
@@ -181,9 +186,9 @@ trait BillTrait {
             // $totalANumero = $totalANumero + ($item->price * $item->amount);
             // dd($igv_item);
                 $item = (new SaleDetail())
-                ->setCodProducto($item->code)
+                ->setCodProducto($item->product_id)
                 ->setUnidad('NIU')
-                ->setDescripcion($item->description)
+                ->setDescripcion($item->name)
                 ->setCantidad(intval($item->amount))
                 ->setMtoValorUnitario($igv_base)
                 ->setMtoValorVenta(number_format($montoBase,2,'.', ''))
@@ -192,7 +197,7 @@ trait BillTrait {
                 ->setIgv($igv_set)
                 ->setTipAfeIgv('10')
                 ->setTotalImpuestos($igv_set)
-                ->setMtoPrecioUnitario($item->price);
+                ->setMtoPrecioUnitario(number_format($item->price, 2,'.', ''));
                 // dd($igv_base.'-'.$montoBase.'-'.$igv_item.'-'.$igv_set);
                 array_push($items, $item);
                 $igv_base= 0;

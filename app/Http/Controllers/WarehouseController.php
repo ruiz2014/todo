@@ -16,7 +16,7 @@ class WarehouseController extends Controller
      */
     public function index(Request $request): View
     {
-        $warehouses = Warehouse::paginate();
+        $warehouses = Warehouse::where('company_id', request()->session()->get('company_id'))->paginate();
 
         return view('warehouse.index', compact('warehouses'))
             ->with('i', ($request->input('page', 1) - 1) * $warehouses->perPage());

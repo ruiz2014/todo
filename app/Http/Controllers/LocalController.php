@@ -16,7 +16,7 @@ class LocalController extends Controller
      */
     public function index(Request $request): View
     {
-        $locals = Local::paginate();
+        $locals = Local::where('company_id', request()->session()->get('company_id'))->paginate();
 
         return view('local.index', compact('locals'))
             ->with('i', ($request->input('page', 1) - 1) * $locals->perPage());

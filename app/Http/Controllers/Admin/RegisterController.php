@@ -31,10 +31,18 @@ class RegisterController extends Controller
         Database Insert
         */
         // dd($request);
+
+        $company_id = 1;
+
+        if(session()->has('company_id')) {
+            $company_id = request()->session()->get('company_id');
+        }
+
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'company_id' => $company_id,
             'password2' => Hash::make('@secret2024.'),
         ]);
 

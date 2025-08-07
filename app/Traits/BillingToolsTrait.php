@@ -4,6 +4,7 @@ namespace App\Traits;
 use App\Models\User;
 use App\Models\Biller\Attention;
 use App\Models\Biller\TempSale;
+use App\Models\Biller\ReceiptLog;
 
 // use Greenter\Data\DocumentGeneratorInterface;
 // use Greenter\Model\DocumentInterface;
@@ -43,8 +44,60 @@ trait BillingToolsTrait {
     protected function getHashXml($xml){
         return  $xml->getElementsByTagName('DigestValue')->item(0)->nodeValue;
     }
+
     protected function getIdXml($xml){
         return  $xml->getElementsByTagName('ID')->item(0)->nodeValue;
+    }
+
+    public function validateResult($result, $response){
+        
+        if(!$result->isSuccess()) {
+            // Mostrar error al conectarse a SUNAT.
+                    
+            $response['message'] = $result->getError()->getMessage();
+            $response['cdr'] = $result->getError()->getCode();
+            $response['error'] = true;
+
+            return $response;
+        }
+
+        return $response;
+    }
+
+    public function validateCrd($code){
+        if($code === 0) {
+
+            $message = 'ACEPTADA ';
+            $alert='success';
+            $update = true;
+
+                    // echo 'ESTADO: ACEPTADA'.PHP_EOL;
+                    // if (count($cdr->getNotes()) > 0) {
+                    //     echo 'OBSERVACIONES:'.PHP_EOL;
+                    //     // Corregir estas observaciones en siguientes emisiones.
+                    //     var_dump($cdr->getNotes());
+                    // }  
+
+        } else if ($code >= 2000 && $code <= 3999) {
+            $message = 'RECHAZADA ';
+            $alert='danger';
+            $update = false;
+                    
+        }else if($code >= 4000){
+            $message = 'Observacion ';
+            $alert='info';
+            $update = true;
+        } 
+        else {
+            /* Esto no debería darse, pero si ocurre, es un CDR inválido que debería tratarse como un error-excepción. */
+            /*code: 0100 a 1999 */
+            // echo 'Excepción';
+            $message = 'Excepción ';
+            $alert='warning ';  
+            $update = false;                  
+        }
+
+        return array($message, $alert, $update);
     }
     
     public function setCorrelative($table, $where, $type){
@@ -59,6 +112,22 @@ trait BillingToolsTrait {
 		}
 
         return 1;
+    }
+
+    public function saveReceipt($documents, $ticket, $documents_type){
+        
+        foreach($documents as $document)
+        {
+            ReceiptLog::create([
+                'company_id'=> request()->session()->get('company_id'),
+                'local_id'=> request()->session()->get('local_id'),
+                'user_id'=> request()->session()->get('user_id'), //Auth-asuser
+                'receipt_code'=>$document->document_code,
+                'identifier'=>$document->identifier,
+                'ticket'=>$ticket,
+                'receipt_type'=>$documents_type, // 1 PARA RESUMEN, 2 PARA BAJA FACTURA
+            ]);
+        }
     }
 
     public function formatSerie($serie, $type){ //SI VALE ESTA FUNCION

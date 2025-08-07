@@ -21,6 +21,11 @@
                                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ92l-724Mv6JJ4Fb8YIGeEQsa4EUDxuqtlgHkY8LBwYUUc4Lx7aevZwG2ChtsBpUMjxFM&usqp=CAU" alt="">
                             </div>
                         </div>
+                        @if ($message = Session::get('danger'))
+                            <div class="alert alert-danger m-4" role="alert">
+                                <p>{{ $message }}</p>
+                            </div>
+                        @endif
                         <form class="col m12 l6" method="POST" action="{{ route('auth.login') }}" name="login">
                         @csrf
                             <div class="form-group">
