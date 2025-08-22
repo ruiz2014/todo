@@ -17,6 +17,11 @@ use App\Models\Admin\WarehouseLog;
 use App\Models\Admin\WarehouseMovement;
 use App\Models\Admin\Category;
 use App\Models\Admin\Notification;
+use App\Models\Admin\BuyProduct;
+use App\Models\Biller\TempBuy;
+use App\Models\Admin\Staff\Establishment;
+use App\Models\Admin\SuperAdmin\Company;
+use App\Helpers\CompanyHelper;
 use DB;
 
 class WarehouseProductController extends Controller
@@ -26,10 +31,9 @@ class WarehouseProductController extends Controller
         if(session()->has('notification')) {
             $noty_id=request()->session()->get('notification');
             $noty = Notification::find($noty_id);
-            // dd($noty, $noty_id);
-            // $noty = 'Esto se descontrolo tanto';
         }
-        $url = $request->path();
+
+        // $url = $request->path();
         // $request->session()->put('url_tool', $url);
         $wh_id = $id;
         $request->session()->flash('wh', $wh_id);
@@ -37,11 +41,66 @@ class WarehouseProductController extends Controller
         
         $locals = Local::pluck('local_name', 'id');
         $categories = Category::pluck('category_name', 'id');
-        $products = Product::select(DB::raw("CONCAT(name,' ',description, ' ',price) AS name"),'id')->pluck('name', 'id');
+        $products = Product::select(DB::raw("CONCAT_WS(' ', name,' ',description, ' ',price) AS name"),'id')->pluck('name', 'id');
         $wh_products = WarehouseProduct::select('warehouse_products.product_id', 'p.name', 'p.description', 'p.price', 'p.category_id', 'warehouse_products.stock')
                 ->join('products as p', 'warehouse_products.product_id', '=', 'p.id')->paginate();
 
         return view('admin.wh_product.index', compact('products', 'categories', 'wh_products', 'wh_id', 'locals', 'noty'));
+    }
+
+    public function newEntries(Request $request){
+        $request->session()->keep(['wh']);
+        $wh_id = request()->session()->get('wh');
+        // BuyProduct::
+        $text = $request->search;
+        $select = ['buy_products.id', 'buy_products.code', 'buy_products.total', 'buy_products.document', 'buy_products.created_at', 'buy_products.status', 'e.name as l_type', 'p.name'];
+        $where = ['buy_products.company_id'=> ['=', $request->session()->get('company_id')], 'buy_products.location_type'=> ['=', 2], 'buy_products.location_id'=> ['=', $wh_id]];
+        $orWhere = ['buy_products.total'=>['like', '%'.$text.'%'], 'buy_products.document' => ['like', '%'.$text.'%'], 'p.name' => ['like', '%'.$text.'%'], 'e.name' => ['like', '%'.$text.'%'], 'buy_products.created_at'=> ['like', '%'.$text.'%']];
+        $join = ['providers as p' => ['buy_products.provider_id', '=', 'p.id'], 'establishments as e' => ['buy_products.location_type', '=', 'e.type']];
+
+        $query  = BuyProduct::select($select);
+
+        $result = CompanyHelper::searchAll($query, $text, $join, $where, $orWhere);
+        $buyProducts = $result->orderBy('buy_products.id', 'desc')->paginate();
+
+        $noty = false;
+        
+        return view('admin.wh_product.entry', compact('buyProducts', 'text', 'noty'))
+            ->with('i', ($request->input('page', 1) - 1) * $buyProducts->perPage());    
+    }
+
+    public function entryAction(Request $request, $code){
+        $request->session()->keep(['wh']);
+        // $company = Company::find($request->session()->get('company_id'));
+        $buyProduct = BuyProduct::where('company_id', $request->session()->get('company_id'))->where('code', $code)->first();
+        $total = TempBuy::where('company_id', $request->session()->get('company_id'))->where('code', $code)->sum(DB::raw('stock * cost'));
+        $temps = TempBuy::select('p.name', 'temp_buys.cost', 'temp_buys.stock')->join('products as p', 'temp_buys.product_id', '=', 'p.id')->where('code', $code)->get();
+        $methods = [];
+        // dd($temps, $total);
+        return view('admin.wh_product.register', compact('code', 'buyProduct', 'total', 'temps', 'methods'));
+    }
+
+    public function register(Request $request, $code){
+        
+        $request->session()->keep(['wh']);
+        $wh_id = request()->session()->get('wh');
+        $buys = TempBuy::where('company_id', $request->session()->get('company_id'))->where('code', $code)->get();
+        
+        foreach($buys as $buy){
+            $checkProd = WarehouseProduct::where('company_id', $request->session()->get('company_id'))->where('product_id', $buy->product_id)->where('warehouse_id', $wh_id)->exists();
+            
+            if($checkProd){
+                WarehouseProduct::where('warehouse_id', $wh_id)->where('product_id', $buy->product_id)->increment('stock', $buy->stock);  
+            }else{
+                WarehouseProduct::create(['user_id'=>$request->session()->get('user_id'), 'company_id' => $request->session()->get('company_id'), 'warehouse_id'=>$wh_id, 'product_id'=>$buy->product_id, 'stock'=>$buy->stock]);
+            }
+
+            $whlog=WarehouseLog::create(['company_id' => $request->session()->get('company_id'), 'warehouse_id'=>$wh_id, 'product_id'=>$buy->product_id, 'batch'=>null,'entry'=>$buy->stock, 'output'=>0]); 
+            WarehouseMovement::create(['user_id'=>$request->session()->get('user_id'), 'whlog_id'=>$whlog->id, 'movement'=>1, 'amount'=>$buy->stock]); 
+            
+        }
+        BuyProduct::where('company_id', $request->session()->get('company_id'))->where('code', $code)->update(['status'=> 1]);
+       return Redirect::route('whp.show', ['id'=>$wh_id])->with('success', 'Se registro correctamente los articulos de la compra ....');
     }
 
     public function store(Request $request){ //EL PROD.EXISTE Y DEBE INCREMENTAR SU STOCK
@@ -84,40 +143,12 @@ class WarehouseProductController extends Controller
         $wh_products = WarehouseLog::select('warehouse_logs.id', 'warehouse_logs.product_id', 'p.name', 'p.description', 'p.price', DB::raw("DATE_FORMAT(warehouse_logs.created_at, '%d-%m-%Y') as date"), 'warehouse_logs.batch', 'warehouse_logs.entry')
                 ->join('products as p', 'warehouse_logs.product_id', '=', 'p.id')
                 ->where('warehouse_logs.product_id', $id)
-                ->where('warehouse_id', $wh_id)
+                ->where('warehouse_id', $wh_id) 
                 ->paginate();
         
         return view('admin.wh_product.history', compact('wh_products', 'locals'));        
         // dd($wh_products);        
     }
-
-    // public function temp(Request $request){
-    //     if(!$request->session()->has('wh')){
-    //         return Redirect::route('whp.show', ['id'=>request()->session()->get('wh')])
-    //         ->with('success', 'Product created successfully.');
-    //     }
-
-    //     $url = 'joder titititotititiritirityyiyiyytrttrtyrtyrtyrtyyurrtyurtyurtytyutyurtyu';
-    //     $user_id = $request->session()->get('user_id');
-    //     //VERIFICAR SI EN EL MISMO LOCAL NO EXISTA EL PRODUCTO CREADO
-    //         // $request->session()->flash('aver', 1);
-    //         // $request->session()->keep(['aver']);
-    //     // $request->session()->reflash();
-    //     // $request->session()->now('status', 'Task was successful!');
-    //     // dd("hola");
-    //     $product = new Product();
-    //     $categories = Category::pluck('category_name', 'id');
-    //     // dd($request->session()->all());
-    //     return view('admin.wh_product.create', compact('product', 'categories', 'url'));
-    //     // $url= $req->session()->get('url_tool');       // $url= $req->session()->pull('url_tool', 'default');
-
-
-    //     // // dd($url, $req->session()->all());
-    //     // $product = new Product();
-    //     // $categories = Category::pluck('category_name', 'id');
-
-    //     // return view('tool.product.create', compact('product', 'categories', 'url'));
-    // }
 
     public function tempAction(Request $request){
 
@@ -288,9 +319,7 @@ class WarehouseProductController extends Controller
                 // dd("error en base ". $th->getMessage());//throw $th;
                 
                 return back()->with('danger', 'Hubo error al generar este procedimiento');
-            }
-
-              
+            }     
     }
 
     // public function checkProduct(Request $request){

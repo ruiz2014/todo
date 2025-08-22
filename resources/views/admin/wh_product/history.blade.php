@@ -35,19 +35,14 @@
                                 {{ __('Products') }}
                             </span>
 
-                             <div class="float-right">
-                                <a href="{{ route('whp.temp') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
+                            <!-- <div class="float-right">
+                                <a href=" route('whp.temp') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
                                   {{ __('Create New') }}
                                 </a>
                                 <a href="" id=""  class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModal3"><ion-icon name="cart-outline"></ion-icon>Trans</a>
-                              </div>
+                            </div> -->
                         </div>
                     </div>
-                    @if ($message = Session::get('success'))
-                        <div class="alert alert-success m-4">
-                            <p>{{ $message }}</p>
-                        </div>
-                    @endif
 
                     @if ($errors->any())
                         <div class="alert alert-danger">
@@ -83,8 +78,8 @@
                                             <td >{{ $product->date }}</td>
                                             <td >{{ $product->entry }}</td>
                                             <td>
-                                                <a id="pr-{{ $product->product_id }}" class="btn btn-sm btn-primary prod-id" href="" data-bs-toggle="modal" data-bs-target="#exampleModal"><ion-icon name="eye"></ion-icon>Agregar</a>
-                                                <a href="" data-id="{{ $product->id }}"  class="btn btn-sm btn-warning opt-prod" data-bs-toggle="modal" data-bs-target="#exampleModal2"><ion-icon name="cart-outline"></ion-icon>Trans</a>
+                                                <!-- <a id="pr-{product->product_id }}" class="btn btn-sm btn-primary prod-id" href="" data-bs-toggle="modal" data-bs-target="#exampleModal"><ion-icon name="eye"></ion-icon>Agregar</a> -->
+                                                <a href="" data-id="{{ $product->id }}"  class="btn btn-sm btn-warning opt-prod" data-bs-toggle="modal" data-bs-target="#exampleModal2"><ion-icon name="cart-outline"></ion-icon>Transferir Producto</a>
                                             </td>
                                         </tr>
                                     @endforeach

@@ -16,6 +16,8 @@ class AdminController extends Controller
     public function index(Request $req){
         // dd("hola", $req);
         // Config::set('joder.supportEmail', "andate a la mierda");
+    // dd(request()->session()->get('local_id'));
+    // dd($_SESSION);
     $sesiones = Session::get('user_id');
     $rol = Session::get('role');
 
@@ -23,5 +25,15 @@ class AdminController extends Controller
 
 
     dd($local, $rol, $req->user(), Auth::user(), $req->session()->get('company_id'), $sesiones, $req->session()->get('local_id'), $req->session()->get('workplace'));
+    }
+
+    public function chooseLocation(Request $request){
+        $validated = $request->validate([
+            "local" => 'required|numeric',  
+        ]);
+        Session::put('local_id', $request->local);
+        session()->save();
+
+        return redirect()->route('home');
     }
 }

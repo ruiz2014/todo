@@ -30,42 +30,43 @@
                     @endif
 
                     <div class="card-body bg-white">
+                        <form class="d-flex">
+                            <div class="input-group">
+                                <input name="search" class="form-control form-control-sm" value="{{ $text }}" type="search" placeholder="Buscar" aria-label="Search">
+                                <button class="btn btn-primary px-4" type="submit">
+                                    <ion-icon name="search"></ion-icon>
+                                </button>
+                            </div>
+                        </form>
                         <div class="table-responsive">
                             <table class="table table-striped table-hover">
                                 <thead class="thead">
                                     <tr>
-                                        <th>No</th>
-                                        
-									<th >User Id</th>
-									<th >Warehouse Name</th>
-									<th >Phone</th>
-									<th >Address</th>
-									<th >Company Id</th>
-
+                                        <th >Warehouse Name</th>
+                                        <th >Phone</th>
+                                        <th >Address</th>
+                                        <th >Company Id</th>
                                         <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach ($warehouses as $warehouse)
                                         <tr>
-                                            <td>{{ ++$i }}</td>
-                                            
-										<td >{{ $warehouse->user_id }}</td>
 										<td >{{ $warehouse->warehouse_name }}</td>
 										<td >{{ $warehouse->phone }}</td>
 										<td >{{ $warehouse->address }}</td>
 										<td >{{ $warehouse->company_id }}</td>
 
-                                            <td>
+                                        <td>
                                                 <form action="{{ route('warehouses.destroy', $warehouse->id) }}" method="POST">
                                                    
-                                                    <a class="btn btn-sm btn-primary " href="{{ route('whp.show', $warehouse->id) }}"><i class="fa fa-fw fa-eye"></i> {{ __('Ver') }}</a>
-                                                    <a class="btn btn-sm btn-success" href="{{ route('warehouses.edit', $warehouse->id) }}"><i class="fa fa-fw fa-edit"></i> {{ __('Edit') }}</a>
+                                                    <a class="btn btn-sm btn-primary xs-margin" href="{{ route('whp.show', $warehouse->id) }}"><ion-icon name="eye"></ion-icon></a>
+                                                    <a class="btn btn-sm btn-success xs-margin" href="{{ route('warehouses.edit', $warehouse->id) }}"><ion-icon name="create"></ion-icon></a>
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger btn-sm" onclick="event.preventDefault(); confirm('Are you sure to delete?') ? this.closest('form').submit() : false;"><i class="fa fa-fw fa-trash"></i> {{ __('Delete') }}</button>
+                                                    <button type="submit" class="btn btn-danger btn-sm xs-margin" onclick="event.preventDefault(); confirm('Are you sure to delete?') ? this.closest('form').submit() : false;"><ion-icon name="trash"></ion-icon></button>
                                                 </form>
-                                            </td>
+                                        </td>
                                         </tr>
                                     @endforeach
                                 </tbody>

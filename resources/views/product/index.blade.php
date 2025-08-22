@@ -30,47 +30,45 @@
                     @endif
 
                     <div class="card-body bg-white">
+                        <form class="d-flex">
+                            <div class="input-group">
+                                <input name="search" class="form-control form-control-sm" value="{{ $text }}" type="search" placeholder="Buscar" aria-label="Search">
+                                <button class="btn btn-primary px-4" type="submit">
+                                    <ion-icon name="search"></ion-icon>
+                                </button>
+                            </div>
+                        </form>
                         <div class="table-responsive">
                             <table class="table table-striped table-hover">
                                 <thead class="thead">
                                     <tr>
-                                        <th>No</th>
-                                        
-									<th >Name</th>
-									<th >Description</th>
-									<th >Product Type</th>
-									<th >Company Id</th>
-									<th >Price</th>
-									<th >Category Id</th>
-									<th >Provider Id</th>
-									<th >Stock</th>
-									<th >Minimo</th>
-
+                                        <th >Name</th>
+                                        <th >Description</th>
+                                        <th >CompId</th>
+                                        <th >Price</th>
+                                        <th >Categoria</th>
+                                        <th >Stock</th>
+                                        <th >Minimo</th>
                                         <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach ($products as $product)
                                         <tr>
-                                            <td>{{ ++$i }}</td>
-                                            
-										<td >{{ $product->name }}</td>
-										<td >{{ $product->description }}</td>
-										<td >{{ $product->product_type }}</td>
-										<td >{{ $product->company_id }}</td>
-										<td >{{ $product->price }}</td>
-										<td >{{ $product->category_id }}</td>
-										<td >{{ $product->provider_id }}</td>
-										<td >{{ $product->stock }}</td>
-										<td >{{ $product->minimo }}</td>
-
+                                            <td >{{ $product->name }}</td>
+                                            <td >{{ $product->description }}</td>
+                                            <td >{{ $product->company_id }}</td>
+                                            <td >{{ $product->price }}</td>
+                                            <td >{{ $product->category_name}}</td>
+                                            <td >{{ $product->stock }}</td>
+                                            <td >{{ $product->minimo }}</td>
                                             <td>
                                                 <form action="{{ route('products.destroy', $product->id) }}" method="POST">
-                                                    <a class="btn btn-sm btn-primary " href="{{ route('products.show', $product->id) }}"><i class="fa fa-fw fa-eye"></i> {{ __('Show') }}</a>
-                                                    <a class="btn btn-sm btn-success" href="{{ route('products.edit', $product->id) }}"><i class="fa fa-fw fa-edit"></i> {{ __('Edit') }}</a>
+                                                    <a class="btn btn-sm btn-primary xs-margin" href="{{ route('products.show', $product->id) }}"><ion-icon name="eye"></ion-icon></a>
+                                                    <a class="btn btn-sm btn-success xs-margin" href="{{ route('products.edit', $product->id) }}"><ion-icon name="create"></ion-icon></a>
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger btn-sm" onclick="event.preventDefault(); confirm('Are you sure to delete?') ? this.closest('form').submit() : false;"><i class="fa fa-fw fa-trash"></i> {{ __('Delete') }}</button>
+                                                    <button type="submit" class="btn btn-danger btn-sm xs-margin" onclick="event.preventDefault(); confirm('Are you sure to delete?') ? this.closest('form').submit() : false;"><ion-icon name="trash"></ion-icon></button>
                                                 </form>
                                             </td>
                                         </tr>

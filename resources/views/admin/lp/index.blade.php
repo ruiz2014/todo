@@ -10,8 +10,6 @@
 @endsection
 
 @section('content')
-    <div class="container-fluid mb-3">
-
     @if ($message = Session::get('success'))
         <div class="alert alert-success m-4" role="alert">
             <p>{{ $message }}</p>
@@ -24,28 +22,30 @@
         </div>
     @endif
 
-        <form id="prue" action="oute('lp.store') }}" method="POST">
+    <div class="container-fluid mb-3">
+         <a href="{{ route('lp.entry') }}" class="btn btn-outline-success" >Nuevas Entradas de Mercansia</a>
+        <!-- <form id="prue" action="oute('lp.store') }}" method="POST">
                 @csrf    
             <div class="row padding-1 p-1 mb-3">
-
+           
                 <div class="col-md-6">
                     <label for="" style="width:100%;">Productos</label>
                     <select id="product_id" name="product_id" class="form-select" aria-label="Default select example" style="width:100%;">
                         <option value="">Seleccione productos</option>     
-                        @foreach($products as $id => $prod)
-                        <option value="{{$id}}">{{$prod}}</option>
-                        @endforeach
+                        foreach(products as id => prod)
+                        <option value="id}}">{prod}}</option>
+                        endforeach
                     </select>
                 </div>
             </div> 
             <button id="btn-add" class="btn btn-outline-success mb-3" type="submit">Agregar</button>  
-        </form>     
+        </form>      -->
     </div>  
 
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-12">
-                <div class="card">
+                <div class="card mb-2">
                     <div class="card-header">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
 
@@ -53,18 +53,13 @@
                                 {{ __('Products') }}
                             </span>
 
-                             <div class="float-right">
+                             <!-- <div class="float-right">
                                 <a href="oute('tool.createProduct') }}" id="check" class="btn btn-primary btn-sm float-right"  data-placement="left">
                                   {{ __('Create New') }}
                                 </a>
-                              </div>
+                              </div> -->
                         </div>
                     </div>
-                    @if ($message = Session::get('success'))
-                        <div class="alert alert-success m-4">
-                            <p>{{ $message }}</p>
-                        </div>
-                    @endif
 
                     @if ($errors->any())
                         <div class="alert alert-danger">
@@ -79,12 +74,12 @@
                     <div class="card-body bg-white">
                         <form class="d-flex">
                                 <div class="input-group">
-                                    <input name="search" class="form-control form-control-sm" value="{{ $text }}" type="search" placeholder="Search" aria-label="Search">
+                                    <input name="search" class="form-control form-control-sm" value="{{ $text }}" type="search" placeholder="Buscar" aria-label="Search">
                                     <button class="btn btn-primary px-4" type="submit">
-                                        <i class="bi bi-search"></i>
+                                        <ion-icon name="search"></ion-icon>
                                     </button>
                                 </div>
-                            </form>
+                        </form>
                         <div class="table-responsive">
                             
                             <table class="table table-striped table-hover">
@@ -108,7 +103,7 @@
                                             <td >{{ $product->stock }}</td>
                                             <td>
                                                 <a class="btn btn-sm btn-primary xs-margin" href=""><ion-icon name="eye"></ion-icon></a>
-                                                <a href="" id="{{ $product->product_id }}%{{$product->name}}"  class="xs-margin btn btn-sm btn-warning opt-prod" data-bs-toggle="modal" data-bs-target="#exampleModal"><ion-icon name="cart-outline"></ion-icon></a>
+                                                <!-- <a href="" id="product->product_id }}%$product->name}}"  class="xs-margin btn btn-sm btn-warning opt-prod" data-bs-toggle="modal" data-bs-target="#exampleModal"><ion-icon name="cart-outline"></ion-icon></a> -->
                                             </td>
                                         </tr>
                                     @endforeach
@@ -122,7 +117,7 @@
         </div>
     </div>
         <!-- Modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <!-- <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -166,7 +161,7 @@
                 </form>     
             </div>
         </div>
-    </div> 
+    </div>  -->
 @endsection
 @section('script')  
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>

@@ -44,10 +44,22 @@
                 <div class="col-md-12">
                     <div class="card card-primary">
                         <div class="card-header">
-                            <h3 class="card-title">Seleccione fecha</h3>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+
+                            <span id="card_title">
+                                Seleccione fecha
+                            </span>
+
+                             <div class="float-right">
+                                <a href="{{ url()->previous() }}" class="btn btn-outline-secondary btn-sm float-right"  data-placement="left">
+                                  <ion-icon name="refresh"></ion-icon>
+                                </a>
+                              </div>
+                        </div>
+
                         </div>
                         <div class="card-body">
-                            <form action="{{ route('sumary.search') }}" method="POST">
+                            <form action="{{ route('summary.search') }}" method="POST">
                             @csrf    
                             <div class="form-group">
                                     <label>Date:</label>
@@ -91,7 +103,7 @@
                             </table>
 
 
-                            <form action="{{ route('sumary') }}" method="POST">
+                            <form action="{{ route('summary') }}" method="POST">
                             @csrf    
                             <input type="hidden" name="fecha" value="{{ $fecha }}">
                                 <div class="card-footer">

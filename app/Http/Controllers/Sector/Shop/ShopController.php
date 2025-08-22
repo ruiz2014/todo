@@ -26,7 +26,7 @@ class ShopController extends Controller
     
     public function index(){
         $code = date('YmdHis');
-        $products = Product::select(DB::raw("CONCAT(products.name,' ',products.description, ' ',products.price) AS name"), 'products.id')
+        $products = Product::select(DB::raw("CONCAT_WS(' ', products.name,' ',products.description, ' ',products.price) AS name"), 'products.id')
                     ->join('local_products as lp', 'products.id', '=', 'lp.product_id')
                     ->where('lp.local_id', Session::get('local_id'))
                     ->pluck('products.name', 'products.id');

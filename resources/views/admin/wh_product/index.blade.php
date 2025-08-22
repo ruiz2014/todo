@@ -23,37 +23,7 @@
             <p>{{ $message }}</p>
         </div>
     @endif
-
-        <form id="prue" action="{{ route('whp.store') }}" method="POST">
-                @csrf    
-            <div class="row padding-1 p-1 mb-3">
-
-                <div class="col-md-6">
-                    <label for="" style="width:100%;">Productos</label>
-                    <select id="product_id" name="product_id" class="form-select" aria-label="Default select example" style="width:100%;">
-                        <option value="">Seleccione productos</option>     
-                        @foreach($products as $id => $prod)
-                        <option value="{{$id}}">{{$prod}}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group mb-2 mb20">
-                        <label for="minimo" class="form-label-2">Lote</label>
-                        <input type="text" name="batch" class="mt-2 form-control-2 @error('batch') is-invalid @enderror" value="{{ old('batch') }}" id="batch" placeholder="Lote">
-                        {!! $errors->first('batch', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group mb-2 mb20">
-                        <label for="minimo" class="form-label-2">Stock</label>
-                        <input type="number" name="stock" class="mt-2 form-control-2 @error('batch') is-invalid @enderror" value="{{ old('stock') }}" id="Stock" placeholder="stock">
-                        {!! $errors->first('stock', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
-                    </div>
-                </div>
-            </div> 
-            <button id="btn-add" class="btn btn-outline-success mb-3" type="submit">Agregar</button>  
-        </form>     
+        <a href="{{ route('whp.entry') }}" class="btn btn-outline-success" >Nuevas Entradas de Mercansia</a> 
     </div>
     <div class="container-fluid">
         <div class="row">
@@ -74,11 +44,6 @@
                               </div>
                         </div>
                     </div>
-                    @if ($message = Session::get('success'))
-                        <div class="alert alert-success m-4">
-                            <p>{{ $message }}</p>
-                        </div>
-                    @endif
 
                     @if ($errors->any())
                         <div class="alert alert-danger">
@@ -114,9 +79,9 @@
                                             <td >{{ $product->category_id }}</td>
                                             <td >{{ $product->stock }}</td>
                                             <td>
-                                            <a href="{{ route('whp.view', $product->product_id) }}">Ver historial</a>
-                                                <a id="pr-{{ $product->product_id }}" class="btn btn-sm btn-primary prod-id" href="" data-bs-toggle="modal" data-bs-target="#exampleModal"><ion-icon name="eye"></ion-icon>Agregar</a>
-                                                <a href="" id="{{ $product->product_id }}%{{$product->name}}"  class="btn btn-sm btn-warning opt-prod" data-bs-toggle="modal" data-bs-target="#exampleModal2"><ion-icon name="cart-outline"></ion-icon>No sirve</a>
+                                            <a class="btn btn-outline-primary" href="{{ route('whp.view', $product->product_id) }}"><ion-icon name="eye"></ion-icon>Ver historial</a>
+                                                <!-- <a id="pr-{product->product_id }}" class="btn btn-sm btn-primary prod-id" href="" data-bs-toggle="modal" data-bs-target="#exampleModal"><ion-icon name="eye"></ion-icon>Agregar</a>
+                                                <a href="" id="product->product_id }}%{product->name}}"  class="btn btn-sm btn-warning opt-prod" data-bs-toggle="modal" data-bs-target="#exampleModal2"><ion-icon name="cart-outline"></ion-icon>No sirve</a> -->
                                             </td>
                                         </tr>
                                     @endforeach

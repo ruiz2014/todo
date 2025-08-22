@@ -14,6 +14,9 @@ use App\Http\Requests\UserRequest;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 
+use App\Helpers\CompanyHelper;
+use DB;
+
 class UserController extends Controller
 {
     /**
@@ -21,10 +24,51 @@ class UserController extends Controller
      */
     public function index(Request $request): View
     {
-        $users = User::where('company_id', $request->session()->get('company_id'))->paginate();
+        
+       
+        // DB::enableQueryLog();
+        $text = $request->search;
+        
+        $select = ['users.id', 'users.name', 'users.email', 'r.name as role'];
+        $where = ['users.company_id'=> ['=', $request->session()->get('company_id')]];
+        $orWhere = ['users.name'=>['like', '%'.$text.'%'], 'users.email' => ['like', '%'.$text.'%'], 'r.name' => ['like', '%'.$text.'%']];
+        $join = ['roles as r' => ['users.rol', '=', 'r.id'] ];
+        
+        $query  = User::select($select);
+// dd($query);
+        $result = CompanyHelper::searchAll($query, $text, $join, $where, $orWhere);
+        $users = $result->paginate(3);
 
-        return view('user.index', compact('users'))
+        // dd($users);
+
+        // foreach($join as $table => $row){
+        //         $query->join($table, $row[0], $row[1], $row[2]);
+        // }
+
+        // foreach($where as $field => $condition){ 
+        //     $query->where($field, $condition[0], $condition[1]);
+        // }
+
+        // $query->where(function($query) use ($orWhere, $text){
+        //             foreach($orWhere as $column => $value){
+        //                 $query->orWhere($column, $value[0], $value[1]);
+        //             }
+        //         });
+
+        // $users = $query->paginate(3);
+
+        // dd(DB::getQueryLog());
+
+        return view('user.index', compact('users', 'text'))
             ->with('i', ($request->input('page', 1) - 1) * $users->perPage());
+
+            // $users  = User::select('users.id', 'users.name', 'users.email', 'r.name as role')
+            //   ->join('roles as r', 'users.rol', '=', 'r.id');
+            // ->where('users.company_id', $request->session()->get('company_id'))
+            // ->where("users.name", "like", "%$text%")
+            // ->orWhere("users.email", "like", "%$text%")
+            // ->orWhere("r.name", "like", "%$text%")
+            // ->paginate(3);
     }
 
     /**

@@ -86,7 +86,12 @@ trait BillTrait {
                 $date = new DateTime();
                 $_fecha = $date->format('Y-m-d');
                 $resumen = '20000000001|01|'.$serie.'|'.$number.'|'.round(45, 2).'|'.round(45, 2).'|'.$_fecha.'| 01 | 29781231232';
+                $rucCustomer = '20608894447';
 
+                $this->writeXml($invoice, $see->getFactory()->getLastXml(), $rucCustomer, 1); 
+                
+                Attention::where('id', $sale_data->id)->update(['hash'=>$hash, 'identifier'=>$xml_id, 'resume' => $resumen, 'dispatched'=>1]);
+                
                 $result = $see->send($invoice);
 
                 $validated = $this->validateResult($result, $response);
@@ -101,16 +106,15 @@ trait BillTrait {
                 $code_cdr = (int)$cdr->getCode();
 
                 list($message, $alert, $update_ts) = $this->validateCrd($code_cdr);
-
+// dd($cdr, $result, $validated);
+                $this->writeCdr($invoice, $result->getCdrZip(), $rucCustomer, 1);
+                Attention::where('id', $sale_data->id)->update(['cdr'=>$code_cdr, 'received'=>1]);
                 // Log_Receipt::create([ 'user_id'=>1, 'customer_id'=>$attentionData->customer_id, 'document_code'=>$order, 'identifier'=>$xml, 'total'=>$total, 'hash'=>$hash, 'resume'=>$resumen, 'cdr'=>$code]);
-                // Log_Receipt::create([ 'user_id'=>1, 'customer_id'=>$attentionData->customer_id, 'document_code'=>$order, 'identifier'=>$xml, 'total'=>$total, 'hash'=>$hash, 'resume'=>$resumen, 'cdr'=>$code]);
-                // Log_Receipt::create([ 'user_id'=>1, 'customer_id'=>$attentionData->customer_id, 'document_code'=>$order, 'identifier'=>$xml, 'total'=>$total, 'hash'=>$hash, 'resume'=>$resumen, 'cdr'=>$code]);    
-
                 $message .=''.$cdr->getDescription().PHP_EOL;
 
                 if($update_ts){ TempSale::where('code', $code)->update(['status'=> 2]); }
                 
-                Attention::where('id', $sale_data->id)->update(['hash'=>$hash, 'identifier'=>$xml_id, 'resume' => $resumen, 'cdr'=>$code_cdr, 'message'=>$message, 'dispatched'=>1, 'received'=>1, 'completed'=>1]);
+                Attention::where('id', $sale_data->id)->update(['message'=>$message, 'completed'=>1, 'status' => 1]);
 
                 $response = [
                     'success' => true,
@@ -121,10 +125,8 @@ trait BillTrait {
                     'attentionId' => $sale_data->id,
                     'update' => $update_ts
                 ];
-
                 // dd($hash, $xml_id, $see, $see->getFactory(), $result, $validated, $response, $message, $alert, $response);
                 return $response;
-                
             }
             else{
                 dd('no hay');

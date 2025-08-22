@@ -1,0 +1,120 @@
+<div class="row padding-1 p-1">
+
+    <div class="col-md-6">
+        <div class="form-group mb-4">
+            <label for="category_id" class="form-label-2">{{ __('Provider Id') }}</label>
+            <select name="provider_id" id="" class="form-control-2 line vld draw">
+                <option value="">Seleccione Proveedor</option>
+                <option value="1">Sin Proveedor</option>
+            </select>
+            {!! $errors->first('provider_id', '<div class="invalid-feedback d-block" role="alert"><strong>:message</strong></div>') !!}  
+        </div>
+    </div>
+    <div class="col-md-6">    
+        <div class="form-group mb-2 mb20">
+            <label for="document" class="form-label-2">{{ __('Document') }}</label>
+            <input type="text" name="document" class="form-control-2 @error('document') is-invalid @enderror" value="{{ old('document', $buyProduct?->document) }}" id="document" placeholder="Document">
+            {!! $errors->first('document', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
+        </div>
+    </div>   
+
+    <div class="col-md-6">
+        <div class="form-group mb-4">
+            <label for="product_id" class="form-label-2">{{ __('Products') }}</label>
+            <select name="product_id" id="" class="form-control-2 line vld draw">
+                <option value="">Seleccione</option>
+                @foreach($products as $key => $value)
+                <option value="{{ $key }}">{{ $value }}</option>
+                @endforeach
+            </select>
+            {!! $errors->first('product_id', '<div class="invalid-feedback d-block" role="alert"><strong>:message</strong></div>') !!}  
+        </div>
+    </div>
+    
+    <div class="col-md-6">    
+        <div class="form-group mb-2 mb20">
+            <label for="cost" class="form-label-2">{{ __('Cost') }}</label>
+            <input type="text" name="cost" class="form-control-2 @error('cost') is-invalid @enderror" value="{{ old('cost', $buyProduct?->cost) }}" id="cost" placeholder="Cost">
+            {!! $errors->first('cost', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
+        </div>
+    </div>
+    <div class="col-md-6">    
+        <div class="form-group mb-2 mb20">
+            <label for="batch" class="form-label-2">{{ __('Batch') }}</label>
+            <input type="text" name="batch" class="form-control-2 @error('batch') is-invalid @enderror" value="{{ old('batch', $buyProduct?->batch) }}" id="batch" placeholder="Batch">
+            {!! $errors->first('batch', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
+        </div>
+    </div>
+    <div class="col-md-6">    
+        <div class="form-group mb-2 mb20">
+            <label for="stock" class="form-label-2">{{ __('Stock') }}</label>
+            <input type="text" name="stock" class="form-control-2 @error('stock') is-invalid @enderror" value="{{ old('stock', $buyProduct?->stock) }}" id="stock" placeholder="Stock">
+            {!! $errors->first('stock', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="form-group mb-4">
+            <label for="type_payment" class="form-label-2">{{ __('Type Payment') }}</label>
+            <select name="type_payment" id="" class="form-control-2 line vld draw">
+                <option value="">Seleccione Proveedor</option>
+                <option value="1">Contado</option>
+                <option value="2">Yape o Plin</option>
+                <option value="3">Tarjeta</option>
+            </select>
+            {!! $errors->first('type_payment', '<div class="invalid-feedback d-block" role="alert"><strong>:message</strong></div>') !!}  
+        </div>
+    </div>
+   
+    <div class="col-md-6">
+        <div class="form-group mb-4">
+            <label for="location_type" class="form-label-2">{{ __('Lugar') }}</label>
+            <select name="location_type" id="location_type" class="form-control-2 line vld draw @error('location_type') is-invalid @enderror">
+                <option value="">Seleccione</option>
+            @foreach($establishments as $etb)    
+                <option value="{{ $etb->type }}" >{{ $etb->name }}</option>
+            @endforeach    
+            </select>
+            {!! $errors->first('location_type', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="form-group mb-4">
+            <label for="location_id" class="form-label-2">{{ __('Locals') }}</label>
+            <select name="location_id" id="location_id" class="form-control-2 line vld draw @error('location_id') is-invalid @enderror">
+                <option value="">Seleccione Lugar</option>
+            </select>
+            {!! $errors->first('location_id', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
+        </div>
+    </div>
+    
+    <div class="col-md-12 mt20 mt-2">
+        <button type="submit" class="btn btn-primary">{{ __('Submit') }}</button>
+    </div>
+</div>
+
+@section('script')  
+    <script>
+        let establishment = document.getElementById('location_type');
+        let local = document.getElementById('location_id');
+
+        establishment.addEventListener('change', ()=>{
+            const est_id = establishment.value;
+            local.innerHTML = '<option value="">Seleccione Lugar</option>';
+            fetch(`{{ url('tool/establishment/${est_id}') }}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+
+                data.forEach(data => {
+                    const option = document.createElement('option');
+                    option.value = data.id;
+                    option.textContent = data.name;
+                    local.appendChild(option);
+                });
+            })
+        });
+    </script>
+
+@endsection

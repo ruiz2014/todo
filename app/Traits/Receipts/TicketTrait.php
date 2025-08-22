@@ -73,12 +73,14 @@ trait TicketTrait {
                 $_fecha = $date->format('Y-m-d');
                 $resumen = '20000000001|03|'.$serie.'|'.$number.'|'.round(45, 2).'|'.round(45, 2).'|'.$_fecha.'|06|48712312';
                 $message = 'Guardado para envio en resumen';
+                $rucCustomer = '20608894447';
 
+                $this->writeXml($invoice, $see->getFactory()->getLastXml(), $rucCustomer, 2); 
                 // dd($hash, $xml_id, $xmlSigned);
             
                 TempSale::where('code', $code)->update(['status'=> 2]);
                 
-                Attention::where('id', $sale_data->id)->update(['hash'=>$hash, 'identifier'=>$xml_id, 'resume' => $resumen, 'message'=>$message]);
+                Attention::where('id', $sale_data->id)->update(['hash'=>$hash, 'identifier'=>$xml_id, 'resume' => $resumen, 'message'=>$message, 'dispatched'=> 1]);
 
                 $response = [
                     'success' => true,

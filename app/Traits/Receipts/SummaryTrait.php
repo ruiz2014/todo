@@ -60,41 +60,46 @@ trait SummaryTrait {
         $xmlSigned = $this->xmlSigned($see->getXmlSigned($summary));//TRAIT BILLTOOL
         $hash=$this->getHashXml($xmlSigned); //TRAIT BILLTOOL
         $xml_id=$this->getIdXml($xmlSigned); //TRAIT BILLTOOL
+        $rucCustomer = '20608894447';
+        // dd($xmlSigned, $hash, $xml_id, $see->getXmlSigned($summary));
+
+        $this->writeXml($summary, $see->getFactory()->getLastXml(), $rucCustomer, 101); 
+        // file_put_contents(public_path().'/Sunat/Summary/'.$summary->getName().'.xml', $see->getFactory()->getLastXml());
 
         $result = $see->send($summary);
 
         $validated = $this->validateResult($result, $response);
 
         if($validated['error']){ //SI HUBO PROBLEMA EN EL ENVIO "HTTP" SE ANULA 
-
-            // Attention::where('id', $sale_data->id)->update(['hash'=>$hash, 'identifier'=>$xml_id, 'resume' => $resumen, 'cdr'=>$validated['cdr'], 'message'=>$validated['message'], 'dispatched'=>1]);
             return $validated;
         }
-
+        
         $ticket = $result->getTicket();
         $statusResult = $see->getStatus($ticket);
 
         $validateStatus = $this->validateResult($statusResult, $response);
-
+        // dd($validateStatus);
         if($validateStatus['error']){ //SI HUBO PROBLEMA EN EL ENVIO "HTTP" SE ANULA 
             // Attention::where('id', $sale_data->id)->update(['hash'=>$hash, 'identifier'=>$xml_id, 'resume' => $resumen, 'cdr'=>$validated['cdr'], 'message'=>$validated['message'], 'dispatched'=>1]);
             return $validateStatus;
         }
 
-        $cdr = $result->getCdrResponse();
+        $cdr = $statusResult->getCdrResponse();
         $code_cdr = (int)$cdr->getCode();
+
+        $this->writeCdr($summary, $statusResult->getCdrZip(), $rucCustomer, 101); //TRAIT RECEIPTSTOOL
 
         $this->saveReceipt($documents, $ticket, 1); //TRAIT BILLINGTOOL
 
         list($message, $alert, $update_ts) = $this->validateCrd($code_cdr);
 
         $message .=''.$cdr->getDescription().PHP_EOL;
-
+// dd('llego 3.0', $cdr, $message);
         if($update_ts){
-            Attention::whereIn('id', $ids)->update(['cdr'=>$code_cdr, 'success'=>1, 'message'=>'Boleta Aceptada enviada en Resumen '.$xml_id, 'dispatched'=>1, 'received'=>1, 'completed'=>1, 'status'=>1]);
+            Attention::whereIn('id', $this->document_id)->update(['cdr'=>$code_cdr, 'success'=>1, 'message'=>'Boleta Aceptada enviada en Resumen '.$xml_id, 'dispatched'=>1, 'received'=>1, 'completed'=>1, 'status'=>1]);
         }
 
-        Resume::create(['company_id'=>request()->session()->get('role'), 'local_id'=>request()->session()->get('role'), 'user_id'=>request()->session()->get('role'), 'identifier'=>$xml_id, 'ticket'=>$ticket, 'cdr'=>$code_cdr, 'hash'=>$hash, 'message'=>$message, 'date_created'=>new DateTime($date), 'date_send'=>new DateTime()]);
+        Resume::create(['company_id'=>request()->session()->get('company_id'), 'local_id'=>request()->session()->get('local_id'), 'user_id'=>request()->session()->get('user_id'), 'identifier'=>$xml_id, 'ticket'=>$ticket, 'cdr'=>$code_cdr, 'status'=>$update_ts, 'hash'=>$hash, 'message'=>$message, 'date_created'=>new DateTime($date), 'date_send'=>new DateTime()]);
 
         $response = [
             'success' => true,

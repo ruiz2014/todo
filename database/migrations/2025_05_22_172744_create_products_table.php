@@ -20,7 +20,6 @@ return new class extends Migration
             $table->unsignedTinyInteger('product_type')->nullable()->default(1);
             $table->decimal('price', 10, 2);
             $table->unsignedInteger('category_id')->default(1);
-            $table->unsignedInteger('provider_id')->default(1);
             $table->decimal('stock', 8,2)->default(0);
             $table->decimal('minimo', 6,2)->nullable();
             $table->unsignedTinyInteger('approved')->nullable()->default(1);

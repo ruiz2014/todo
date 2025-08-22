@@ -73,7 +73,7 @@
         let type = null; 
         establishment.addEventListener('change', ()=>{
             const id = establishment.value;
-            alert(id);
+            // alert(id);
             local.innerHTML = '<option value="">Seleccione Establecimiento</option>';
             fetch(`{{ url('tool/role/${id}') }}`)
             .then(response => response.json())
@@ -93,7 +93,7 @@
         
         rol.addEventListener('change', ()=>{
             // const id = rol.value;
-            alert(type);
+            // alert(type);
             // const est_id = establishment.value;
             const est_id = type;
             fetch(`{{ url('tool/establishment/${est_id}') }}`)

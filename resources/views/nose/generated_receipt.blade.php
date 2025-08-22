@@ -7,17 +7,35 @@
 @section('content')
 
 <div class="container-fluid">
+
     <div class="row">
-    @if ($message = Session::get('success'))
-        <div class="alert alert-success m-4" role="alert">
-            <p>{{ $message }}</p>
+         <div class="col-sm-12">
+            <div class="mb-3" style="display: flex; justify-content: space-between; align-items: center;">
+
+                <span id="card_title" class="text-uppercase">
+                    Comprobante
+                </span>
+
+                <div class="float-right">
+                    <a href="{{ url()->previous() }}" class="btn btn-outline-secondary btn-sm float-right"  data-placement="left">
+                        <ion-icon name="refresh"></ion-icon>
+                    </a>
+                </div>
+            </div>
+            @if ($message = Session::get('success'))
+            <div class="alert alert-success" role="alert">
+                <p>{{ $message }}</p>
+            </div>
+            @endif
+            @if ($message = Session::get('danger'))
+                <div class="alert alert-danger" role="alert">
+                    <p>{{ $message }}</p>
+                </div>
+            @endif
         </div>
-    @endif
-    @if ($message = Session::get('danger'))
-        <div class="alert alert-danger m-4" role="alert">
-            <p>{{ $message }}</p>
-        </div>
-    @endif
+    </div>
+    <div class="row">
+    
         <div class="col-md-3">
             <div class="panel invoice-list">
                 <div class="list-group animate__animated animate__fadeInLeft">

@@ -30,33 +30,35 @@
                     @endif
 
                     <div class="card-body bg-white">
+                        <form class="d-flex">
+                            <div class="input-group">
+                                <input name="search" class="form-control form-control-sm" value="{{ $text }}" type="search" placeholder="Buscar" aria-label="Search">
+                                <button class="btn btn-primary px-4" type="submit">
+                                    <ion-icon name="search"></ion-icon>
+                                </button>
+                            </div>
+                        </form>
                         <div class="table-responsive">
                             <table class="table table-striped table-hover">
                                 <thead class="thead">
                                     <tr>
-                                        <th>No</th>
-                                        
-									<th >Company Id</th>
-									<th >Category Name</th>
-
+                                        <th >Category Name</th>
+                                        <th >Company Id</th>
                                         <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach ($categories as $category)
                                         <tr>
-                                            <td>{{ ++$i }}</td>
-                                            
-										<td >{{ $category->company_id }}</td>
-										<td >{{ $category->category_name }}</td>
-
+                                            <td >{{ $category->category_name }}</td>
+                                            <td >{{ $category->company_id }}</td>
                                             <td>
                                                 <form action="{{ route('categories.destroy', $category->id) }}" method="POST">
-                                                    <a class="btn btn-sm btn-primary " href="{{ route('categories.show', $category->id) }}"><i class="fa fa-fw fa-eye"></i> {{ __('Show') }}</a>
-                                                    <a class="btn btn-sm btn-success" href="{{ route('categories.edit', $category->id) }}"><i class="fa fa-fw fa-edit"></i> {{ __('Edit') }}</a>
+                                                    <a class="btn btn-sm btn-primary xs-margin" href="{{ route('categories.show', $category->id) }}"><ion-icon name="eye"></ion-icon></a>
+                                                    <a class="btn btn-sm btn-success xs-margin" href="{{ route('categories.edit', $category->id) }}"><ion-icon name="create"></ion-icon></a>
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger btn-sm" onclick="event.preventDefault(); confirm('Are you sure to delete?') ? this.closest('form').submit() : false;"><i class="fa fa-fw fa-trash"></i> {{ __('Delete') }}</button>
+                                                    <button type="submit" class="btn btn-danger btn-sm xs-margin" onclick="event.preventDefault(); confirm('Are you sure to delete?') ? this.closest('form').submit() : false;"><ion-icon name="trash"></ion-icon></button>
                                                 </form>
                                             </td>
                                         </tr>

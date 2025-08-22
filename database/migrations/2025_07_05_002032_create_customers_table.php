@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('customers', function (Blueprint $table) {
             $table->id();
+            $table->unsignedInteger('company_id')->nullable()->default(1);
             $table->unsignedTinyInteger('local_id');
             $table->unsignedInteger('user_id');
             $table->string('name', 150);
@@ -21,7 +22,7 @@ return new class extends Migration
             $table->string('phone', 25)->nullable();
             $table->string('address', 250)->nullable();
             $table->string('email', 100)->nullable();
-            $table->string('ubigeo', 50)->nullable();
+            $table->string('ubigeo', 50)->nullable()->default('13001');
             $table->softDeletes();
             $table->timestamps();
         });

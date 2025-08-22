@@ -21,16 +21,56 @@
     }
     </style>
 <section class="container">
+    @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+        @endif
+
+        @if (session('danger'))
+        <div class="alert alert-danger">
+            {{ session('danger') }}
+        </div>
+        @endif
+
+        @if (session('info'))
+        <div class="alert alert-info">
+            {{ session('info') }}
+        </div>
+        @endif
+
+
+
+  <div class="row">
+
+    <div class="col-md-6">
+      @if(Auth::user()->rol <= 2)
+       <h6>{{ isset($local->local_name) ? $local->local_name : 'Elija el Local a Observar' }}</h6>
+      <form method="post" action="{{ route('admin.chl') }}" class="d-flex"> 
+        @csrf
+          <select name="local" class="form-select" aria-label="Default select example">
+              <option value="">Seleccione el local</option>
+            @foreach($locals as $key => $value)
+              <option value="{{ $key }}">{{ $value }}</option>
+            @endforeach
+          </select>  
+          <button type="submit" class="btn btn-outline-info ms-3">Confirmar</button>
+      </form>
+    @else
+      <h3 class="mb-3">{{ \App\Helpers\CompanyHelper::getSector()['name'] .':'. $local->local_name }} </h3>
+    @endif
+    </div>
+    
+  </div>
+ 
 
     <div class="row mt-4 mb-5">
 
-        <h3 class="mb-3">{{ \App\Helpers\CompanyHelper::getSector()['name'] .':'. $local->local_name }} </h3>
+        
         <div class="col-sm-6 col-lg-3">
-            <div class="card mb-3 rounded-pill" style="max-width: 540px;">
+            <div class="card mb-3" style="max-width: 540px;">
                 <div class="row g-0">
-                    <div class="col-md-3 d-flex justify-content-center align-items-center">
-                        <ion-icon name="person-outline" style="font-size:30px;color:blue;border: 1px solid black;padding: 8px;border-radius: 50%;"></ion-icon>
-                    </div>
+                    
                     <div class="col-md-9">
                         <div class="card-body">
                             <h5 class="card-title mb-0 fw-normal">{{ Auth::user()->name }}</h5>
@@ -109,7 +149,7 @@
 
         <div class="col-sm-12 col-lg-7">
           <div class="row">
-            <div class="col-7">
+            <div class="col-lg-7">
                   <div class="card py-4 px-3">
                     <h5 class="card-title mb-3 fw-normal">Pagos Realizados en este Mes</h5>
                     <ul class="p-0">
@@ -126,7 +166,7 @@
                   </div>
                 </div>
             
-            <div class="col-5">
+            <div class="col-lg-5">
                 <div class="card py-3 px-2">
                   <h6 class="card-title mb-3 fw-normal">Enlace directos</h6>
                   <ul class="p-0">
@@ -144,7 +184,7 @@
                             <ion-icon name="restaurant-outline" class="me-2 fs-4" style="font-size:20px;"></ion-icon>  
                             <div class="fw-nomal">Cocina</div>
                           </div>
-                          <a href="{{ url('kitchen') }}">
+                          <a href="{{ route('customers.index') }}">
                             <ion-icon name="enter-outline" class="me-2 fs-4" style="font-size:20px;"></ion-icon> 
                           </a>
                       </li>
@@ -196,7 +236,7 @@
     const ln = document.getElementById('myChart3');
     
     const br2 = document.getElementById('myChart4');
-    var xValues = ['Ticket'];//["Ticket", "Factura", "Boleta"];
+    var xValues = ['Ticket', 'Factura', 'Boleta'];//["Ticket", "Factura", "Boleta"];
     var yValues = {{ $receipts }};
     var barColors = [
         "rgba(226, 152, 15, 0.6)",

@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\LocalRequest;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use App\Helpers\CompanyHelper;
 
 class LocalController extends Controller
 {
@@ -16,9 +17,19 @@ class LocalController extends Controller
      */
     public function index(Request $request): View
     {
-        $locals = Local::where('company_id', request()->session()->get('company_id'))->paginate();
+        $text = $request->search;
+        $select = ['id', 'local_name', 'phone', 'address', 'company_id'];
+        $where = ['company_id'=> ['=', request()->session()->get('company_id')]];
+        $orWhere = ['local_name'=>['like', '%'.$text.'%'], 'phone'=>['like', '%'.$text.'%'], 'address'=>['like', '%'.$text.'%']];
+        $join = [];
 
-        return view('local.index', compact('locals'))
+        $query  = Local::select($select);
+
+        $result = CompanyHelper::searchAll($query, $text, $join, $where, $orWhere);
+        $locals = $result->paginate(1);
+
+        // $locals = Local::where('company_id', request()->session()->get('company_id'))->paginate();
+        return view('local.index', compact('locals', 'text'))
             ->with('i', ($request->input('page', 1) - 1) * $locals->perPage());
     }
 

@@ -30,11 +30,18 @@
                     @endif
 
                     <div class="card-body bg-white">
+                        <form class="d-flex">
+                                <div class="input-group">
+                                    <input name="search" class="form-control form-control-sm" value="{{ $text }}" type="search" placeholder="Buscar" aria-label="Search">
+                                    <button class="btn btn-primary px-4" type="submit">
+                                        <ion-icon name="search"></ion-icon>
+                                    </button>
+                                </div>
+                        </form>
                         <div class="table-responsive">
                             <table class="table table-striped table-hover">
                                 <thead class="thead">
                                     <tr>
-                                        <th>No</th>
                                         <th >Name</th>
                                         <th >Email</th>
                                         <th >Rol</th>
@@ -44,17 +51,16 @@
                                 <tbody>
                                     @foreach ($users as $user)
                                         <tr>
-                                            <td>{{ ++$i }}</td>
                                             <td >{{ $user->name }}</td>
                                             <td >{{ $user->email }}</td>
-                                            <td >{{ $user->rol }}</td>
+                                            <td >{{ $user->role }}</td>
                                             <td>
                                                 <form action="{{ route('users.destroy', $user->id) }}" method="POST">
-                                                    <a class="btn btn-sm btn-primary " href="{{ route('users.show', $user->id) }}"><i class="fa fa-fw fa-eye"></i> {{ __('Show') }}</a>
-                                                    <a class="btn btn-sm btn-success" href="{{ route('users.edit', $user->id) }}"><i class="fa fa-fw fa-edit"></i> {{ __('Edit') }}</a>
+                                                    <a class="btn btn-sm btn-primary xs-margin" href="{{ route('users.show', $user->id) }}"><ion-icon name="eye"></ion-icon></a>
+                                                    <a class="btn btn-sm btn-success xs-margin" href="{{ route('users.edit', $user->id) }}"><ion-icon name="create"></ion-icon></a>
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger btn-sm" onclick="event.preventDefault(); confirm('Are you sure to delete?') ? this.closest('form').submit() : false;"><i class="fa fa-fw fa-trash"></i> {{ __('Delete') }}</button>
+                                                    <button type="submit" class="btn btn-danger btn-sm xs-margin" onclick="event.preventDefault(); confirm('Are you sure to delete?') ? this.closest('form').submit() : false;"><ion-icon name="trash"></ion-icon></button>
                                                 </form>
                                             </td>
                                         </tr>

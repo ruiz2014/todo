@@ -36,10 +36,6 @@
                                     <strong>Rol:</strong>
                                     {{ $user->rol }}
                                 </div>
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Password2:</strong>
-                                    {{ $user->password2 }}
-                                </div>
 
                     </div>
                 </div>

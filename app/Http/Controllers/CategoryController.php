@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\CategoryRequest;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use App\Helpers\CompanyHelper;
 
 class CategoryController extends Controller
 {
@@ -16,9 +17,19 @@ class CategoryController extends Controller
      */
     public function index(Request $request): View
     {
-        $categories = Category::paginate();
+        $text = $request->search;
+        $select = ['id', 'category_name', 'company_id'];
+        $where = ['company_id'=> ['=', request()->session()->get('company_id')]];
+        $orWhere = ['category_name'=>['like', '%'.$text.'%'] ];
+        $join = [];
+
+        $query  = Category::select($select);
+        $result = CompanyHelper::searchAll($query, $text, $join, $where, $orWhere);
+        $categories = $result->paginate(1);
+        
+        // $categories = Category::paginate();
         // dd($request->session()->all());
-        return view('category.index', compact('categories'))
+        return view('category.index', compact('categories', 'text'))
             ->with('i', ($request->input('page', 1) - 1) * $categories->perPage());
     }
 

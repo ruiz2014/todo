@@ -38,7 +38,7 @@
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Navbar</a>
+            <a class="navbar-brand" href="{{ route('home') }}">Navbar</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -57,7 +57,7 @@
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <li><a class="dropdown-item" href="{{ route('lp.index') }}">Productos</a></li>
-                            <li><a class="dropdown-item" href=oute('users.index') }}">Usuarios</a></li>
+                            <li><a class="dropdown-item" href="{{ route('customers.index') }}">Cliente</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="#">Something else here</a></li>
                         </ul>
@@ -69,6 +69,7 @@
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
 
                             <li><a class="dropdown-item" href="{{ route('users.index') }}">Usuarios</a></li>
+                            <li><a class="dropdown-item" href="{{ route('buy-products.index') }}">Compras</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="{{ route('warehouses.index') }}">Almacenes</a></li>
                             <li><a class="dropdown-item" href="{{ route('locals.index') }}">Locales</a></li>
@@ -93,18 +94,28 @@
                             Atenciones
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="{{ route('attentions.index', ['type' => '00']) }}">Ticket</a></li>
-                            <li><a class="dropdown-item" href="{{ route('attentions.index', ['type' => '03']) }}">Boletas</a></li>
-                            <li><a class="dropdown-item" href="{{ route('attentions.index', ['type' => '01']) }}">Facturas</a></li>
-                            <li><a class="dropdown-item" href="{{ route('sumary.index') }}">Resumenes</a></li>
+                            <li><a class="dropdown-item" href="{{ route('attentions.index', ['type' => 'ticket']) }}">Ticket</a></li>
+                            <li><a class="dropdown-item" href="{{ route('attentions.index', ['type' => 'boleta']) }}">Boletas</a></li>
+                            <li><a class="dropdown-item" href="{{ route('attentions.index', ['type' => 'factura']) }}">Facturas</a></li>
+                            <li><a class="dropdown-item" href="{{ route('summary.index') }}">Resumenes</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="#">Something else here</a></li>
                         </ul>
                     </li>
 
-
-
-
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Reportes
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="{{ route('report.date') }}">Ventas</a></li>
+                            <li><a class="dropdown-item" href="{{ route('attentions.index', ['type' => 'boleta']) }}">X</a></li>
+                            <li><a class="dropdown-item" href="{{ route('attentions.index', ['type' => 'factura']) }}">X</a></li>
+                            <li><a class="dropdown-item" href="{{ route('summary.index') }}">X</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        </ul>
+                    </li>
 
                     <li class="nav-item dropdown">
                         <a class="nav-link" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">

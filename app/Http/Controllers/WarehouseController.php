@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\WarehouseRequest;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use App\Helpers\CompanyHelper;
 
 class WarehouseController extends Controller
 {
@@ -16,9 +17,21 @@ class WarehouseController extends Controller
      */
     public function index(Request $request): View
     {
-        $warehouses = Warehouse::where('company_id', request()->session()->get('company_id'))->paginate();
+        $text = $request->search;
+        $select = ['id', 'warehouse_name', 'phone', 'address', 'company_id'];
+        $where = ['company_id'=> ['=', request()->session()->get('company_id')]];
+        $orWhere = ['warehouse_name'=>['like', '%'.$text.'%'], 'phone'=>['like', '%'.$text.'%'], 'address'=>['like', '%'.$text.'%']];
+        $join = [];
 
-        return view('warehouse.index', compact('warehouses'))
+        $query  = Warehouse::select($select);
+
+        $result = CompanyHelper::searchAll($query, $text, $join, $where, $orWhere);
+        // dd($result);
+        $warehouses = $result->paginate();
+// dd($Warehouses);
+        // $warehouses = Warehouse::where('company_id', request()->session()->get('company_id'))->paginate();
+
+        return view('warehouse.index', compact('warehouses', 'text'))
             ->with('i', ($request->input('page', 1) - 1) * $warehouses->perPage());
     }
 

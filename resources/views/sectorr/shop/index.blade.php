@@ -5,9 +5,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
 
     <style>
-        body {
+        /* body {
             font-family: monospace;
-        }
+        } */
 
         /* .container {
             width: 100%;
@@ -269,35 +269,6 @@
         </div>
     </div>
 
-    <div class="container-fluid">
-        <div style="overflow-x: auto;">
-                <table class="table">
-            <thead>
-                <tr>
-                <th>Sticky Column Header</th>
-                <th>Column 2</th>
-                <th>Column 3</th>
-                <th>Column 3</th>
-                <th>Column 3</th>
-                
-                <!-- More columns -->
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Sticky Row 1 Data</td>
-                    <td>Row 1 Data 2</td>
-                    <td>Row 1 Data 3</td>
-                    <td>Row 1 Data 3</td>
-                    <td>Row 1 Data 3</td>
-                <!-- More columns -->
-                </tr>
-                <!-- More rows -->
-            </tbody>
-            </table>
-        </div>    
-    </div>
-
     <style>
 
     /* .table th:first-child,
@@ -307,13 +278,6 @@
       background-color: #f8f9fa; /* Example background color */
      /* z-index: 1; /* Ensure it stays on top of other content */
     /*} */
-
-
-
-
-
-
-
 
     .result{
         background: #fcfdff;

@@ -7,7 +7,7 @@ use App\Models\Biller\TempSale;
 use App\Models\Biller\ReceiptLog;
 
 // use Greenter\Data\DocumentGeneratorInterface;
-// use Greenter\Model\DocumentInterface;
+use Greenter\Model\DocumentInterface;
 
 // use Greenter\Ws\Services\SunatEndpoints;
 // use Greenter\See;
@@ -152,4 +152,63 @@ trait BillingToolsTrait {
         }
         return $serie;
     }
+
+    public function writeXml(DocumentInterface $document, $xml, $ruc, $tipoDoc)
+    {
+        $this->writeFile($document->getName().'.xml', $xml, $ruc, $tipoDoc);
+    }
+
+    public function writeCdr(DocumentInterface $document, $zip, $ruc, $tipoDoc)
+    {
+        $this->writeFile('R-'.$document->getName().'.zip', $zip, $ruc, $tipoDoc);
+    }
+
+    public function writeFile($filename, $content, $ruc, $tipoDoc)
+    {
+        if (getenv('GREENTER_NO_FILES')) {
+            return;
+        }
+
+        switch($tipoDoc){
+            case 1 :  
+                    $file = 'Bill';    
+                    $this->check_folder($filename, $file, $ruc, $content);
+                break;
+            case 2 :
+                    $file =  'Ticket';   
+                    $this->check_folder($filename, $file, $ruc, $content);
+                break; 
+            case 7 :
+                $file =  'Note';   
+                $this->check_folder($filename, $file, $ruc, $content);
+            break; 
+            case 100 :
+                $file = 'Voided';
+                $this->check_folder($filename, $file, $ruc, $content); 
+            break;        
+            case 101 :
+                $file = 'Summary';
+                $this->check_folder($filename, $file, $ruc, $content); 
+            break;             
+        }
+
+        // $fileDir = __DIR__.'/../files';
+
+        // if (!file_exists($fileDir)) {
+        //     mkdir($fileDir, 0777, true);
+        // }
+
+        // file_put_contents($fileDir.DIRECTORY_SEPARATOR.$filename, $content);
+    }
+
+    protected function check_folder($filename, $file, $ruc, $content){
+        $fileDir = public_path().DIRECTORY_SEPARATOR.'sunat_documents';
+
+        if (!is_dir($fileDir.DIRECTORY_SEPARATOR.$file.DIRECTORY_SEPARATOR.$ruc)) {
+            mkdir($fileDir.DIRECTORY_SEPARATOR.$file.DIRECTORY_SEPARATOR.$ruc);
+        }
+
+        file_put_contents($fileDir.DIRECTORY_SEPARATOR.$file.DIRECTORY_SEPARATOR.$ruc.DIRECTORY_SEPARATOR.$filename, $content);  
+    }
+
 }

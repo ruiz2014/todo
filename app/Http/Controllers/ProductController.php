@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\ProductRequest;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use App\Helpers\CompanyHelper;
 
 class ProductController extends Controller
 {
@@ -17,9 +18,20 @@ class ProductController extends Controller
      */
     public function index(Request $request): View
     {
-        $products = Product::paginate();
+        $text = $request->search;
+        $select = ['products.id', 'products.name', 'products.description', 'products.price', 'products.category_id', 'products.stock', 'products.minimo', 'c.category_name'];
+        $where = ['products.company_id'=> ['=', request()->session()->get('company_id')]];
+        $orWhere = ['products.name'=>['like', '%'.$text.'%'], 'products.description'=>['like', '%'.$text.'%'], 'products.price'=>['like', '%'.$text.'%'], 'products.stock'=>['like', '%'.$text.'%'], 'products.minimo'=>['like', '%'.$text.'%'], 'c.category_name'=>['like', '%'.$text.'%']];
+        $join = ['categories as c' => ['products.category_id', '=', 'c.id']];
 
-        return view('product.index', compact('products'))
+        $query  = Product::select($select);
+
+        $result = CompanyHelper::searchAll($query, $text, $join, $where, $orWhere);
+        $products = $result->paginate(2);
+
+        // $products = Product::paginate();
+
+        return view('product.index', compact('products', 'text'))
             ->with('i', ($request->input('page', 1) - 1) * $products->perPage());
     }
 
