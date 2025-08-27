@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 
 use App\Models\Admin\Local;
 use App\Models\Admin\Role;
+use App\Models\Admin\SuperAdmin\Company;
 use App\Models\Biller\PaymentMethod;
 use App\Models\Biller\PaymentLog;
 use App\Models\Biller\Attention;
@@ -19,6 +20,12 @@ class HomeController extends Controller
 {
     public function index(Request $request){
 
+        
+        $companys = [];
+        if(Auth::user()->rol== 1){
+            $companys = Company::pluck('name', 'id');
+        }
+// dd($request->session()->get('role') , $companys, Auth::user()->rol);
         $local = Local::select('local_name')->where('id', $request->session()->get('local_id'))->first();
         $locals = Local::where('company_id', $request->session()->get('company_id'))->pluck('local_name', 'id');
         $rol = Role::select('name')->where('id', $request->session()->get('role'))->first();
@@ -42,7 +49,7 @@ class HomeController extends Controller
         $bestSellerQty = $this->selling($currentMonth)->pluck('dish');
         // dd($this->currentDay($currentMonth, $currentDay), $weekAttention, $currentWeek, $currentDay, $currentMonth);
         // dd($monthlyCare, $receipts, $currentWeek );
-        return view('admin.home.index', compact('locals', 'local', 'rol', 'receipts', 'pays', 'attentionDay', 'monthlyCare', 'months', 'bestSeller', 'bestSellerQty', 'attentionWeek'));
+        return view('admin.home.index', compact('companys', 'locals', 'local', 'rol', 'receipts', 'pays', 'attentionDay', 'monthlyCare', 'months', 'bestSeller', 'bestSellerQty', 'attentionWeek'));
         // return view('admin.home.index');
     }
 

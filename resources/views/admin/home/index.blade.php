@@ -44,6 +44,20 @@
   <div class="row">
 
     <div class="col-md-6">
+      @if(Auth::user()->rol == 1)
+        <h6>Elija Compania</h6>
+        <form method="post" action="{{ route('admin.chc') }}" class="d-flex mb-3"> 
+          @csrf
+            <select name="company" class="form-select" aria-label="Default select example">
+                <option value="">Seleccione Compania</option>
+              @foreach($companys as $key => $value)
+                <option value="{{ $key }}">{{ $value }}</option>
+              @endforeach
+            </select>  
+            <button type="submit" class="btn btn-outline-info ms-3">Confirmar</button>
+        </form>
+      @endif
+
       @if(Auth::user()->rol <= 2)
        <h6>{{ isset($local->local_name) ? $local->local_name : 'Elija el Local a Observar' }}</h6>
       <form method="post" action="{{ route('admin.chl') }}" class="d-flex"> 
@@ -182,7 +196,7 @@
                       <li class="d-flex justify-content-between align-items-start my-3">
                           <div class="ms-2 me-auto d-flex align-items-center">
                             <ion-icon name="restaurant-outline" class="me-2 fs-4" style="font-size:20px;"></ion-icon>  
-                            <div class="fw-nomal">Cocina</div>
+                            <div class="fw-nomal">Clientes</div>
                           </div>
                           <a href="{{ route('customers.index') }}">
                             <ion-icon name="enter-outline" class="me-2 fs-4" style="font-size:20px;"></ion-icon> 

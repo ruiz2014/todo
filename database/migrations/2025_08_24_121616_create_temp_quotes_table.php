@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('temp_sales', function (Blueprint $table) {
+        Schema::create('temp_quotes', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('company_id')->nullable()->default(1);
+            $table->unsignedInteger('company_id')->default(1);
             $table->unsignedInteger('local_id');
             $table->unsignedInteger('user_id');
             $table->string('code', 20);
@@ -32,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('temp_sales');
+        Schema::dropIfExists('temp_quotes');
     }
 };

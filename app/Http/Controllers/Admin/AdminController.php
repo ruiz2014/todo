@@ -36,4 +36,16 @@ class AdminController extends Controller
 
         return redirect()->route('home');
     }
+
+    public function chooseCompany(Request $request){
+        
+        $validated = $request->validate([
+            "company" => 'required|numeric',  
+        ]);
+        
+        Session::put('company_id', $request->company);
+        session()->save();
+
+        return redirect()->route('home');
+    }
 }

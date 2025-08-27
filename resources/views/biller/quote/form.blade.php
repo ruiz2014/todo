@@ -111,8 +111,14 @@
         </div>
     @endif
 
-    <form id="form_sale" action="{{ route('shop.store') }}" method="POST">
-            @csrf    
+    @if($parameter)
+        <form id="form_sale" action="{{ route($route, $parameter) }}" method="POST">
+        {{ method_field('PATCH') }}
+    
+    @else
+        <form id="form_sale" action="{{ route($route) }}" method="POST">
+    @endif    
+        @csrf    
         <div class="row padding-1 p-1 mb-3">
 
             <div class="col-md-6">
@@ -135,6 +141,8 @@
                         <input type="text" id="term" autocomplete="off" class="form-control-2" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
                         <input type="hidden" name="customer_id" id="customer_id">
                         <input type="hidden" name="code" id="code" value="{{ $code }}">
+                        <input type="hidden" name="old_code" id="old_code" value="{{ $old_code }}">
+                        
                     </div>
                     
                     <div class="result position-absolute">
@@ -218,7 +226,7 @@
                                 </tr>
                             </thead>
                             <tbody id="tbody">
-                                
+
                             </tbody>
                         </table>
                     </div>
@@ -229,19 +237,6 @@
 
         <div class="row">
             <div class="col-md-6">
-            {!! $errors->first('payMethod', '<div class="invalid-feedback d-block" role="alert"><strong>:message</strong></div>') !!}
-                <ul class="list-group mb-4" id="payMethod">
-                @foreach($payment_methods as $pay)    
-                    <li class="list-group-item d-flex">
-                        <div class="w-50">
-                            <input class="form-check-input me-1" name="payMethod[]" type="checkbox" value="{{ $pay->id }}" aria-label="..." form="form_sale">
-                            {{ $pay->name }}
-                        </div>
-                        
-                        <input type="number" class="form-control-2" name="payMethodVal[]" id="payMethod_{{ $pay->id }}" placeholder="Monto S/."  style="width:50%;display:none" form="form_sale">
-                    </li>
-                @endforeach    
-                </ul>
             </div>
 
             <div class="col-md-6">
@@ -264,7 +259,7 @@
         
         <div class="row mt-4">
             <div class="col-md-12">
-                <button id="btn-generate" class="btn btn-outline-primary" >Generar Comprobante</button>
+                <button id="btn-generate" class="btn btn-outline-primary" >{{ $btn_txt }}</button>
             </div>
         </div>
     </div>
@@ -320,6 +315,9 @@
             let textSelect = null;
             let priceSelect = null;
             let productos = new Array();
+
+            let temp_result = {!! $temps !!};
+            showResponse(temp_result, 'joder');
 
             clear_btn.onclick = ()=>{ clean(); } 
             btn_generate.onclick = ()=>{ validar();} 
@@ -426,7 +424,7 @@
                 var data = { order: producto };
                 $('#tbody').empty();
                 let body = ''
-                fetch(`add_order`, {
+                fetch(`{{ url('add_order_quote') }}`, {
                     method: "POST",
                     headers: { 
                         'Content-Type': 'application/json',
@@ -460,7 +458,7 @@
                 var data = { id: id };
                 let body = ''
                 $('#tbody').empty();
-                fetch(`delete_order`, {
+                fetch(`{{ url('delete_order_2') }}`, {
                     method: "POST",
                     headers: { 
                         'Content-Type': 'application/json',
@@ -506,7 +504,7 @@
 
                 var data = { id: id, amount: amount }; 
                 console.log(data)
-                fetch(`modify_amount`, {
+                fetch(`{{ url('modify_amount_2') }}`, {
                     method: "POST",
                     headers: { 
                         'Content-Type': 'application/json',
@@ -530,20 +528,20 @@
             }
             /******************************* */
 
-            payMethod.onclick = function(ev){
-                // if(ev.target.value){
-                if(ev.target.checked){
-                    document.getElementById(`payMethod_${ev.target.value}`).style.display="block"
-                    // console.log(ev.target.checked, ev.target.value)
-                }else{
-                    verbo = document.getElementById(`payMethod_${ev.target.value}`)
-                    if(typeof verbo !== 'undefined' && verbo !== null) {
-                        verbo.style.display="none";
-                        verbo.value=""
-                    }
-                    // document.getElementById(`payMethod_${ev.target.value}`).value=""
-                }
-            }
+            // payMethod.onclick = function(ev){
+            //     // if(ev.target.value){
+            //     if(ev.target.checked){
+            //         document.getElementById(`payMethod_${ev.target.value}`).style.display="block"
+            //         // console.log(ev.target.checked, ev.target.value)
+            //     }else{
+            //         verbo = document.getElementById(`payMethod_${ev.target.value}`)
+            //         if(typeof verbo !== 'undefined' && verbo !== null) {
+            //             verbo.style.display="none";
+            //             verbo.value=""
+            //         }
+            //         // document.getElementById(`payMethod_${ev.target.value}`).value=""
+            //     }
+            // }
 
             function validar(){
                 let cuenta =  $('.table_shop').find('tbody tr').length;
@@ -557,17 +555,17 @@
                 }
                 
                 let total =  document.getElementById('total').innerHTML;
-                total_pay = 0;
-                document.querySelectorAll('#payMethod input[type=checkbox]').forEach((e)=>{
-                    if(e.checked === true){
-                        total_pay += parseFloat(document.getElementById(`payMethod_${e.value}`).value);
-                    }
-                });
-                // console.log(total+ ' ' +total_pay)
-                if(parseFloat(total) !== total_pay){
-                    alert("El monto no es igual")
-                    return 0;
-                } 
+                // total_pay = 0;
+                // document.querySelectorAll('#payMethod input[type=checkbox]').forEach((e)=>{
+                //     if(e.checked === true){
+                //         total_pay += parseFloat(document.getElementById(`payMethod_${e.value}`).value);
+                //     }
+                // });
+                // // console.log(total+ ' ' +total_pay)
+                // if(parseFloat(total) !== total_pay){
+                //     alert("El monto no es igual")
+                //     return 0;
+                // } 
 
                 generate_receipt();
             }

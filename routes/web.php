@@ -19,6 +19,8 @@ use App\Http\Controllers\Admin\LocalProductController;
 use App\Http\Controllers\Tool\CommonController;
 use App\Http\Controllers\Biller\AttentionController;
 use App\Http\Controllers\Biller\SumaryController;
+use App\Http\Controllers\Biller\QuoteController;
+use App\Http\Controllers\Operation\OperationController;
 use App\Http\Controllers\EstablishmentController;
 use App\Http\Controllers\PaymentMethodController;
 
@@ -42,7 +44,9 @@ Route::get('/', function () {
 Route::post('/login', [LoginController::class, 'login'])->name('auth.login');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-
+Route::get('prue/{type}', [QuoteController::class, 'mela']);
+Route::get('quotes/generated/{order}', [QuoteController::class, 'generatedReceipt'])->name('quotes.generated');
+Route::resource('quotes', QuoteController::class);
 
 // Route::get('attention', [AttentionController::class, 'index'])->name('attention.index');
 
@@ -81,7 +85,7 @@ Route::middleware(['auth', 'hasPermission:1,2,3'])->prefix('admin')->group(funct
 
     Route::resource('products', ProductController::class);
 
-     Route::post('choose-location', [AdminController::class, 'chooseLocation'])->name('admin.chl');
+    Route::post('choose-location', [AdminController::class, 'chooseLocation'])->name('admin.chl');
 
 });
 
@@ -109,6 +113,8 @@ Route::middleware(['auth', 'hasPermission:1'])->prefix('super_admin')->group(fun
     Route::resource('establishments', EstablishmentController::class);
     Route::resource('roles', RoleController::class);
     Route::resource('sectors', SectorController::class);
+
+    Route::post('choose-company', [AdminController::class, 'chooseCompany'])->name('admin.chc');
 
 });
 
@@ -170,5 +176,10 @@ Route::group(['middleware' => 'auth'], function(){
     })->name('downloadCdr');
 });
 
+Route::post('add_order_quote', [OperationController::class, 'add']); 
+Route::post('delete_order_2', [OperationController::class, 'delete']);
+Route::post('modify_amount_2', [OperationController::class, 'modifyAmount']); 
+
+// Route::post('save', [ShopController::class, 'store'])->name('shop.store');
 
 Route::view('pichi', 'pru');

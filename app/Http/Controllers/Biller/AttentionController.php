@@ -56,10 +56,12 @@ class AttentionController extends Controller
     }
 
     public function reportSale(Request $request){
+        $local_id = request()->session()->get('local_id');
+        $company_id = request()->session()->get('company_id');
         $start_date = $request->get('start');
         $end_date = $request->get('end');
         // return (new SheetMulExport($this->start, $this->end))->download('reporte-general.xlsx');
-        return Excel::download(new SalesExport($start_date, $end_date), 'sales.xlsx');
+        return Excel::download(new SalesExport($start_date, $end_date, $local_id, $company_id), 'sales.xlsx');
     }
 
     // public function downloadXml(Request $request, $id, $type){

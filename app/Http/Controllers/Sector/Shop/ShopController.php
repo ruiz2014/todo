@@ -25,7 +25,8 @@ class ShopController extends Controller
     use BillTrait, TicketTrait;
     
     public function index(){
-        $code = date('YmdHis');
+        $code = date('YmdHis').''.Session::get('user_id');
+
         $products = Product::select(DB::raw("CONCAT_WS(' ', products.name,' ',products.description, ' ',products.price) AS name"), 'products.id')
                     ->join('local_products as lp', 'products.id', '=', 'lp.product_id')
                     ->where('lp.local_id', Session::get('local_id'))
@@ -39,23 +40,36 @@ class ShopController extends Controller
 
     public function addOrder(Request $req){
 
+        // return response()->json(['ok' => 1, 'orders' => $req->order['code']]);
+        $local = Session::get('local_id');
+        $company = Session::get('company_id');
         // $code = date('YmdHis');
-        $check = TempSale::where('code', $req->order['code'])
+        $check = TempSale::where('company_id', $company)->where('local_id', $local)->where('code', $req->order['code'])
         ->where('status', '<', 2)
         ->where(DB::raw("CAST(created_at AS DATE)"), '=', DB::raw("DATE(now())"))
         ->value('code');
-        
-        if($check){
-            $id_order=TempSale::create(['local_id'=>Session::get('local_id'), 'user_id'=>Session::get('user_id'), 'customer_id'=>1, 'code'=>$req->order['code'], 'product_id'=>$req->order['id'], 'amount'=>$req->order['amount'], 'price'=> $req->order['price'], 'status' => 1]);
-            $orders = Product::select("products.name", "products.price", "ts.id", "ts.status", "ts.amount")->join("temp_sales as ts", "ts.product_id", "=", "products.id")->where('ts.code', $check)->get();
-            return response()->json(['ok' => 1, 'orders' => $orders]);
-        }else{
-            // dd($check, 'hace esto');
-            $id_order=TempSale::create(['local_id'=>Session::get('local_id'), 'user_id'=>Session::get('user_id'), 'customer_id'=>1, 'code'=>$req->order['code'], 'product_id'=>$req->order['id'], 'amount'=>$req->order['amount'], 'price'=> $req->order['price'], 'status' => 1 ]);
-            $orders = Product::select("products.name", "products.price", "ts.id", "ts.status", "ts.amount")->join("temp_sales as ts", "ts.product_id", "=", "products.id")->where('ts.code', $id_order->code)->get();
-            return response()->json(['ok' => 1, 'orders' => $orders]);
-        }
 
+        $check22 = empty($check) ? $req->order['code'] : $check ;
+
+        $id_order=TempSale::create(['company_id' => $company, 'local_id'=>$local, 'user_id'=>Session::get('user_id'), 'customer_id'=>1, 'code'=>$check22, 'product_id'=>$req->order['id'], 'amount'=>$req->order['amount'], 'price'=> $req->order['price'], 'status' => 1 ]);
+        $orders = Product::select("products.name", "products.price", "ts.id", "ts.status", "ts.amount")->join("temp_sales as ts", "ts.product_id", "=", "products.id")->where('ts.code', $check22)->get();
+        return response()->json(['ok' => 1, 'orders' => $orders]);
+
+        die();
+
+        // return response()->json(['ok' => 1, 'orders' => $check, 'aver' => $check22]);
+        // // $check22 = empty($check) ? $check : $req->order['code'];
+        
+        // if($check){
+        //     $id_order=TempSale::create(['company_id' => $company, 'local_id'=>$local, 'user_id'=>Session::get('user_id'), 'customer_id'=>1, 'code'=>$req->order['code'], 'product_id'=>$req->order['id'], 'amount'=>$req->order['amount'], 'price'=> $req->order['price'], 'status' => 1]);
+        //     $orders = Product::select("products.name", "products.price", "ts.id", "ts.status", "ts.amount")->join("temp_sales as ts", "ts.product_id", "=", "products.id")->where('ts.code', $check)->get();
+        //     return response()->json(['ok' => 1, 'orders' => $orders]);
+        // }else{
+        //     // dd($check, 'hace esto');
+        //     $id_order=TempSale::create(['company_id' => $company, 'local_id'=>$local, 'user_id'=>Session::get('user_id'), 'customer_id'=>1, 'code'=>$req->order['code'], 'product_id'=>$req->order['id'], 'amount'=>$req->order['amount'], 'price'=> $req->order['price'], 'status' => 1 ]);
+        //     $orders = Product::select("products.name", "products.price", "ts.id", "ts.status", "ts.amount")->join("temp_sales as ts", "ts.product_id", "=", "products.id")->where('ts.code', $id_order->code)->get();
+        //     return response()->json(['ok' => 1, 'orders' => $orders]);
+        // }
     }
 
     public function modifyAmount(Request $req){
@@ -75,13 +89,14 @@ class ShopController extends Controller
         $ordersSent = TempSale::where('code', $check)->where('status', 3)->count();
         $sign = $numberOrders == $ordersSent ? 1 : 0;
 
-        $orders = Product::select("products.name", "products.price", "ts.id", "ts.status", "ts.amount")->join("temp_sales as ts", "ts.product_id", "=", "products.id")->where('ts.code', $check)->get();
+        $orders = Product::select("products.name", "products.price", "ts.id", "ts.status", "ts.amount")->join("temp_sales as ts", "ts.product_id", "=", "products.id")->where('ts.company_id', Session::get('company_id'))->where('ts.local_id', Session::get('local_id'))->where('ts.code', $check)->get();
         return response()->json(['ok' => 1, 'orders' => $orders, 'sign'=> $sign]);
     }
 
     public function store(Request $request){
 
         $local = Session::get('local_id');
+        $company = Session::get('company_id');
 
         $campos = [
             "receipt"=>"required",
@@ -96,7 +111,7 @@ class ShopController extends Controller
         Validator::make($request->all(), $campos)->validate(); //DEVUELVE ERROR 403
 
 
-        if (TempSale::where('code', $request->code)->exists()) {
+        if (TempSale::where('company_id', $company)->where('code', $request->code)->exists()) {
 
             $filteredArray = array_filter($request->input('payMethodVal'), function($value) {
                 return !is_null($value);
@@ -144,7 +159,7 @@ class ShopController extends Controller
 
                 foreach($combinado as $key => $val){
                     PaymentLog::create([
-
+                        'company_id' => $company,
                         'local_id' => Session::get('local_id'),
                         'attention_id'=>$attention_id->id,
                         'method_id'=>$key,
@@ -159,7 +174,7 @@ class ShopController extends Controller
                     LocalProduct::where('local_id', $local)->where('product_id', $pid->product_id)->decrement('stock', $pid->amount);
                     Product::where('id', $pid->product_id)->decrement('stock', $pid->amount);
 
-                    $check = Kardex::where('local_id', Session::get('local_id'))
+                    $check = Kardex::where('company_id', $company)->where('local_id', Session::get('local_id'))
                     ->where('product_id', $pid->product_id)
                     ->where(DB::raw("CAST(created_at AS DATE)"), '=', DB::raw("DATE(now())"))
                     ->value('id');
@@ -168,7 +183,7 @@ class ShopController extends Controller
                         Kardex::where('id', $check)->increment('output', $pid->amount);
                     }
                     else{
-                        Kardex::create(['local_id'=>$local, 'product_id'=>$pid->product_id, 'entry'=>0, 'output'=>$pid->amount]);
+                        Kardex::create(['company_id' => $company, 'local_id'=>$local, 'product_id'=>$pid->product_id, 'entry'=>0, 'output'=>$pid->amount]);
                     } 
                 }
 
@@ -195,6 +210,7 @@ class ShopController extends Controller
                             // $respo = $this->ticket($request->code);
                             $voucher = 'Ticket';
                             $identifier = 'T001-'.str_pad($attention_id->numeration, 8, "0", STR_PAD_LEFT);
+                            TempSale::where('code', $request->code)->update(['status'=> 2]);
                             Attention::where('id', $attention_id->id)->update(['identifier' => $identifier, 'message' => 'Ticket Generado', 'success'=> 1, 'completed' => 1, 'status'=>1]);
                             return redirect()->route('shop.generated', ['order' => $request->code ])->with('success', 'Ticket Generado .....Se realizo correctamente la venta');        
                 }
@@ -220,7 +236,7 @@ class ShopController extends Controller
         // dd($article);
         $attention = Attention::where('document_code', $order)->first();
         // dd($attention);
-        $company = Company::find(1);
+        $company = Company::find($request->session()->get('company_id'));
         $temps = TempSale::where('code', $attention->document_code)->get();
         $methods = PaymentMethod::join('payment_logs as pl', 'payment_methods.id', '=', 'pl.method_id')
                                 ->join('attentions as at', 'pl.attention_id', '=', 'at.id')

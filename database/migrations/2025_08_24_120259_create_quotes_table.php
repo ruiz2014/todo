@@ -11,31 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('attentions', function (Blueprint $table) {
+        Schema::create('quotes', function (Blueprint $table) {
             $table->id();
+            $table->unsignedInteger('company_id')->default(1);
             $table->unsignedInteger('local_id');
             $table->unsignedInteger('customer_id');
-            $table->string('sunat_code', 5);
             $table->string('document_code', 17)->nullable();
-            $table->string('reference _document', 17)->nullable();
+            $table->string('reference_document', 17)->nullable();
             $table->unsignedTinyInteger('currency')->default(1);
             $table->double('total', 8,2);
             $table->unsignedInteger('seller');
             $table->smallInteger('serie')->default(1);
             $table->string('identifier', 20)->nullable();
             $table->unsignedInteger('numeration')->nullable();
-            $table->string('hash', 50)->nullable();
-            $table->string('resume', 100)->nullable();
-            $table->string('cdr', 5)->nullable();
-            $table->unsignedTinyInteger('success')->nullable();
             $table->string('message', 70)->nullable();
-            $table->string('low_motive', 200)->nullable();
-            $table->unsignedTinyInteger('low')->default(0);
-            $table->unsignedTinyInteger('guide')->default(0);
-            $table->unsignedTinyInteger('completed')->default(0);
-            $table->unsignedTinyInteger('dispatched')->default(0);
-            $table->unsignedTinyInteger('received')->default(0);
-            $table->string('status', 50)->nullable();
+            $table->unsignedTinyInteger('status')->nullable()->default(1);
             $table->timestamps();
         });
     }
@@ -45,6 +35,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('attentions');
+        Schema::dropIfExists('quotes');
     }
 };
