@@ -48,10 +48,18 @@ class CustomerController extends Controller
      */
     public function store(CustomerRequest $request): RedirectResponse
     {
-        Customer::create($request->validated() + ['company_id' => $request->session()->get('company_id'), 'user_id' => $request->session()->get('user_id'), 'local_id' => $request->session()->get('local_id')]);
+        try{
+            Customer::create($request->validated() + ['company_id' => $request->session()->get('company_id'), 'user_id' => $request->session()->get('user_id'), 'local_id' => $request->session()->get('local_id')]);
 
-        return Redirect::route('customers.index')
-            ->with('success', 'Customer created successfully.');
+            return Redirect::route('customers.index')->with('success', 'Customer created successfully.');
+            
+        }catch (\Throwable $th) {
+
+            Log::info("Line No : ".__LINE__." : File Path : ".__FILE__." message ".$th->getMessage()." linea : ".$th->getLine()." codigo :".$th->getCode());
+            Log::error('Velocity CartController: ' . $th->getMessage(), ["hola"=>"hola"]);
+                
+            return back()->with('danger', 'Hubo error al generar este procedimiento');
+        } 
     }
 
     /**
@@ -79,10 +87,18 @@ class CustomerController extends Controller
      */
     public function update(CustomerRequest $request, Customer $customer): RedirectResponse
     {
-        $customer->update($request->validated());
+        try{
+            $customer->update($request->validated());
 
-        return Redirect::route('customers.index')
-            ->with('success', 'Customer updated successfully');
+            return Redirect::route('customers.index')->with('success', 'Customer updated successfully');
+
+        }catch (\Throwable $th) {
+
+            Log::info("Line No : ".__LINE__." : File Path : ".__FILE__." message ".$th->getMessage()." linea : ".$th->getLine()." codigo :".$th->getCode());
+            Log::error('Velocity CartController: ' . $th->getMessage(), ["hola"=>"hola"]);
+                
+            return back()->with('danger', 'Hubo error al generar este procedimiento');
+        } 
     }
 
     public function destroy($id): RedirectResponse

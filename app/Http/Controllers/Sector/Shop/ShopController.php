@@ -12,6 +12,7 @@ use App\Models\Biller\PaymentLog;
 use App\Models\Admin\LocalProduct;
 use App\Models\Biller\Attention;
 use App\Models\Biller\TempSale;
+use App\Models\Biller\CreditLog;
 use App\Models\Admin\Kardex;
 use App\Models\Admin\SuperAdmin\Company;
 
@@ -57,19 +58,6 @@ class ShopController extends Controller
 
         die();
 
-        // return response()->json(['ok' => 1, 'orders' => $check, 'aver' => $check22]);
-        // // $check22 = empty($check) ? $check : $req->order['code'];
-        
-        // if($check){
-        //     $id_order=TempSale::create(['company_id' => $company, 'local_id'=>$local, 'user_id'=>Session::get('user_id'), 'customer_id'=>1, 'code'=>$req->order['code'], 'product_id'=>$req->order['id'], 'amount'=>$req->order['amount'], 'price'=> $req->order['price'], 'status' => 1]);
-        //     $orders = Product::select("products.name", "products.price", "ts.id", "ts.status", "ts.amount")->join("temp_sales as ts", "ts.product_id", "=", "products.id")->where('ts.code', $check)->get();
-        //     return response()->json(['ok' => 1, 'orders' => $orders]);
-        // }else{
-        //     // dd($check, 'hace esto');
-        //     $id_order=TempSale::create(['company_id' => $company, 'local_id'=>$local, 'user_id'=>Session::get('user_id'), 'customer_id'=>1, 'code'=>$req->order['code'], 'product_id'=>$req->order['id'], 'amount'=>$req->order['amount'], 'price'=> $req->order['price'], 'status' => 1 ]);
-        //     $orders = Product::select("products.name", "products.price", "ts.id", "ts.status", "ts.amount")->join("temp_sales as ts", "ts.product_id", "=", "products.id")->where('ts.code', $id_order->code)->get();
-        //     return response()->json(['ok' => 1, 'orders' => $orders]);
-        // }
     }
 
     public function modifyAmount(Request $req){
@@ -102,7 +90,9 @@ class ShopController extends Controller
             "receipt"=>"required",
             "customer_id"=>"required",
             "code"=>"required",
-            "payMethod" => "required"
+            "type_payment" => "required",
+            "payMethod" => "required_if:type_payment,1",
+            
         ];
         // $mensajes =[
         // ]; 
@@ -110,117 +100,143 @@ class ShopController extends Controller
         // $validator = Validator::make($request->all(), $campos);
         Validator::make($request->all(), $campos)->validate(); //DEVUELVE ERROR 403
 
+        try{
 
-        if (TempSale::where('company_id', $company)->where('code', $request->code)->exists()) {
+            if (TempSale::where('company_id', $company)->where('code', $request->code)->exists()) {
 
-            $filteredArray = array_filter($request->input('payMethodVal'), function($value) {
-                return !is_null($value);
-            });
+                $combinado = [];
+                $total = TempSale::select(DB::raw('SUM(price * amount) as total'))->where('code', $request->code)->value('total');
 
-            if(count($filteredArray) !== count($request->input('payMethod'))){
-               /**SI ES DIFERENTE MP CON VALUE-MP */
-               
-                // dd($total, $total_provi, $filteredArray, $request->input('payMethod'), array_combine($request->input('payMethod'), $filteredArray), $request, count($filteredArray), count($request->input('payMethod')));
-                // return redirect()->route('pay.show', ['order'=> $request->code])->with('danger', 'Elegio formas de pagos que no coninciden con monto total');
-            dd("joder1");
-            }
-    
-            $total_provi = (float)array_sum($filteredArray);
-            $total = TempSale::select(DB::raw('SUM(price * amount) as total'))->where('code', $request->code)->value('total');
-            
-            if($total !== $total_provi){
-                /**COMPARA VALORES LE TEMP_SALE CON LOS TRAIDO EL EL ARREGLO "$filteredArray" **/
+                if($request->type_payment == 1){
 
-                //dd($total, $total_provi, $filteredArray, $request->input('payMethod'), array_combine($request->input('payMethod'), $filteredArray), $request, count($filteredArray), count($request->input('payMethod')));
-                dd("joder2");
-                // return redirect()->route('pay.show', ['order'=> $request->code])->with('danger', 'Elegio formas de pagos que no coninciden con monto total');
-            }
+                    $filteredArray = array_filter($request->input('payMethodVal'), function($value) {
+                        return !is_null($value);
+                    });
 
-            $combinado = array_combine($request->input('payMethod'), $filteredArray);
-            
-            // dd($total, $total_provi, $filteredArray, $request->input('payMethod'), array_combine($request->input('payMethod'), $filteredArray), $request, count($filteredArray), count($request->input('payMethod')));
-            $numeration = $this->setCorrelative($request->receipt); 
-            $attention_id = Attention::create([
-                'local_id'=> Session::get('local_id'),
-                'customer_id'=>$request->customer_id,
-                'sunat_code'=>$request->receipt,
-                'document_code'=>$request->code,
-                'reference _document'=>'',
-                'currency'=>1,
-                'total'=>$total,
-                'seller'=>Session::get('user_id'),
-                'serie'=>1,
-                'numeration'=> $numeration,
-            ]);
-
-            TempSale::where('code', $request->code)->update(['customer_id'=>$request->customer_id]);
-            
-            if($attention_id->id){
-
-                foreach($combinado as $key => $val){
-                    PaymentLog::create([
-                        'company_id' => $company,
-                        'local_id' => Session::get('local_id'),
-                        'attention_id'=>$attention_id->id,
-                        'method_id'=>$key,
-                        'total'=>$val
-                    ]);
-                }
-
-                $temps=TempSale::where('code', $request->code);
-                $product_ids = $temps->get();
-                foreach($product_ids as $pid){
-            //RECORDAR QUE EL ID_PRODUXCT ES EL ID DEL LOCAL_PRODUCT
-                    LocalProduct::where('local_id', $local)->where('product_id', $pid->product_id)->decrement('stock', $pid->amount);
-                    Product::where('id', $pid->product_id)->decrement('stock', $pid->amount);
-
-                    $check = Kardex::where('company_id', $company)->where('local_id', Session::get('local_id'))
-                    ->where('product_id', $pid->product_id)
-                    ->where(DB::raw("CAST(created_at AS DATE)"), '=', DB::raw("DATE(now())"))
-                    ->value('id');
-
-                    if($check){
-                        Kardex::where('id', $check)->increment('output', $pid->amount);
+                    if(count($filteredArray) !== count($request->input('payMethod'))){
+                    /**SI ES DIFERENTE MP CON VALUE-MP */
+                    
+                        // dd($total, $total_provi, $filteredArray, $request->input('payMethod'), array_combine($request->input('payMethod'), $filteredArray), $request, count($filteredArray), count($request->input('payMethod')));
+                        // return redirect()->route('pay.show', ['order'=> $request->code])->with('danger', 'Elegio formas de pagos que no coninciden con monto total');
+                    dd("joder1");
                     }
-                    else{
-                        Kardex::create(['company_id' => $company, 'local_id'=>$local, 'product_id'=>$pid->product_id, 'entry'=>0, 'output'=>$pid->amount]);
-                    } 
+            
+                    $total_provi = (float)array_sum($filteredArray);
+                    $total = TempSale::select(DB::raw('SUM(price * amount) as total'))->where('code', $request->code)->value('total');
+                    
+                    if($total !== $total_provi){
+                        /**COMPARA VALORES LE TEMP_SALE CON LOS TRAIDO EL EL ARREGLO "$filteredArray" **/
+
+                        //dd($total, $total_provi, $filteredArray, $request->input('payMethod'), array_combine($request->input('payMethod'), $filteredArray), $request, count($filteredArray), count($request->input('payMethod')));
+                        dd("joder2");
+                        // return redirect()->route('pay.show', ['order'=> $request->code])->with('danger', 'Elegio formas de pagos que no coninciden con monto total');
+                    }
+
+                    $combinado = array_combine($request->input('payMethod'), $filteredArray);
                 }
 
+                // dd($total, $total_provi, $filteredArray, $request->input('payMethod'), array_combine($request->input('payMethod'), $filteredArray), $request, count($filteredArray), count($request->input('payMethod')));
+                $numeration = $this->setCorrelative($request->receipt); 
+                $attention_id = Attention::create([
+                    'local_id'=> Session::get('local_id'),
+                    'customer_id'=>$request->customer_id,
+                    'sunat_code'=>$request->receipt,
+                    'document_code'=>$request->code,
+                    'reference _document'=>'',
+                    'currency'=>1,
+                    'type_payment'=>$request->type_payment,
+                    'total'=>$total,
+                    'seller'=>Session::get('user_id'),
+                    'serie'=>1,
+                    'numeration'=> $numeration,
+                ]);
+                /*AQUI DEBERIA VER UN ESTADO PARA VER LA CASH*/
+                TempSale::where('code', $request->code)->update(['customer_id'=>$request->customer_id]);
+                
+                if($attention_id->id ){
 
-                switch($request->receipt){
-                    case '03' :
-                            $respo = $this->setTicket($request->code);
-                            $voucher = 'Boleta';
-                            // if($respo['success'])
-                            //     return redirect()->route('pay.generated', ['order'=>$respo['attentionId']])->with($respo['alert'], 'Boleta '.$respo['nameId'].' '.$respo['message']);  
-                            // else
-                            //     return redirect()->route('pay.index')->with($respo['alert'], $respo['message']); 
-                            break;
-                    case '01' :
-                            $respo = $this->setBill($request->code); //TRAIT BILL
-                            // dd($respo);
-                            $voucher = 'Factura';
-                            // if($respo['success'])
-                            //     return redirect()->route('pay.generated', ['order'=>$respo['attentionId']])->with($respo['alert'], 'Factura '.$respo['nameId'].' '.$respo['message']); 
-                            // else
-                            //     return redirect()->route('pay.index')->with($respo['alert'], $respo['message']);   
-                            break; 
-                    default :
-                            // $respo = $this->ticket($request->code);
-                            $voucher = 'Ticket';
-                            $identifier = 'T001-'.str_pad($attention_id->numeration, 8, "0", STR_PAD_LEFT);
-                            TempSale::where('code', $request->code)->update(['status'=> 2]);
-                            Attention::where('id', $attention_id->id)->update(['identifier' => $identifier, 'message' => 'Ticket Generado', 'success'=> 1, 'completed' => 1, 'status'=>1]);
-                            return redirect()->route('shop.generated', ['order' => $request->code ])->with('success', 'Ticket Generado .....Se realizo correctamente la venta');        
+                    if($request->type_payment == 1){
+                        foreach($combinado as $key => $val){
+                            PaymentLog::create([
+                                'company_id' => $company,
+                                'local_id' => Session::get('local_id'),
+                                'attention_id'=>$attention_id->id,
+                                'method_id'=>$key,
+                                'total'=>$val
+                            ]);
+                        }
+                    }else{
+                        
+                        CreditLog::create([
+                            'local_id' => $local,
+                            'company_id' =>$company,
+                            'attention_id'=> $attention_id->id,
+                            'customer_id'=>$request->customer_id,
+                            'total'=>$total,
+                        ]);
+                    }
+                    
+                    $temps=TempSale::where('code', $request->code);
+                    $product_ids = $temps->get();
+                    foreach($product_ids as $pid){
+                    //RECORDAR QUE EL ID_PRODUXCT ES EL ID DEL LOCAL_PRODUCT
+                        LocalProduct::where('local_id', $local)->where('product_id', $pid->product_id)->decrement('stock', $pid->amount);
+                        Product::where('id', $pid->product_id)->decrement('stock', $pid->amount);
+
+                        $check = Kardex::where('company_id', $company)->where('local_id', Session::get('local_id'))
+                        ->where('product_id', $pid->product_id)
+                        ->where(DB::raw("CAST(created_at AS DATE)"), '=', DB::raw("DATE(now())"))
+                        ->value('id');
+
+                        if($check){
+                            Kardex::where('id', $check)->increment('output', $pid->amount);
+                        }
+                        else{
+                            Kardex::create(['company_id' => $company, 'local_id'=>$local, 'product_id'=>$pid->product_id, 'entry'=>0, 'output'=>$pid->amount]);
+                        } 
+                    }
+
+                    switch($request->receipt){
+                        case '03' :
+                                $respo = $this->setTicket($request->code);
+                                $voucher = 'Boleta';
+                                // if($respo['success'])
+                                //     return redirect()->route('pay.generated', ['order'=>$respo['attentionId']])->with($respo['alert'], 'Boleta '.$respo['nameId'].' '.$respo['message']);  
+                                // else
+                                //     return redirect()->route('pay.index')->with($respo['alert'], $respo['message']); 
+                                break;
+                        case '01' :
+                                $respo = $this->setBill($request->code); //TRAIT BILL
+                                // dd($respo);
+                                $voucher = 'Factura';
+                                // if($respo['success'])
+                                //     return redirect()->route('pay.generated', ['order'=>$respo['attentionId']])->with($respo['alert'], 'Factura '.$respo['nameId'].' '.$respo['message']); 
+                                // else
+                                //     return redirect()->route('pay.index')->with($respo['alert'], $respo['message']);   
+                                break; 
+                        default :
+                                // $respo = $this->ticket($request->code);
+                                $voucher = 'Ticket';
+                                $identifier = 'T001-'.str_pad($attention_id->numeration, 8, "0", STR_PAD_LEFT);
+                                TempSale::where('code', $request->code)->update(['status'=> 2]);
+                                Attention::where('id', $attention_id->id)->update(['identifier' => $identifier, 'message' => 'Ticket Generado', 'success'=> 1, 'completed' => 1, 'status'=>1]);
+                                return redirect()->route('shop.generated', ['order' => $request->code ])->with('success', 'Ticket Generado .....Se realizo correctamente la venta');        
+                    }
+
+                    return redirect()->route('shop.generated', ['order' => $request->code ])->with($respo['alert'], $respo['message']);
                 }
 
-                return redirect()->route('shop.generated', ['order' => $request->code ])->with($respo['alert'], $respo['message']);
             }
 
-        }
+            return redirect()->route('shop.index')->with('danger', 'No se pudo realizar la venta');
+            
+        }catch (\Throwable $th) {
 
-        return redirect()->route('shop.index')->with('danger', 'No se pudo realizar la venta');
+            Log::info("Line No : ".__LINE__." : File Path : ".__FILE__." message ".$th->getMessage()." linea : ".$th->getLine()." codigo :".$th->getCode());
+            Log::error('Velocity CartController: ' . $th->getMessage(), ["hola"=>"hola"]);
+                
+            return back()->with('danger', 'Hubo error al generar este procedimiento');
+        } 
     }
 
     public function generatedReceipt(Request $request, $order){

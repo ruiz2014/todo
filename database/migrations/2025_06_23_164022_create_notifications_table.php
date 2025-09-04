@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedInteger('company_id')->default(1); 
             $table->unsignedInteger('user_id');
-            $table->unsignedTinyInteger('local_id');
+            $table->unsignedInteger('local_id');
             $table->unsignedTinyInteger('from_role_id');
             $table->unsignedTinyInteger('to_role_id')->nullable();
             $table->string('title', 100);

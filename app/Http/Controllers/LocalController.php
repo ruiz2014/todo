@@ -48,10 +48,18 @@ class LocalController extends Controller
      */
     public function store(LocalRequest $request): RedirectResponse
     {
-        Local::create($request->validated() + ['user_id'=>$request->session()->get('user_id'), 'company_id'=>$request->session()->get('company_id')]);
+        try{
+            Local::create($request->validated() + ['user_id'=>$request->session()->get('user_id'), 'company_id'=>$request->session()->get('company_id')]);
 
-        return Redirect::route('locals.index')
-            ->with('success', 'Local created successfully.');
+            return Redirect::route('locals.index')->with('success', 'Local created successfully.');
+            
+        }catch (\Throwable $th) {
+
+            Log::info("Line No : ".__LINE__." : File Path : ".__FILE__." message ".$th->getMessage()." linea : ".$th->getLine()." codigo :".$th->getCode());
+            Log::error('Velocity CartController: ' . $th->getMessage(), ["hola"=>"hola"]);
+                
+            return back()->with('danger', 'Hubo error al generar este procedimiento');
+        } 
     }
 
     /**
@@ -79,10 +87,18 @@ class LocalController extends Controller
      */
     public function update(LocalRequest $request, Local $local): RedirectResponse
     {
-        $local->update($request->validated());
+        try{
+            $local->update($request->validated());
 
-        return Redirect::route('locals.index')
-            ->with('success', 'Local updated successfully');
+            return Redirect::route('locals.index')->with('success', 'Local updated successfully');
+
+        }catch (\Throwable $th) {
+
+            Log::info("Line No : ".__LINE__." : File Path : ".__FILE__." message ".$th->getMessage()." linea : ".$th->getLine()." codigo :".$th->getCode());
+            Log::error('Velocity CartController: ' . $th->getMessage(), ["hola"=>"hola"]);
+                
+            return back()->with('danger', 'Hubo error al generar este procedimiento');
+        } 
     }
 
     public function destroy($id): RedirectResponse

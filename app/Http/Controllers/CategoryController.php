@@ -48,11 +48,19 @@ class CategoryController extends Controller
      */
     public function store(CategoryRequest $request): RedirectResponse
     {
-        $company_id = $request->session()->get('company_id');
-        Category::create($request->validated() + ['company_id'=> $company_id]);
+        try{
+            $company_id = $request->session()->get('company_id');
+            Category::create($request->validated() + ['company_id'=> $company_id]);
 
-        return Redirect::route('categories.index')
-            ->with('success', 'Category created successfully.');
+            return Redirect::route('categories.index')->with('success', 'Category created successfully.');
+            
+        }catch (\Throwable $th) {
+
+            Log::info("Line No : ".__LINE__." : File Path : ".__FILE__." message ".$th->getMessage()." linea : ".$th->getLine()." codigo :".$th->getCode());
+            Log::error('Velocity CartController: ' . $th->getMessage(), ["hola"=>"hola"]);
+                
+            return back()->with('danger', 'Hubo error al generar este procedimiento');
+        } 
     }
 
     /**

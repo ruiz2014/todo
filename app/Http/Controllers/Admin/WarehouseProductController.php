@@ -39,7 +39,7 @@ class WarehouseProductController extends Controller
         $request->session()->flash('wh', $wh_id);
         $request->session()->keep(['wh']);
         
-        $locals = Local::pluck('local_name', 'id');
+        $locals = Local::where('company_id', request()->session()->get('company_id'))->pluck('local_name', 'id');
         $categories = Category::pluck('category_name', 'id');
         $products = Product::select(DB::raw("CONCAT_WS(' ', name,' ',description, ' ',price) AS name"),'id')->pluck('name', 'id');
         $wh_products = WarehouseProduct::select('warehouse_products.product_id', 'p.name', 'p.description', 'p.price', 'p.category_id', 'warehouse_products.stock')

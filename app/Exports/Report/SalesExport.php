@@ -30,14 +30,16 @@ class SalesExport implements FromView, WithTitle, ShouldAutoSize
     public function view(): View
     {
        // dd($this->company_id, PaymentLog::where('company_id', $this->company_id)->where('method_id', 2)->whereBetween(DB::raw('DATE(created_at)'), [$this->start, $this->end])->sum('total'));
-        return view('exports.report.sales', [
+       //dd(TempSale::where('company_id', $this->company_id)->where('local_id', $this->local_id)->where('status', 2)->whereBetween(DB::raw('DATE(created_at)'), [$this->start, $this->end])->get()); 
+       return view('exports.report.sales', [
             'voucher'=>'Ventas',
             'start'=> $this->start, 
             'end'=> $this->end,
             'sales' => TempSale::where('company_id', $this->company_id)->where('local_id', $this->local_id)->where('status', 2)->whereBetween(DB::raw('DATE(created_at)'), [$this->start, $this->end])->get(),
             'yape' => PaymentLog::where('company_id', $this->company_id)->where('local_id', $this->local_id)->where('method_id', 2)->whereBetween(DB::raw('DATE(created_at)'), [$this->start, $this->end])->sum('total'),
             'contado' => PaymentLog::where('company_id', $this->company_id)->where('local_id', $this->local_id)->where('method_id', 1)->whereBetween(DB::raw('DATE(created_at)'), [$this->start, $this->end])->sum('total'),
-            'credito' => PaymentLog::where('company_id', $this->company_id)->where('local_id', $this->local_id)->where('method_id', 3)->whereBetween(DB::raw('DATE(created_at)'), [$this->start, $this->end])->sum('total'),
+            'tarjeta' => PaymentLog::where('company_id', $this->company_id)->where('local_id', $this->local_id)->where('method_id', 3)->whereBetween(DB::raw('DATE(created_at)'), [$this->start, $this->end])->sum('total'),
+            'credito' => Attention::where('local_id', $this->local_id)->where('type_payment', 2)->whereBetween(DB::raw('DATE(created_at)'), [$this->start, $this->end])->sum('total'),
             // 'yape' =>PaymentLog::where('company_id', $this->company_id)->where('local_id', $this->local_id)->where('method_id', 2)->whereBetween(DB::raw('DATE(created_at)'), [$this->start, $this->end])->sum('total'),
             // 'contado' =>PaymentLog::where('company_id', $this->company_id)->where('local_id', $this->local_id)->where('method_id', 1)->whereBetween(DB::raw('DATE(created_at)'), [$this->start, $this->end])->sum('total'),
             // 'credito' => PaymentLog::where('company_id', $this->company_id)->where('local_id', $this->local_id)->where('method_id', 3)->whereBetween(DB::raw('DATE(created_at)'), [$this->start, $this->end])->sum('total'),

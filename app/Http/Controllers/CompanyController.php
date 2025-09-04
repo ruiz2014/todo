@@ -40,23 +40,29 @@ class CompanyController extends Controller
      */
     public function store(CompanyRequest $request): RedirectResponse
     {
-        // dd(User::find(1)->exists());
-        $company = Company::create($request->validated());
+        try{
+            $company = Company::create($request->validated());
 
-        if($company->id !== 1){
-            $user = User::create([
-                'name' => $company->document,
-                'email' => $company->document.'@init.com',
-                'password' => Hash::make($company->document),
-                'rol' => 2,
-                'company_id'=> $company->id,
-                'password2' => Hash::make('@secret2024.'),
-            ]);
-        }
-        // return User::find(1);
-        // dd($company, $company->id);
-        return Redirect::route('companies.index')
-            ->with('success', 'Company created successfully.');
+            if($company->id !== 1){
+                $user = User::create([
+                    'name' => $company->document,
+                    'email' => $company->document.'@init.com',
+                    'password' => Hash::make($company->document),
+                    'rol' => 2,
+                    'company_id'=> $company->id,
+                    'password2' => Hash::make('@secret2024.'),
+                ]);
+            }
+
+            return Redirect::route('companies.index')->with('success', 'Company created successfully.');
+
+        }catch (\Throwable $th) {
+
+            Log::info("Line No : ".__LINE__." : File Path : ".__FILE__." message ".$th->getMessage()." linea : ".$th->getLine()." codigo :".$th->getCode());
+            Log::error('Velocity CartController: ' . $th->getMessage(), ["hola"=>"hola"]);
+                
+            return back()->with('danger', 'Hubo error al generar este procedimiento');
+        } 
     }
 
     /**
@@ -84,10 +90,18 @@ class CompanyController extends Controller
      */
     public function update(CompanyRequest $request, Company $company): RedirectResponse
     {
-        $company->update($request->validated());
+        try{
+            $company->update($request->validated());
 
-        return Redirect::route('companies.index')
-            ->with('success', 'Company updated successfully');
+            return Redirect::route('companies.index')->with('success', 'Company updated successfully');
+            
+        }catch (\Throwable $th) {
+
+            Log::info("Line No : ".__LINE__." : File Path : ".__FILE__." message ".$th->getMessage()." linea : ".$th->getLine()." codigo :".$th->getCode());
+            Log::error('Velocity CartController: ' . $th->getMessage(), ["hola"=>"hola"]);
+                
+            return back()->with('danger', 'Hubo error al generar este procedimiento');
+        } 
     }
 
     public function destroy($id): RedirectResponse

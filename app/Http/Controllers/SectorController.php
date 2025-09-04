@@ -37,10 +37,18 @@ class SectorController extends Controller
      */
     public function store(SectorRequest $request): RedirectResponse
     {
-        Sector::create($request->validated());
+        try{
+            Sector::create($request->validated());
 
-        return Redirect::route('sectors.index')
-            ->with('success', 'Sector created successfully.');
+            return Redirect::route('sectors.index')->with('success', 'Sector created successfully.');
+
+        }catch (\Throwable $th) {
+
+            Log::info("Line No : ".__LINE__." : File Path : ".__FILE__." message ".$th->getMessage()." linea : ".$th->getLine()." codigo :".$th->getCode());
+            Log::error('Velocity CartController: ' . $th->getMessage(), ["hola"=>"hola"]);
+                
+            return back()->with('danger', 'Hubo error al generar este procedimiento');
+        }
     }
 
     /**
@@ -68,10 +76,18 @@ class SectorController extends Controller
      */
     public function update(SectorRequest $request, Sector $sector): RedirectResponse
     {
-        $sector->update($request->validated());
+        try{
+            $sector->update($request->validated());
 
-        return Redirect::route('sectors.index')
-            ->with('success', 'Sector updated successfully');
+            return Redirect::route('sectors.index')->with('success', 'Sector updated successfully');
+
+        }catch (\Throwable $th) {
+
+            Log::info("Line No : ".__LINE__." : File Path : ".__FILE__." message ".$th->getMessage()." linea : ".$th->getLine()." codigo :".$th->getCode());
+            Log::error('Velocity CartController: ' . $th->getMessage(), ["hola"=>"hola"]);
+                
+            return back()->with('danger', 'Hubo error al generar este procedimiento');
+        }  
     }
 
     public function destroy($id): RedirectResponse

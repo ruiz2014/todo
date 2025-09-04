@@ -51,13 +51,21 @@ class ProductController extends Controller
      */
     public function store(ProductRequest $request): RedirectResponse
     {
-        $id_user = $request->session()->get('user_id');
-        $id_company = $request->session()->get('company_id');
-        // dd($id_user,  $id_company);
-        Product::create($request->validated() + ['user_id' => $id_user , 'company_id'=>$id_company]);
+        try{
+            $id_user = $request->session()->get('user_id');
+            $id_company = $request->session()->get('company_id');
+            // dd($id_user,  $id_company);
+            Product::create($request->validated() + ['user_id' => $id_user , 'company_id'=>$id_company]);
 
-        return Redirect::route('products.index')
-            ->with('success', 'Product created successfully.');
+            return Redirect::route('products.index')->with('success', 'Product created successfully.');
+            
+        }catch (\Throwable $th) {
+
+            Log::info("Line No : ".__LINE__." : File Path : ".__FILE__." message ".$th->getMessage()." linea : ".$th->getLine()." codigo :".$th->getCode());
+            Log::error('Velocity CartController: ' . $th->getMessage(), ["hola"=>"hola"]);
+                
+            return back()->with('danger', 'Hubo error al generar este procedimiento');
+        }
     }
 
     /**
@@ -86,10 +94,18 @@ class ProductController extends Controller
      */
     public function update(ProductRequest $request, Product $product): RedirectResponse
     {
-        $product->update($request->validated());
+        try{
+            $product->update($request->validated());
 
-        return Redirect::route('products.index')
-            ->with('success', 'Product updated successfully');
+            return Redirect::route('products.index')->with('success', 'Product updated successfully');
+
+        }catch (\Throwable $th) {
+
+            Log::info("Line No : ".__LINE__." : File Path : ".__FILE__." message ".$th->getMessage()." linea : ".$th->getLine()." codigo :".$th->getCode());
+            Log::error('Velocity CartController: ' . $th->getMessage(), ["hola"=>"hola"]);
+                
+            return back()->with('danger', 'Hubo error al generar este procedimiento');
+        }
     }
 
     public function destroy($id): RedirectResponse

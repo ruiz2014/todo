@@ -100,7 +100,7 @@
             </div>
         </div>
         <div class="col-sm-6 col-lg-3">
-          <div class="card pt-5 pb-4 px-2">
+          <div class="card pt-3 px-2">
             <div class="card mb-3" style="background:black;color:white;">
                 <div class="row g-0">
                     <div class="col-md-3 d-flex justify-content-center align-items-center">
@@ -109,7 +109,7 @@
                     <div class="col-md-9">
                         <div class="card-body p-1">
                             <h6 class="card-title mb-0 fw-normal">Atenciones</h6>
-                            <p class="card-text fs-6 mb-0">{{ $attentionDay->attentions }}</p>
+                            <p class="card-text fs-6 mb-0">{{ $attentionDay }}</p>
                             <p class="card-text"><small class="" style="color: #939393;">Total del dia</small></p>
                         </div>
                     </div>
@@ -124,12 +124,27 @@
                     <div class="col-md-9">
                         <div class="card-body p-1">
                             <h6 class="card-title mb-0 fw-normal">Dinero</h6>
-                            <p class="card-text fs-6 mb-0"> S/. {{ $attentionDay->total }}</p>
+                            <p class="card-text fs-6 mb-0"> S/. {{ $totalDay->total ?? '0'}}</p>
                             <p class="card-text"><small class="" style="color: #939393;">Total del dia</small></p>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <div class="card mb-3" style="background:black;color:white;">
+                <div class="row g-0">
+                    <div class="col-md-3 d-flex justify-content-center align-items-center">
+                        <ion-icon name="today-outline" style="background:white;font-size:25px;color:black;border: 1px solid white;padding: 5px;border-radius: 50%;"></ion-icon>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="card-body p-1">
+                            <h6 class="card-title mb-0 fw-normal">Credito</h6>
+                            <p class="card-text fs-6 mb-0"> S/. {{ $creditoDay ?? '0' }}</p>
+                            <p class="card-text"><small class="" style="color: #939393;">Total de la Semana</small></p>
+                        </div>
+                    </div>
+                </div>
+            </div> 
 
             <div class="card mb-3" style="background:black;color:white;">
                 <div class="row g-0">

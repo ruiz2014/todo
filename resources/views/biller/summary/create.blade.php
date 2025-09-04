@@ -61,18 +61,18 @@
                         <div class="card-body">
                             <form action="{{ route('summary.search') }}" method="POST">
                             @csrf    
-                            <div class="form-group">
+                                <div class="form-group">
                                     <label>Date:</label>
-                                    <div class="input-group date" id="" data-target-input="nearest">
-                                        <input type="date" name="birthday" class="form-control"  />
-                                    </div>
+                                    <!-- <div class="input-group date" id="" data-target-input="nearest">
+                                    </div> -->
+                                    <input type="date" name="birthday" class="form-control @error('birthday') is-invalid @enderror"  />
+                                        {!! $errors->first('birthday', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
                                 </div>
                                 <div class="card-footer">
-                                <button type="submit" class="btn btn-primary">Submit</button>
+                                    <button type="submit" class="btn btn-primary">Submit</button>
                                 </div>
                             </form>
                         </div>
-
                     </div>
 
                 @if($documentos)

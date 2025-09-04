@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('kardexes', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('company_id')->default(1); 
-            $table->unsignedTinyInteger('local_id');
+            $table->unsignedInteger('local_id');
             $table->unsignedInteger('product_id');
             $table->decimal('entry', 8,2)->default(0);
             $table->decimal('output', 8,2)->default(0);

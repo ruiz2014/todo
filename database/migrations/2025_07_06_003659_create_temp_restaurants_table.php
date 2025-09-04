@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('temp_restaurants', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('company_id')->nullable()->default(1);
-            $table->unsignedTinyInteger('local_id');
+            $table->unsignedInteger('local_id');
             $table->unsignedInteger('user_id');
             $table->string('code', 20);
             $table->unsignedInteger('customer_id')->nullable();

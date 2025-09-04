@@ -24,8 +24,6 @@ class UserController extends Controller
      */
     public function index(Request $request): View
     {
-        
-       
         // DB::enableQueryLog();
         $text = $request->search;
         
@@ -133,17 +131,25 @@ class UserController extends Controller
      */
     public function update(UserRequest $request, User $user): RedirectResponse
     {
-        // dd($request, $request->validated());
-        // Es
-        $user->update($request->validated());
+        try{
 
-        if(is_numeric(request('local'))){
-            
-            BelongLocal::updateOrCreate(['user_id' =>  $user->id], ['company_id'=>request()->session()->get('company_id'), 'establishment_id'=>request('establishment'), 'local_id'=>request('local')]);
-        }
+            $user->update($request->validated());
 
-        return Redirect::route('users.index')
-            ->with('success', 'User updated successfully');
+            if(is_numeric(request('local'))){
+                
+                BelongLocal::updateOrCreate(['user_id' =>  $user->id], ['company_id'=>request()->session()->get('company_id'), 'establishment_id'=>request('establishment'), 'local_id'=>request('local')]);
+            }
+
+            return Redirect::route('users.index')
+                ->with('success', 'User updated successfully');
+
+        }catch (\Throwable $th) {
+
+            Log::info("Line No : ".__LINE__." : File Path : ".__FILE__." message ".$th->getMessage()." linea : ".$th->getLine()." codigo :".$th->getCode());
+            Log::error('Velocity CartController: ' . $th->getMessage(), ["hola"=>"hola"]);
+                
+            return back()->with('danger', 'Hubo error al generar este procedimiento');
+        }         
     }
 
     public function updateAdmin(Request $request, User $user): RedirectResponse
@@ -153,10 +159,19 @@ class UserController extends Controller
             'email' => 'required|email',
         ]);
 
-        $user->update($validated);
+        try{
 
-        return Redirect::route('users.index')
-            ->with('success', 'User updated successfully');
+            $user->update($validated);
+
+            return Redirect::route('users.index')->with('success', 'User updated successfully');
+            
+        }catch (\Throwable $th) {
+
+            Log::info("Line No : ".__LINE__." : File Path : ".__FILE__." message ".$th->getMessage()." linea : ".$th->getLine()." codigo :".$th->getCode());
+            Log::error('Velocity CartController: ' . $th->getMessage(), ["hola"=>"hola"]);
+                
+            return back()->with('danger', 'Hubo error al generar este procedimiento');
+        } 
     }
 
     public function destroy($id): RedirectResponse

@@ -37,10 +37,18 @@ class PaymentMethodController extends Controller
      */
     public function store(PaymentMethodRequest $request): RedirectResponse
     {
-        PaymentMethod::create($request->validated());
+        try{
+            PaymentMethod::create($request->validated());
 
-        return Redirect::route('payment-methods.index')
-            ->with('success', 'PaymentMethod created successfully.');
+            return Redirect::route('payment-methods.index')->with('success', 'PaymentMethod created successfully.');
+            
+        }catch (\Throwable $th) {
+
+            Log::info("Line No : ".__LINE__." : File Path : ".__FILE__." message ".$th->getMessage()." linea : ".$th->getLine()." codigo :".$th->getCode());
+            Log::error('Velocity CartController: ' . $th->getMessage(), ["hola"=>"hola"]);
+                
+            return back()->with('danger', 'Hubo error al generar este procedimiento');
+        }
     }
 
     /**
@@ -68,10 +76,18 @@ class PaymentMethodController extends Controller
      */
     public function update(PaymentMethodRequest $request, PaymentMethod $paymentMethod): RedirectResponse
     {
-        $paymentMethod->update($request->validated());
+        try{
+            $paymentMethod->update($request->validated());
 
-        return Redirect::route('payment-methods.index')
-            ->with('success', 'PaymentMethod updated successfully');
+            return Redirect::route('payment-methods.index')->with('success', 'PaymentMethod updated successfully');
+
+        }catch (\Throwable $th) {
+
+            Log::info("Line No : ".__LINE__." : File Path : ".__FILE__." message ".$th->getMessage()." linea : ".$th->getLine()." codigo :".$th->getCode());
+            Log::error('Velocity CartController: ' . $th->getMessage(), ["hola"=>"hola"]);
+                
+            return back()->with('danger', 'Hubo error al generar este procedimiento');
+        }   
     }
 
     public function destroy($id): RedirectResponse

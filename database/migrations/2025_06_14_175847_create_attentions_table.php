@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('document_code', 17)->nullable();
             $table->string('reference _document', 17)->nullable();
             $table->unsignedTinyInteger('currency')->default(1);
+            $table->unsignedTinyInteger('type_payment')->default(1);
             $table->double('total', 8,2);
             $table->unsignedInteger('seller');
             $table->smallInteger('serie')->default(1);

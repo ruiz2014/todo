@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedInteger('company_id')->default(1);
             $table->unsignedInteger('warehouse_id');
-            $table->unsignedTinyInteger('local_id');
+            $table->unsignedInteger('local_id');
             $table->unsignedInteger('user_id');
             $table->unsignedInteger('product_id');
             $table->decimal('output', 8,2)->nullable();

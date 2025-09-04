@@ -86,34 +86,43 @@ class QuoteController extends Controller
         // $validator = Validator::make($request->all(), $campos);
         Validator::make($request->all(), $campos)->validate(); //DEVUELVE ERROR 403
 
-        if (TempQuote::where('company_id', $company)->where('code', $request->code)->exists()) {
+        try{
+            if(TempQuote::where('company_id', $company)->where('code', $request->code)->exists()) {
 
-            $total = TempQuote::select(DB::raw('SUM(price * amount) as total'))->where('code', $request->code)->value('total');
+                $total = TempQuote::select(DB::raw('SUM(price * amount) as total'))->where('code', $request->code)->value('total');
 
-            $numeration = $this->setCorrelative($request->receipt); 
-            $identifier = 'CTZ1-'.str_pad($numeration, 8, "0", STR_PAD_LEFT);
+                $numeration = $this->setCorrelative($request->receipt); 
+                $identifier = 'CTZ1-'.str_pad($numeration, 8, "0", STR_PAD_LEFT);
 
-            $quote_id = Quote::create([
-                'company_id' => $company,
-                'local_id'=> $local,
-                'customer_id'=>$request->customer_id,
-                'document_code'=>$request->code,
-                'reference_document'=>'',
-                'currency'=>1,
-                'total'=>$total,
-                'seller'=>Session::get('user_id'),
-                'serie'=>1,
-                'numeration'=> $numeration,
-                'identifier'=> $identifier,
-            ]);
+                $quote_id = Quote::create([
+                    'company_id' => $company,
+                    'local_id'=> $local,
+                    'customer_id'=>$request->customer_id,
+                    'document_code'=>$request->code,
+                    'reference_document'=>'',
+                    'currency'=>1,
+                    'total'=>$total,
+                    'seller'=>Session::get('user_id'),
+                    'serie'=>1,
+                    'numeration'=> $numeration,
+                    'identifier'=> $identifier,
+                ]);
 
-            TempQuote::where('code', $request->code)->update(['customer_id'=>$request->customer_id, 'status'=> 2]);
-            return redirect()->route('quotes.generated', ['order' => $request->code ])->with('success', 'Su cotizacion se genero con exito');
-        }
-        else{
-             return Redirect::route('quotes.index')
-            ->with('danger', 'No se pudo generar la cotizacion ..... Hubo algun error');
-        }
+                TempQuote::where('code', $request->code)->update(['customer_id'=>$request->customer_id, 'status'=> 2]);
+                return redirect()->route('quotes.generated', ['order' => $request->code ])->with('success', 'Su cotizacion se genero con exito');
+            }
+            else{
+                return Redirect::route('quotes.index')
+                ->with('danger', 'No se pudo generar la cotizacion ..... Hubo algun error');
+            }
+
+        }catch (\Throwable $th) {
+
+            Log::info("Line No : ".__LINE__." : File Path : ".__FILE__." message ".$th->getMessage()." linea : ".$th->getLine()." codigo :".$th->getCode());
+            Log::error('Velocity CartController: ' . $th->getMessage(), ["hola"=>"hola"]);
+                
+            return back()->with('danger', 'Hubo error al generar este procedimiento');
+        } 
     }
 
     /**
@@ -178,45 +187,52 @@ class QuoteController extends Controller
         ];
         // $validator = Validator::make($request->all(), $campos);
         Validator::make($request->all(), $campos)->validate(); //DEVUELVE ERROR 403
+        try{
+            if (TempQuote::where('company_id', $company)->where('code', $request->code)->exists()) {
 
-        if (TempQuote::where('company_id', $company)->where('code', $request->code)->exists()) {
+                $total = TempQuote::select(DB::raw('SUM(price * amount) as total'))->where('code', $request->code)->value('total');
 
-            $total = TempQuote::select(DB::raw('SUM(price * amount) as total'))->where('code', $request->code)->value('total');
+                $numeration = $this->setCorrelative($request->receipt); 
+                $identifier = 'CTZ1-'.str_pad($numeration, 8, "0", STR_PAD_LEFT);
 
-            $numeration = $this->setCorrelative($request->receipt); 
-            $identifier = 'CTZ1-'.str_pad($numeration, 8, "0", STR_PAD_LEFT);
+                $modify = explode('_', $request->code);
+                $code_2 = $modify[0];
 
-            $modify = explode('_', $request->code);
-            $code_2 = $modify[0];
+                $quote_id = Quote::create([
+                    'company_id' => $company,
+                    'local_id'=> $local,
+                    'customer_id'=>$request->customer_id,
+                    'document_code'=>$code_2,
+                    'reference_document'=>'',
+                    'currency'=>1,
+                    'total'=>$total,
+                    'seller'=>Session::get('user_id'),
+                    'serie'=>1,
+                    'numeration'=> $numeration,
+                    'identifier'=> $identifier,
+                ]);
 
-            $quote_id = Quote::create([
-                'company_id' => $company,
-                'local_id'=> $local,
-                'customer_id'=>$request->customer_id,
-                'document_code'=>$code_2,
-                'reference_document'=>'',
-                'currency'=>1,
-                'total'=>$total,
-                'seller'=>Session::get('user_id'),
-                'serie'=>1,
-                'numeration'=> $numeration,
-                'identifier'=> $identifier,
-            ]);
-
-            
-            TempQuote::where('code', $request->code)->update(['code'=>$code_2, 'customer_id'=>$request->customer_id, 'status'=> 2]);
-            return redirect()->route('quotes.generated', ['order' => $code_2 ])->with('success', 'Su cotizacion se genero con exito');
-        }
-        else{
-             return Redirect::route('quotes.index')
-            ->with('danger', 'No se pudo generar la cotizacion ..... Hubo algun error');
-        }
+                
+                TempQuote::where('code', $request->code)->update(['code'=>$code_2, 'customer_id'=>$request->customer_id, 'status'=> 2]);
+                return redirect()->route('quotes.generated', ['order' => $code_2 ])->with('success', 'Su cotizacion se genero con exito');
+            }
+            else{
+                return Redirect::route('quotes.index')
+                ->with('danger', 'No se pudo generar la cotizacion ..... Hubo algun error');
+            }
 
 
-        $quote->update($request->validated());
+            $quote->update($request->validated());
 
-        return Redirect::route('quotes.index')
-            ->with('success', 'Quote updated successfully');
+            return Redirect::route('quotes.index')->with('success', 'Quote updated successfully');
+
+        }catch (\Throwable $th) {
+
+            Log::info("Line No : ".__LINE__." : File Path : ".__FILE__." message ".$th->getMessage()." linea : ".$th->getLine()." codigo :".$th->getCode());
+            Log::error('Velocity CartController: ' . $th->getMessage(), ["hola"=>"hola"]);
+                
+            return back()->with('danger', 'Hubo error al generar este procedimiento');
+        } 
     }
 
 

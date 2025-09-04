@@ -37,10 +37,18 @@ class EstablishmentController extends Controller
      */
     public function store(EstablishmentRequest $request): RedirectResponse
     {
-        Establishment::create($request->validated());
+        try{
+            Establishment::create($request->validated());
 
-        return Redirect::route('establishments.index')
-            ->with('success', 'Establishment created successfully.');
+            return Redirect::route('establishments.index')->with('success', 'Establishment created successfully.');
+
+        }catch (\Throwable $th) {
+
+            Log::info("Line No : ".__LINE__." : File Path : ".__FILE__." message ".$th->getMessage()." linea : ".$th->getLine()." codigo :".$th->getCode());
+            Log::error('Velocity CartController: ' . $th->getMessage(), ["hola"=>"hola"]);
+                
+            return back()->with('danger', 'Hubo error al generar este procedimiento');
+        }
     }
 
     /**
@@ -68,10 +76,18 @@ class EstablishmentController extends Controller
      */
     public function update(EstablishmentRequest $request, Establishment $establishment): RedirectResponse
     {
-        $establishment->update($request->validated());
+        try{
+            $establishment->update($request->validated());
 
-        return Redirect::route('establishments.index')
-            ->with('success', 'Establishment updated successfully');
+            return Redirect::route('establishments.index')->with('success', 'Establishment updated successfully');
+
+        }catch (\Throwable $th) {
+
+            Log::info("Line No : ".__LINE__." : File Path : ".__FILE__." message ".$th->getMessage()." linea : ".$th->getLine()." codigo :".$th->getCode());
+            Log::error('Velocity CartController: ' . $th->getMessage(), ["hola"=>"hola"]);
+                
+            return back()->with('danger', 'Hubo error al generar este procedimiento');
+        }
     }
 
     public function destroy($id): RedirectResponse

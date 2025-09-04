@@ -25,13 +25,11 @@ class HomeController extends Controller
         if(Auth::user()->rol== 1){
             $companys = Company::pluck('name', 'id');
         }
-// dd($request->session()->get('role') , $companys, Auth::user()->rol);
+        
         $local = Local::select('local_name')->where('id', $request->session()->get('local_id'))->first();
         $locals = Local::where('company_id', $request->session()->get('company_id'))->pluck('local_name', 'id');
         $rol = Role::select('name')->where('id', $request->session()->get('role'))->first();
-        // return view('admin.home.index', compact('local'));
-        // $sesiones = Session::get('user_id');
-        // dd($req->user(), Auth::user(), $req->session(), $sesiones);
+        $date = date('Y-m-d');
         $currentMonth = date('n');
         $currentWeek = date("W");
         $currentDay = date("d");
@@ -40,16 +38,15 @@ class HomeController extends Controller
         $pays = $this->paymentMethods($currentMonth);
         $months = $this->monthlyCare()->pluck('months');
         $monthlyCare = $this->monthlyCare()->pluck('total');
-        //$amountAttention = $this->monthlyCare()->where('month', $currentMonth)->first(); //where('month', DB::raw('MONTH(now()'));
-        // $weekAttention = $this->monthlyCare()->where('week', $currentWeek)->first();
-        
-        $attentionDay = $this->currentDay($currentMonth, $currentDay);
+
+        $attentionDay = Attention::where(DB::raw('CAST(created_at as DATE)'), $date)->count();    //$this->currentDay($currentMonth, $currentDay);
+        $totalDay = $this->currentDay($currentMonth, $currentDay);
         $attentionWeek = $this->currentWeek($currentWeek);
         $bestSeller = $this->selling($currentMonth)->pluck('name');
         $bestSellerQty = $this->selling($currentMonth)->pluck('dish');
-        // dd($this->currentDay($currentMonth, $currentDay), $weekAttention, $currentWeek, $currentDay, $currentMonth);
-        // dd($monthlyCare, $receipts, $currentWeek );
-        return view('admin.home.index', compact('companys', 'locals', 'local', 'rol', 'receipts', 'pays', 'attentionDay', 'monthlyCare', 'months', 'bestSeller', 'bestSellerQty', 'attentionWeek'));
+        $creditoDay = Attention::where('type_payment', 2)->where(DB::raw('CAST(created_at as DATE)'), $date)->sum('total');
+
+        return view('admin.home.index', compact('companys', 'locals', 'local', 'rol', 'receipts', 'pays', 'attentionDay', 'totalDay', 'creditoDay', 'monthlyCare', 'months', 'bestSeller', 'bestSellerQty', 'attentionWeek'));
         // return view('admin.home.index');
     }
 
@@ -75,6 +72,7 @@ class HomeController extends Controller
 
     public function currentDay($month, $day){
         $attentions = Attention::select(DB::raw('COUNT(id) as attentions'), DB::raw('SUM(total) as total'), DB::raw('DAY(created_at) as day'))
+                    ->where('type_payment', 1)            
                     ->where(DB::raw('MONTH(created_at)'), $month)
                     ->where(DB::raw('DAY(created_at)'), $day)
                     ->first();

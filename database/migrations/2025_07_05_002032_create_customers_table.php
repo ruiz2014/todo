@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('customers', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('company_id')->nullable()->default(1);
-            $table->unsignedTinyInteger('local_id');
+            $table->unsignedInteger('local_id');
             $table->unsignedInteger('user_id');
             $table->string('name', 150);
             $table->string('tipo_doc', 10)->nullable();

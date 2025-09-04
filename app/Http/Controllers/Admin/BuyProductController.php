@@ -70,26 +70,35 @@ class BuyProductController extends Controller
     // public function store(Request $request): RedirectResponse
     public function store(BuyProductRequest $request): RedirectResponse
     {
-        $alert = 'danger';
-        $message = 'Hubo un problema en el registro de la compra';
-         
-        $total = TempBuy::select(DB::raw('SUM(cost * stock) as total'))->where('company_id', $request->session()->get('company_id'))->where('code', $request->code)->value('total');
-
-        if (TempBuy::where('code', $request->code)->exists()) {
-            $id = BuyProduct::create($request->validated() + ['company_id'=>request()->session()->get('company_id'), 'user_id'=>request()->session()->get('company_id'), 'total' => $total]);
-            // Purchaselog::create(['company_id'=>request()->session()->get('company_id'), 'user_id' => $request->session()->get('user_id'), 'buy_id'=>$id->id, 'product_id'=>$request->location_id, 'stock' => $request->stock, 'location_type'=>$request->location_type, 'location_id'=>$request->location_id]);
-
-            $role = request()->session()->get('role');
-            $title = 'Se Realizo una compra para el Almacen';
-            $notes = 'Se Hizo una compra con Articulos que seran llevados al Almacen Almacen pri';
-            $notify_id = Notification::create(['company_id'=>$request->session()->get('company_id'), 'user_id'=>$request->session()->get('user_id'), 'local_id'=>0, 'from_role_id'=>$role, 'to_role_id'=>1, 'title'=>$title, 'notes'=>$notes]);
-            $request->session()->flash('notification', $notify_id->id);
+        try{
+            $alert = 'danger';
+            $message = 'Hubo un problema en el registro de la compra';
             
-            $alert = 'success';
-            $message = 'Su compra se registro con exito';
-         }
+            $total = TempBuy::select(DB::raw('SUM(cost * stock) as total'))->where('company_id', $request->session()->get('company_id'))->where('code', $request->code)->value('total');
+
+            if (TempBuy::where('code', $request->code)->exists()) {
+                $id = BuyProduct::create($request->validated() + ['company_id'=>request()->session()->get('company_id'), 'user_id'=>request()->session()->get('company_id'), 'total' => $total]);
+                // Purchaselog::create(['company_id'=>request()->session()->get('company_id'), 'user_id' => $request->session()->get('user_id'), 'buy_id'=>$id->id, 'product_id'=>$request->location_id, 'stock' => $request->stock, 'location_type'=>$request->location_type, 'location_id'=>$request->location_id]);
+
+                $role = request()->session()->get('role');
+                $title = 'Se Realizo una compra para el Almacen';
+                $notes = 'Se Hizo una compra con Articulos que seran llevados al Almacen Almacen pri';
+                $notify_id = Notification::create(['company_id'=>$request->session()->get('company_id'), 'user_id'=>$request->session()->get('user_id'), 'local_id'=>0, 'from_role_id'=>$role, 'to_role_id'=>1, 'title'=>$title, 'notes'=>$notes]);
+                $request->session()->flash('notification', $notify_id->id);
+                
+                $alert = 'success';
+                $message = 'Su compra se registro con exito';
+            }
 
             return Redirect::route('buy-products.index')->with($alert, $message);
+            
+        }catch (\Throwable $th) {
+
+            Log::info("Line No : ".__LINE__." : File Path : ".__FILE__." message ".$th->getMessage()." linea : ".$th->getLine()." codigo :".$th->getCode());
+            Log::error('Velocity CartController: ' . $th->getMessage(), ["hola"=>"hola"]);
+                
+            return back()->with('danger', 'Hubo error al generar este procedimiento');
+        }     
     }
 
     public function generatedReceipt(Request $request, $code){
@@ -108,7 +117,7 @@ class BuyProductController extends Controller
     public function addOrder(Request $req){
 
         // $code = date('YmdHis');
-        $check = TempBuy::where('company_id', $request->session()->get('company_id'))->where('code', $req->order['code'])
+        $check = TempBuy::where('company_id', $req->session()->get('company_id'))->where('code', $req->order['code'])
         ->where('status', '<', 2)
         ->where(DB::raw("CAST(created_at AS DATE)"), '=', DB::raw("DATE(now())"))
         ->value('code');
@@ -130,7 +139,7 @@ class BuyProductController extends Controller
         if($req->amount < 1){
             return response()->json(['ok' => 0, 'orders' => []]);
         }
-        $orders = TempBuy::where('company_id', $request->session()->get('company_id'))->where('id', $req->id)->update(['stock' => $req->amount]);
+        $orders = TempBuy::where('company_id', $req->session()->get('company_id'))->where('id', $req->id)->update(['stock' => $req->amount]);
         return response()->json(['ok' => 1, 'orders' => $orders]);
     }
 
@@ -140,8 +149,8 @@ class BuyProductController extends Controller
         $check = $order->code;
         $order->delete();
 // return response()->json(['ok' => 1, 'orders' => $order, 'sign'=> $check]);
-        $numberOrders = TempBuy::where('company_id', $request->session()->get('company_id'))->where('code', $check)->count();
-        $ordersSent = TempBuy::where('company_id', $request->session()->get('company_id'))->where('code', $check)->where('status', 3)->count();
+        $numberOrders = TempBuy::where('company_id', $req->session()->get('company_id'))->where('code', $check)->count();
+        $ordersSent = TempBuy::where('company_id', $req->session()->get('company_id'))->where('code', $check)->where('status', 3)->count();
         $sign = $numberOrders == $ordersSent ? 1 : 0;
 
         $orders = Product::select("products.name", "ts.cost", "ts.id", "ts.status", "ts.stock")->join("temp_buys as ts", "ts.product_id", "=", "products.id")->where('ts.code', $check)->get();

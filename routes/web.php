@@ -15,11 +15,13 @@ use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\SectorController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\WarehouseProductController;
+use App\Http\Controllers\Admin\CashController;
 use App\Http\Controllers\Admin\LocalProductController;
 use App\Http\Controllers\Tool\CommonController;
 use App\Http\Controllers\Biller\AttentionController;
 use App\Http\Controllers\Biller\SumaryController;
 use App\Http\Controllers\Biller\QuoteController;
+use App\Http\Controllers\Biller\CreditController;
 use App\Http\Controllers\Operation\OperationController;
 use App\Http\Controllers\EstablishmentController;
 use App\Http\Controllers\PaymentMethodController;
@@ -48,7 +50,13 @@ Route::get('prue/{type}', [QuoteController::class, 'mela']);
 Route::get('quotes/generated/{order}', [QuoteController::class, 'generatedReceipt'])->name('quotes.generated');
 Route::resource('quotes', QuoteController::class);
 
+Route::get('cashes/seller/{user}', [CashController::class, 'getSeller']);
+Route::get('cashes/close/{id}', [CashController::class, 'close'])->name('cashes.close');
+Route::post('cashes/end_cash/{id}', [CashController::class, 'endCash'])->name('cashes.end');
+
+Route::resource('cashes', CashController::class);
 // Route::get('attention', [AttentionController::class, 'index'])->name('attention.index');
+Route::resource('credits', CreditController::class);
 
 Route::middleware(['auth', 'hasPermission:1,2,3'])->prefix('admin')->group(function () {
 

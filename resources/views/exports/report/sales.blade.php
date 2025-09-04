@@ -13,12 +13,16 @@
             <td>{{ $yape }}</td>
         </tr>
         <tr>
-            <td>Crédito</td>
+            <td>Tarjeta</td>
+            <td>{{ $tarjeta }}</td>
+        </tr>
+        <tr>
+            <td>Credito</td>
             <td>{{ $credito }}</td>
         </tr>
         <tr>
             <td><b>Total</b></td>
-            <td><b>{{ $yape + $contado + $credito }}</b></td>
+            <td><b>{{ $yape + $contado + $credito + $tarjeta }}</b></td>
         </tr>
     </tbody>
 </table>

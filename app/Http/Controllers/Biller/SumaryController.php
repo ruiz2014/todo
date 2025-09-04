@@ -67,7 +67,7 @@ class SumaryController extends Controller
             "birthday" => 'required|date',
            
         ]);
-
+  
         $fecha = $request->input('birthday');
         $date = Carbon::parse($fecha)->format('Y-m-d');
        
@@ -95,15 +95,24 @@ class SumaryController extends Controller
         $mensaje = '';
         $date = $request->input('fecha');
 
-        $documents = Attention::where('sunat_code','03')->whereNull('status')->where(DB::raw("CAST(created_at as date)"), $fecha)->get();
-        
-        $respo = $this->setResume($documents, $date);
-        
-        return redirect()->route('summary.index')->with($respo['alert'], $respo['message']);
+        try{
 
-        // dd($result);
-        // // dd($see, $sum, $correlativo, $result, $res, $cdr);
-        // return redirect()->route('resumen.index')->with($alert, $cdr->getDescription());
+            $documents = Attention::where('sunat_code','03')->whereNull('status')->where(DB::raw("CAST(created_at as date)"), $fecha)->get();
+            
+            $respo = $this->setResume($documents, $date);
+            
+            return redirect()->route('summary.index')->with($respo['alert'], $respo['message']);
+
+            // dd($result);
+            // // dd($see, $sum, $correlativo, $result, $res, $cdr);
+            // return redirect()->route('resumen.index')->with($alert, $cdr->getDescription());
+        }catch (\Throwable $th) {
+
+            Log::info("Line No : ".__LINE__." : File Path : ".__FILE__." message ".$th->getMessage()." linea : ".$th->getLine()." codigo :".$th->getCode());
+            Log::error('Velocity CartController: ' . $th->getMessage(), ["hola"=>"hola"]);
+                
+            return back()->with('danger', 'Hubo error al generar este procedimiento');
+        } 
     }
 
     public function show(Request $request, $ticket){

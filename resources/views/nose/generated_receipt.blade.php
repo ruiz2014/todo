@@ -53,7 +53,7 @@
                     <!-- <small class="text-muted">3 days ago</small> -->
                     </div>
                     <p class="amount mb-1">Forma de Pago</p>
-                    <div class="text-muted">Contado.</div>
+                    <div class="text-muted">{{ $attention->type_payment == 1 ? 'Contado' : 'Credito' }}</div>
 
                     <p class="amount mb-1 mt-2">Medio de Pago</p>
 

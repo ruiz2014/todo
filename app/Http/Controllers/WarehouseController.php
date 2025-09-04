@@ -61,9 +61,18 @@ class WarehouseController extends Controller
      */
     public function show($id): View
     {
-        $warehouse = Warehouse::find($id);
+        try{
+            $warehouse = Warehouse::find($id);
 
-        return view('warehouse.show', compact('warehouse'));
+            return view('warehouse.show', compact('warehouse'));
+
+        }catch (\Throwable $th) {
+
+            Log::info("Line No : ".__LINE__." : File Path : ".__FILE__." message ".$th->getMessage()." linea : ".$th->getLine()." codigo :".$th->getCode());
+            Log::error('Velocity CartController: ' . $th->getMessage(), ["hola"=>"hola"]);
+                
+            return back()->with('danger', 'Hubo error al generar este procedimiento');
+        }
     }
 
     /**
@@ -81,10 +90,18 @@ class WarehouseController extends Controller
      */
     public function update(WarehouseRequest $request, Warehouse $warehouse): RedirectResponse
     {
-        $warehouse->update($request->validated());
+        try{
+            $warehouse->update($request->validated());
 
-        return Redirect::route('warehouses.index')
-            ->with('success', 'Warehouse updated successfully');
+            return Redirect::route('warehouses.index')->with('success', 'Warehouse updated successfully');
+        
+        }catch (\Throwable $th) {
+
+            Log::info("Line No : ".__LINE__." : File Path : ".__FILE__." message ".$th->getMessage()." linea : ".$th->getLine()." codigo :".$th->getCode());
+            Log::error('Velocity CartController: ' . $th->getMessage(), ["hola"=>"hola"]);
+                
+            return back()->with('danger', 'Hubo error al generar este procedimiento');
+        }    
     }
 
     public function destroy($id): RedirectResponse

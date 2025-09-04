@@ -43,11 +43,18 @@ class RoleController extends Controller
     public function store(RoleRequest $request): RedirectResponse
     {
         // dd($request->validated(), $request->session()->get('company_id'));
-        
-        Role::create($request->validated() +['company_id'=> $request->session()->get('company_id')]);
+        try{
+            Role::create($request->validated() +['company_id'=> $request->session()->get('company_id')]);
 
-        return Redirect::route('roles.index')
-            ->with('success', 'Role created successfully.');
+            return Redirect::route('roles.index')->with('success', 'Role created successfully.');
+            
+        }catch (\Throwable $th) {
+
+            Log::info("Line No : ".__LINE__." : File Path : ".__FILE__." message ".$th->getMessage()." linea : ".$th->getLine()." codigo :".$th->getCode());
+            Log::error('Velocity CartController: ' . $th->getMessage(), ["hola"=>"hola"]);
+                
+            return back()->with('danger', 'Hubo error al generar este procedimiento');
+        }  
     }
 
     /**
@@ -76,10 +83,18 @@ class RoleController extends Controller
      */
     public function update(RoleRequest $request, Role $role): RedirectResponse
     {
-        $role->update($request->validated());
+        try{
+            $role->update($request->validated());
 
-        return Redirect::route('roles.index')
-            ->with('success', 'Role updated successfully');
+            return Redirect::route('roles.index')->with('success', 'Role updated successfully');
+
+        }catch (\Throwable $th) {
+
+            Log::info("Line No : ".__LINE__." : File Path : ".__FILE__." message ".$th->getMessage()." linea : ".$th->getLine()." codigo :".$th->getCode());
+            Log::error('Velocity CartController: ' . $th->getMessage(), ["hola"=>"hola"]);
+                
+            return back()->with('danger', 'Hubo error al generar este procedimiento');
+        }  
     }
 
     public function destroy($id): RedirectResponse

@@ -124,7 +124,7 @@
                 </select>
             </div>
         
-            <div class="col-md-6">
+            <div class="col-md-6 mtb-xs">
                 <div class="position-relative">
                     <label for="contact" class="form-label-2">{{ __('Customer') }}</label>
                     <div class="d-flex input-group-sm">
@@ -148,6 +148,19 @@
                 {!! $errors->first('customer_id', '<div class="invalid-feedback d-block" role="alert"><strong>:message</strong></div>') !!}
                 {!! $errors->first('code', '<div class="invalid-feedback d-block" role="alert"><strong>:message</strong></div>') !!}
             </div> 
+            
+            <div class="col-md-6 mt-md-3">
+                <label for="" style="width:100%;">Tipo Pago</label>
+                <select name="type_payment" id="type_payment" class="form-select" aria-label="Default select example" style="width:100%;">
+                    <option value="1" selected>Contado</option>
+                    <option value="2">Credito</option>
+                    <!--<option value="01">Factura</option> -->
+                </select>
+                {!! $errors->first('type_payment', '<div class="invalid-feedback d-block" role="alert"><strong>:message</strong></div>') !!}
+            </div>
+        </div>
+        
+        <div class="row padding-1 p-1 mb-3">     
 
             <div class="col-md-6">
                 <label for="" style="width:100%;">Productos</label>
@@ -307,11 +320,16 @@
  
     <script>
         window.addEventListener("DOMContentLoaded", function(){
+
+            $('#product_id').select2( {
+                theme: 'bootstrap-5'
+            } );
             
             let term = document.getElementById('term');
             let box = document.getElementById('box-search');
             let table = document.getElementById('table_shop')
             let tb_data = document.getElementById('tbody')
+            let type_payment = document.getElementById('type_payment');
             let payMethod = document.getElementById('payMethod');
             let clear_btn = document.getElementById('clean');
             let btn_generate = document.getElementById('btn-generate');
@@ -324,13 +342,16 @@
             clear_btn.onclick = ()=>{ clean(); } 
             btn_generate.onclick = ()=>{ validar();} 
 
+            type_payment.selectedIndex = 0;
+
             $('#product_id').change(function(){
                 idSelect = $(this).val();
                 // alert(idSelect)
                 textSelect = $(this).find('option:selected').text();
                 let getPrice = textSelect.split(' ').reverse();
                 priceSelect  = getPrice[0];
-                $('#amount_form').focus();
+                $('#amount_form').val(1);
+                // $('#amount_form').focus();
                 // console.log(priceSelect);
             })
 
@@ -530,6 +551,21 @@
             }
             /******************************* */
 
+             $('#type_payment').change(function(){
+                let type_pay = $(this).val();
+                if(type_pay == 2 ){
+                    document.querySelectorAll('#payMethod li input[type=checkbox]').forEach(function(checkElement) {
+                        checkElement.checked = false;
+                    });
+                    document.querySelectorAll('#payMethod li input[type=number]').forEach(function(checkElement) {
+                        checkElement.value = false;
+                    });
+                    payMethod.style.display = "none";
+                    return 0;
+                }
+                payMethod.style.display = "block";
+            })
+
             payMethod.onclick = function(ev){
                 // if(ev.target.value){
                 if(ev.target.checked){
@@ -546,6 +582,7 @@
             }
 
             function validar(){
+                let type_payment = $('#type_payment').val();
                 let cuenta =  $('.table_shop').find('tbody tr').length;
                 if(cuenta === 0){
                     Swal.fire({
@@ -555,20 +592,22 @@
                     });
                     return 0;
                 }
-                
-                let total =  document.getElementById('total').innerHTML;
-                total_pay = 0;
-                document.querySelectorAll('#payMethod input[type=checkbox]').forEach((e)=>{
-                    if(e.checked === true){
-                        total_pay += parseFloat(document.getElementById(`payMethod_${e.value}`).value);
-                    }
-                });
-                // console.log(total+ ' ' +total_pay)
-                if(parseFloat(total) !== total_pay){
-                    alert("El monto no es igual")
-                    return 0;
-                } 
 
+                if(type_payment == 1){
+                     let total =  document.getElementById('total').innerHTML;
+                    total_pay = 0;
+                    document.querySelectorAll('#payMethod input[type=checkbox]').forEach((e)=>{
+                        if(e.checked === true){
+                            total_pay += parseFloat(document.getElementById(`payMethod_${e.value}`).value);
+                        }
+                    });
+                    // console.log(total+ ' ' +total_pay)
+                    if(parseFloat(total) !== total_pay){
+                        alert("El monto no es igual")
+                        return 0;
+                    } 
+                }
+                
                 generate_receipt();
             }
 
