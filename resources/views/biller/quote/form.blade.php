@@ -141,8 +141,6 @@
                         <input type="text" id="term" autocomplete="off" class="form-control-2" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
                         <input type="hidden" name="customer_id" id="customer_id">
                         <input type="hidden" name="code" id="code" value="{{ $code }}">
-                        <input type="hidden" name="old_code" id="old_code" value="{{ $old_code }}">
-                        
                     </div>
                     
                     <div class="result position-absolute">
@@ -175,6 +173,7 @@
                     {!! $errors->first('amount', '<div class="invalid-feedback d-block" role="alert"><strong>:message</strong></div>') !!}
                 </div>
             </div>
+            <input type="hidden" id="option" name="option">
 
         </div>
         <button id="btn-add" class="btn btn-outline-success mb-3" type="button">Agregar</button>
@@ -258,9 +257,17 @@
         </div>
         
         <div class="row mt-4">
+
             <div class="col-md-12">
-                <button id="btn-generate" class="btn btn-outline-primary" >{{ $btn_txt }}</button>
+               @if($parameter) 
+                <button id="btn-edit" class="btn btn-outline-success me-3">{{ $btn_txt_edit }}</button>
+               @endif 
+                <button id="btn-generate" class="btn btn-outline-primary">{{ $btn_txt }}</button>
             </div>
+            <div class="col-md-4">
+                
+            </div>
+            
         </div>
     </div>
 
@@ -301,8 +308,9 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>
  
     <script>
+
         window.addEventListener("DOMContentLoaded", function(){
-            
+    
             let term = document.getElementById('term');
             let box = document.getElementById('box-search');
             let table = document.getElementById('table_shop')
@@ -310,6 +318,8 @@
             let payMethod = document.getElementById('payMethod');
             let clear_btn = document.getElementById('clean');
             let btn_generate = document.getElementById('btn-generate');
+            let btn_edit = document.getElementById('btn-edit');
+            
 
             let idSelect = null;
             let textSelect = null;
@@ -320,7 +330,10 @@
             showResponse(temp_result, 'joder');
 
             clear_btn.onclick = ()=>{ clean(); } 
-            btn_generate.onclick = ()=>{ validar();} 
+            btn_generate.onclick = ()=>{ $("#option").val(2); validar();} 
+            @if($parameter)
+            btn_edit.onclick = ()=>{ $("#option").val(1); validar();} 
+            @endif
 
             $('#product_id').change(function(){
                 idSelect = $(this).val();
@@ -407,7 +420,7 @@
 
             /***************ADD SALE*************** */
             $("#btn-add").click(function(){
-
+                
                 let qty = $('#amount_form').val();
 
                 if(!$.isNumeric(idSelect) || !$.isNumeric(qty)){
@@ -424,7 +437,7 @@
                 var data = { order: producto };
                 $('#tbody').empty();
                 let body = ''
-                fetch(`{{ url('add_order_quote') }}`, {
+                fetch(`{{ url($url_add) }}`, {
                     method: "POST",
                     headers: { 
                         'Content-Type': 'application/json',
@@ -458,7 +471,7 @@
                 var data = { id: id };
                 let body = ''
                 $('#tbody').empty();
-                fetch(`{{ url('delete_order_2') }}`, {
+                fetch(`{{ url($url_delete) }}`, {
                     method: "POST",
                     headers: { 
                         'Content-Type': 'application/json',
@@ -504,7 +517,7 @@
 
                 var data = { id: id, amount: amount }; 
                 console.log(data)
-                fetch(`{{ url('modify_amount_2') }}`, {
+                fetch(`{{ url($url_modify) }}`, {
                     method: "POST",
                     headers: { 
                         'Content-Type': 'application/json',
@@ -545,6 +558,19 @@
 
             function validar(){
                 let cuenta =  $('.table_shop').find('tbody tr').length;
+                const customer_val = $('#customer_id').val();
+
+                if (customer_val === null || customer_val === undefined || customer_val === "") {
+                    console.log("No se ha seleccionado ninguna opción.");
+                
+                    Swal.fire({
+                        icon: "error",
+                        title: "Problema con cliente...",
+                        text: "No ha elegido un cliente .... verifique los datos",
+                    });
+                    return 0;
+                }
+
                 if(cuenta === 0){
                     Swal.fire({
                         icon: "error",
@@ -585,7 +611,7 @@
                 data.forEach( i =>{
                     console.log(i) 
                     tax(i.price * i.amount, op);
-                    body += `<tr>
+                    body += `<tr id="temp_${i.temp_id}">
                             <td data-label="Producto">
                                 ${i.name}
                             </td>

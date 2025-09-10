@@ -47,7 +47,10 @@ Route::post('/login', [LoginController::class, 'login'])->name('auth.login');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::get('prue/{type}', [QuoteController::class, 'mela']);
+
 Route::get('quotes/generated/{order}', [QuoteController::class, 'generatedReceipt'])->name('quotes.generated');
+Route::get('quotes/keep/{order}', [QuoteController::class, 'keep'])->name('quotes.keep');
+Route::get('quotes/convert/{order}', [QuoteController::class, 'convert'])->name('quotes.convert');
 Route::resource('quotes', QuoteController::class);
 
 Route::get('cashes/seller/{user}', [CashController::class, 'getSeller']);
@@ -187,6 +190,10 @@ Route::group(['middleware' => 'auth'], function(){
 Route::post('add_order_quote', [OperationController::class, 'add']); 
 Route::post('delete_order_2', [OperationController::class, 'delete']);
 Route::post('modify_amount_2', [OperationController::class, 'modifyAmount']); 
+
+Route::post('add_order_quote_edit', [OperationController::class, 'add_edit']); 
+Route::post('modify_amount_edit', [OperationController::class, 'modifyAmount_edit']);
+Route::post('delete_order_edit', [OperationController::class, 'delete_edit']);
 
 // Route::post('save', [ShopController::class, 'store'])->name('shop.store');
 

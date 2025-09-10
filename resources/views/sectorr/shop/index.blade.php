@@ -319,6 +319,12 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>
  
     <script>
+        window.onload = function() {
+            const checkboxs = document.querySelectorAll('input[type="checkbox"]');
+            checkboxs.forEach(function(checkbox) {
+                checkbox.checked = false;
+            });
+        };
         window.addEventListener("DOMContentLoaded", function(){
 
             $('#product_id').select2( {
@@ -339,6 +345,9 @@
             let priceSelect = null;
             let productos = new Array();
 
+            let temp_result = {!! $temps !!};
+            showResponse(temp_result, 'joder');
+       
             clear_btn.onclick = ()=>{ clean(); } 
             btn_generate.onclick = ()=>{ validar();} 
 
@@ -447,7 +456,7 @@
                 var data = { order: producto };
                 $('#tbody').empty();
                 let body = ''
-                fetch(`add_order`, {
+                fetch(`{{ url("add_order") }}`, {
                     method: "POST",
                     headers: { 
                         'Content-Type': 'application/json',
@@ -481,7 +490,7 @@
                 var data = { id: id };
                 let body = ''
                 $('#tbody').empty();
-                fetch(`delete_order`, {
+                fetch(`{{ url("delete_order") }}`, {
                     method: "POST",
                     headers: { 
                         'Content-Type': 'application/json',
@@ -506,7 +515,12 @@
             /*******************************/
 
             /***************MODIFICAR AMOUNT*************** */
-            window.modifyAmount = (id, price, op)=>{
+            window.modifyAmount = async (id, price, op)=>{
+
+                const addBtn = document.getElementById(`btn_add_${id}`);
+                const subBtn = document.getElementById(`btn_sub_${id}`);
+                addBtn.disabled = true; // Deshabilita el botón
+                subBtn.disabled = true; // Deshabilita el botón
 
                 let amount = $("#amount_"+id).text();
                 if(op == 'add')
@@ -526,28 +540,50 @@
                 }
 
                 var data = { id: id, amount: amount }; 
-                console.log(data)
-                fetch(`modify_amount`, {
-                    method: "POST",
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        "X-CSRF-Token": document.querySelector('input[name=_token]').value
-                    },
-                    body: JSON.stringify(data)
-                })
-                .then(response => response.json()) 
-                .then(datos => {
-                    console.log(datos)
-                    if(datos.ok){
-                        $("#amount_"+id).text(amount.toFixed(2));
-                        $("#operation_"+id).html(price * amount)
-                        tax(price * 1, op)
+                // console.log(data)
+                
+                try {
+                    response = await fetch(`{{ url("modify_amount") }}`, {
+                        method: "POST",
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            "X-CSRF-Token": document.querySelector('input[name=_token]').value
+                        },
+                        body: JSON.stringify(data)
+                    })
+
+                    const dataJson = await response.json();
+                    console.log(dataJson)
+
+                    if(dataJson.ok){
+                            $("#amount_"+id).text(amount.toFixed(2));
+                            $("#operation_"+id).html(price * amount)
+                            tax(price * 1, op)
                     }else{
-                        alert("no se pudo realizar el cambio de cantidad")
-                        resul = (op === 'add' ? --amount : ++amount);
-                        $("#amount_"+id).text(resul.toFixed(2));
+                            alert("no se pudo realizar el cambio de cantidad")
+                            resul = (op === 'add' ? --amount : ++amount);
+                            $("#amount_"+id).text(resul.toFixed(2));
                     }
-                });   
+
+                } catch (error) {
+                    console.error('Error al obtener los datos:', error);
+                } finally {
+                    addBtn.disabled = false; // Deshabilita el botón
+                    subBtn.disabled = false; 
+                }
+                // .then(response => response.json()) 
+                // .then(datos => {
+                //     console.log(datos)
+                //     if(datos.ok){
+                //         $("#amount_"+id).text(amount.toFixed(2));
+                //         $("#operation_"+id).html(price * amount)
+                //         tax(price * 1, op)
+                //     }else{
+                //         alert("no se pudo realizar el cambio de cantidad")
+                //         resul = (op === 'add' ? --amount : ++amount);
+                //         $("#amount_"+id).text(resul.toFixed(2));
+                //     }
+                // });   
             }
             /******************************* */
 
@@ -584,6 +620,19 @@
             function validar(){
                 let type_payment = $('#type_payment').val();
                 let cuenta =  $('.table_shop').find('tbody tr').length;
+                const customer_val = $('#customer_id').val();
+
+                if (customer_val === null || customer_val === undefined || customer_val === "") {
+                    console.log("No se ha seleccionado ninguna opción.");
+                
+                    Swal.fire({
+                        icon: "error",
+                        title: "Problema con cliente...",
+                        text: "No ha elegido un cliente .... verifique los datos",
+                    });
+                    return 0;
+                }
+
                 if(cuenta === 0){
                     Swal.fire({
                         icon: "error",
@@ -633,7 +682,7 @@
                             <td data-label="Cantidad" class="td-amount">
                                 <button class="btn btn-outline-secondary btn-amount" id="btn_add_${i.id}" onclick="modifyAmount(${i.id}, ${i.price}, 'add')" style="position:relative;top:2px;"><ion-icon name="add-outline"></ion-icon></button>
                                     <span id="amount_${i.id}">${i.amount}</span>
-                                <button class="btn btn-outline-secondary btn-amount" onclick="modifyAmount(${i.id}, ${i.price}, 'sub')" style="position:relative;top:2px;"> <ion-icon name="remove-outline"></ion-icon> </button>
+                                <button class="btn btn-outline-secondary btn-amount" id="btn_sub_${i.id}" onclick="modifyAmount(${i.id}, ${i.price}, 'sub')" style="position:relative;top:2px;"> <ion-icon name="remove-outline"></ion-icon> </button>
                             </td>
                             <td data-label="Precio uni."> 
                                 ${i.price}

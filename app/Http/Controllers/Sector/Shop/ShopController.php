@@ -25,7 +25,7 @@ class ShopController extends Controller
 {
     use BillTrait, TicketTrait;
     
-    public function index(){
+    public function index($quote = null){
         $code = date('YmdHis').''.Session::get('user_id');
 
         $products = Product::select(DB::raw("CONCAT_WS(' ', products.name,' ',products.description, ' ',products.price) AS name"), 'products.id')
@@ -35,7 +35,8 @@ class ShopController extends Controller
         $customers = DB::table('customers')->where('local_id', Session::get('company_id'))->get();            
         //  dd($products);
         $payment_methods = PaymentMethod::where('company_id', Session::get('company_id'))->get();
-        return view('sectorr.shop.index', compact('payment_methods', 'products', 'code', 'customers'));
+        $temps = new TempSale(); 
+        return view('sectorr.shop.index', compact('payment_methods', 'products', 'code', 'customers', 'temps'));
         // dd("aqui tipo Tienda");
     }
 

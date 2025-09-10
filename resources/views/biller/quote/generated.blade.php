@@ -26,6 +26,7 @@
                 </span>
 
                 <div class="float-right">
+                    <a href="{{ route('quotes.convert', $quote->document_code ) }}">convertir factura</a>
                     <a href="{{ url()->previous() }}" class="btn btn-outline-secondary btn-sm float-right"  data-placement="left">
                         <ion-icon name="refresh"></ion-icon>
                     </a>

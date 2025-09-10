@@ -63,13 +63,10 @@
                                             <td >{{ $quote->message }}</td>
                                             <td >{{ $quote->status }}</td>
                                             <td>
-                                                <form action="{{ route('quotes.destroy', $quote->id) }}" method="POST">
-                                                    <a class="btn btn-sm btn-primary xs-margin" href="{{ route('quotes.generated', $quote->document_code) }}"><ion-icon name="eye"></ion-icon></a>
-                                                    <a class="btn btn-sm btn-success xs-margin" href="{{ route('quotes.edit', $quote->document_code) }}"><ion-icon name="create"></ion-icon></a>
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger btn-sm xs-margin" onclick="event.preventDefault(); confirm('Are you sure to delete?') ? this.closest('form').submit() : false;"><ion-icon name="trash"></ion-icon></button>
-                                                </form>
+                                                <a class="btn btn-sm btn-primary xs-margin" href="{{ route('quotes.generated', $quote->document_code) }}"><ion-icon name="eye"></ion-icon></a>
+                                                <a class="btn btn-sm btn-success xs-margin" href="{{ route('quotes.edit', $quote->document_code) }}" onclick="confirm('Crear una nueva Cotizacion a partir de esta ...?') ? true : event.preventDefault();"><ion-icon name="create"></ion-icon></a>
+                                                <a class="btn btn-sm btn-warning xs-margin" href="{{ route('quotes.keep', $quote->document_code) }}" onclick="confirm('Editar esta Cotizacion y conservar los cambios...?') ? true : event.preventDefault();"><ion-icon name="trash"></ion-icon></a>
+                                                <!-- <ion-icon name="trash"></ion-icon> -->
                                             </td>
                                         </tr>
                                     @endforeach
