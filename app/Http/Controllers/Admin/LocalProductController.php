@@ -12,6 +12,10 @@ use App\Models\Admin\Kardex;
 use App\Models\Admin\ProductEntry;
 use Illuminate\Support\Facades\Redirect;
 use App\Helpers\CompanyHelper;
+
+use App\Exports\Product\ProductsExport;
+use App\Imports\LocalProductImport;
+use Maatwebsite\Excel\Facades\Excel;
 use DB;
 use Session;
 
@@ -31,7 +35,7 @@ class localProductController extends Controller
         $query  = LocalProduct::select($select);
 
         $result = CompanyHelper::searchAll($query, $text, $join, $where, $orWhere);
-        $local_products = $result->paginate(2);
+        $local_products = $result->paginate();
 
         return view('admin.lp.index', compact('products', 'local_products', 'text'));
     }
@@ -102,5 +106,26 @@ class localProductController extends Controller
         }
         BuyProduct::where('company_id', $request->session()->get('company_id'))->where('code', $code)->update(['status'=> 1]);
        return Redirect::route('lp.index')->with('success', 'Se registro correctamente los articulos de la compra ....');
+    }
+
+    public function format(){
+        // $local_id = request()->session()->get('local_id');
+        $company_id = request()->session()->get('company_id');
+
+        // return (new SheetMulExport($this->start, $this->end))->download('reporte-general.xlsx');
+        return Excel::download(new ProductsExport($company_id), 'productos_local.xlsx');
+    }
+
+    public function localImport(Request $request){
+        $local_id = request()->session()->get('local_id');
+        $user_id = request()->session()->get('user_id');
+        $company_id = request()->session()->get('company_id');
+
+        $request->validate([
+            'file' => 'required|file|mimes:xlsx,xls,csv'
+        ]);
+        
+        Excel::import(new LocalProductImport($company_id, $local_id, $user_id), $request->file('file'));
+        dd("algo que esea");
     }
 }

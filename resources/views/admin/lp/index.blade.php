@@ -40,6 +40,7 @@
             </div> 
             <button id="btn-add" class="btn btn-outline-success mb-3" type="submit">Agregar</button>  
         </form>      -->
+        <button data-bs-toggle="modal" data-bs-target="#exampleModal3" class="btn btn-outline-warning" >importar productos</button>
     </div>  
 
     <div class="container-fluid">
@@ -115,6 +116,34 @@
                 {!! $local_products->withQueryString()->links() !!}
             </div>
         </div>
+    </div>
+
+        <!-- Modal -->
+    <div class="modal fade" id="exampleModal3" tabindex="-1" aria-labelledby="exampleModal4Label" aria-hidden="false">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModal4Label">Verificacion de Existencia</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Quiso decir : </p>
+                    <p>se encontraron productos con similar nombre ... si el producto ya en esta lista no lo cree y precione el boton VOLVER, caso contrario siga con la creacion del Producto </p>
+                    <form action="{{ route('lp.import') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+        
+                        <input type="file" name="file" class="form-control">
+                        <br>
+                        <button type="submit" class="btn btn-success"><i class="fa fa-file"></i> Import User Data</button>
+                    </form>
+                <a href="{{ route('lp.format') }}">descargar formato</a>
+                </div>
+                <div class="modal-footer">
+                    <a href="" type="button" class="btn btn-secondary">Volver</a>
+                    <button type="button" id=""  class="btn btn-success">Importar Excel</button>
+                </div>
+                </div>
+            </div>
     </div>
         <!-- Modal -->
     <!-- <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

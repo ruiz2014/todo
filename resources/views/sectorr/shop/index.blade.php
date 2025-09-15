@@ -44,15 +44,15 @@
 
         .table_shop thead th{ 
             text-transform: uppercase;
-            background-color: #ddd;
+            background-color: #ffffff67;
         }
 
         .table_shop tbody tr:hover {
-            background-color: rgba(0, 0, 0, 0.2);
+            background-color: rgba(238, 244, 245, 0.3);
         }
 
         .table_shop tbody td:hover {
-            background-color: rgba(0, 0, 0, 0.3);
+            background-color: rgba(206, 200, 200, 0.3);
         }
 
         @media screen and (max-width: 600px) {
@@ -370,6 +370,7 @@
             
 
             term.onclick = function(e){ 
+                term.value = "";
                 const url = `/tool/search?customer=`;
                 if(box.childElementCount > 0){
                     box.innerHTML = "";

@@ -94,6 +94,7 @@ Route::middleware(['auth', 'hasPermission:1,2,3'])->prefix('admin')->group(funct
     Route::get('generado_purchase/{code}', [BuyProductController::class, 'generatedReceipt'])->name('buy-products.generated');
     // Route::resource('buy-products', BuyProductController::class); 
 
+    Route::post('products/import', [ProductController::class, 'productImport'])->name('products.import');
     Route::resource('products', ProductController::class);
 
     Route::post('choose-location', [AdminController::class, 'chooseLocation'])->name('admin.chl');
@@ -137,6 +138,8 @@ Route::group(['middleware' => 'auth'], function(){
     Route::resource('customers', CustomerController::class);
     Route::resource('categories', CategoryController::class);
 
+    Route::post('local_products/import', [LocalProductController::class, 'localImport'])->name('lp.import');
+    Route::get('local_products/formato', [LocalProductController::class, 'format'])->name('lp.format');
     Route::post('lp/register/{code}', [LocalProductController::class, 'register'])->name('lp.register');
     Route::get('lp/entry_action/{code}', [LocalProductController::class, 'entryAction'])->name('lp.entryAction');
     Route::get('local_products/entry', [LocalProductController::class, 'newEntries'])->name('lp.entry');

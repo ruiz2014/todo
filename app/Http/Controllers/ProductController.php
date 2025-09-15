@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use App\Http\Requests\ProductRequest;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use App\Imports\ProductsImport;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Helpers\CompanyHelper;
 
 class ProductController extends Controller
@@ -27,7 +29,7 @@ class ProductController extends Controller
         $query  = Product::select($select);
 
         $result = CompanyHelper::searchAll($query, $text, $join, $where, $orWhere);
-        $products = $result->paginate(2);
+        $products = $result->paginate();
 
         // $products = Product::paginate();
 
@@ -114,5 +116,21 @@ class ProductController extends Controller
 
         return Redirect::route('products.index')
             ->with('success', 'Product deleted successfully');
+    }
+
+    public function productImport(Request $request){
+        
+        $company_id = request()->session()->get('company_id');
+        $user_id = request()->session()->get('user_id');
+
+        $last = Product::where('company_id', $company_id)->latest()->first();
+        $request->validate([
+            'file' => 'required|file|mimes:xlsx,xls,csv'
+        ]);
+
+        Excel::import(new ProductsImport($company_id, $user_id), $request->file('file'));
+        dd($last);
+        return redirect('/')->with('success', 'All good!');
+        
     }
 }

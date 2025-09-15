@@ -100,9 +100,15 @@ class LoginController extends Controller
     }
 
     public function logout(Request $req, Redirector $redirect){        
-        Auth::logout();
-        $req->session()->invalidate();
-        $req->session()->regenerateToken();
-        return $redirect->to('/');
+        if (Auth::check()) {
+            Auth::logout();
+            $req->session()->invalidate();
+            $req->session()->regenerateToken();
+            return $redirect->to('/');
+        } else {
+            session()->flush();
+            return $redirect->to('/');
+        }
+        
     }
 }
