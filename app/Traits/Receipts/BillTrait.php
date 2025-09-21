@@ -2,7 +2,7 @@
 namespace App\Traits\Receipts;
 
 use App\Models\Usuario;
-// use App\Models\Sale\Sale;
+use App\Models\Admin\Product;
 use App\Models\Biller\Attention;
 use App\Models\Biller\TempSale;
 // use App\Traits\Sunat\SunatTrait;
@@ -11,6 +11,7 @@ use App\Traits\BillingToolsTrait;
 use DateTime;
 
 use Greenter\Model\Response\BillResult;
+use Greenter\Model\Sale\Charge;
 use Greenter\Model\Sale\FormaPagos\FormaPagoContado;
 use Greenter\Model\Sale\Invoice;
 use Greenter\Model\Sale\SaleDetail;
@@ -180,34 +181,101 @@ trait BillTrait {
 
         $items = [];
         
-        foreach($data as $item){
-            $igv_base = $item->price / 1.18; //igv del valor unitario
-            $montoBase = $igv_base * $item->amount; //multiplicamos el valor unitario por la cantidad
-            $igv_item = $item->price - $igv_base; //sacamos igv de producto unitario
-            $igv_set = $igv_item * $item->amount; // igv unitario total
-            // $totalANumero = $totalANumero + ($item->price * $item->amount);
-            // dd($igv_item);
+        foreach($data as $item_sale){
+
+            $product_price = Product::where('id', $item_sale->product_id)->value('price');
+
+            $igv_base = $item_sale->price / 1.18; //igv del valor unitario
+            $montoBase = number_format($igv_base * $item_sale->amount, 2,'.', ''); //multiplicamos el valor unitario por la cantidad
+            $igv_item = $item_sale->price - $igv_base; //sacamos igv de producto unitario
+            $igv_set = $igv_item * $item_sale->amount; // igv unitario total
+            
+            $discount = 0;
+
                 $item = (new SaleDetail())
-                ->setCodProducto($item->product_id)
+                ->setCodProducto($item_sale->product_id)
                 ->setUnidad('NIU')
-                ->setDescripcion($item->name)
-                ->setCantidad(intval($item->amount))
-                ->setMtoValorUnitario($igv_base)
-                ->setMtoValorVenta(number_format($montoBase,2,'.', ''))
-                ->setMtoBaseIgv(number_format($montoBase,2,'.', ''))
+                ->setDescripcion($item_sale->name)
+                ->setCantidad(intval($item_sale->amount))
+                ->setMtoValorUnitario($igv_base);
+
+            if($product_price > $item_sale->price)  
+            {
+                $factor = ($product_price - $item_sale->price) / $product_price;
+                $discount = number_format($montoBase * $factor, 2,'.', '');
+ 
+                $item->setDescuentos([
+                    (new Charge())
+                        ->setCodTipo('00') // Catalog. 53
+                        ->setMontoBase($montoBase)
+                        ->setFactor($factor)
+                        ->setMonto($discount)
+                ]);
+            }  
+            // dd($factor, $discount, $montoBase, ($montoBase - $discount), (($montoBase - $discount) * 0.18), (($montoBase - $discount) + ($montoBase - $discount) * 0.18) / $item_sale->amount, ($product_price - ($item_sale->price - 0.2)));
+                
+            $baseDiscount = number_format($montoBase - $discount, 2,'.', '');
+            $setIgv = number_format($baseDiscount * 0.18, 2,'.', '');  
+
+                $item->setMtoValorVenta($baseDiscount)
+                ->setMtoBaseIgv($baseDiscount)
                 ->setPorcentajeIgv(18.00) // 18%
-                ->setIgv($igv_set)
+                ->setIgv($setIgv)
                 ->setTipAfeIgv('10')
-                ->setTotalImpuestos($igv_set)
-                ->setMtoPrecioUnitario(number_format($item->price, 2,'.', ''));
-                // dd($igv_base.'-'.$montoBase.'-'.$igv_item.'-'.$igv_set);
+                ->setTotalImpuestos($setIgv)
+                ->setMtoPrecioUnitario(number_format(($baseDiscount + $setIgv) / $item_sale->amount, 2,'.', ''));
                 array_push($items, $item);
                 $igv_base= 0;
                 $montoBase = 0;
                 $igv_item = 0;
-                $igv_set = 0;   
+                $igv_set = 0;  
+                $discount = 0;
+                $baseDiscount = 0; 
+                $setIgv = 0;
         }
         
         return $items;    
     }
+
+    // public function setItems($data){
+
+    //     $items = [];
+        
+    //     foreach($data as $item){
+    //         $igv_base = $item->price / 1.18; //igv del valor unitario
+    //         $montoBase = $igv_base * $item->amount; //multiplicamos el valor unitario por la cantidad
+    //         $igv_item = $item->price - $igv_base; //sacamos igv de producto unitario
+    //         $igv_set = $igv_item * $item->amount; // igv unitario total
+    //         // $totalANumero = $totalANumero + ($item->price * $item->amount);
+    //         // dd($igv_item);
+    //             $item = (new SaleDetail())
+    //             ->setCodProducto($item->product_id)
+    //             ->setUnidad('NIU')
+    //             ->setDescripcion($item->name)
+    //             ->setCantidad(intval($item->amount))
+    //             ->setMtoValorUnitario($igv_base)
+
+                
+
+
+
+
+
+    //             ->setMtoValorVenta(number_format($montoBase,2,'.', ''))
+    //             ->setMtoBaseIgv(number_format($montoBase,2,'.', ''))
+    //             ->setPorcentajeIgv(18.00) // 18%
+    //             ->setIgv($igv_set)
+    //             ->setTipAfeIgv('10')
+    //             ->setTotalImpuestos($igv_set)
+    //             ->setMtoPrecioUnitario(number_format($item->price, 2,'.', ''));
+    //             // dd($igv_base.'-'.$montoBase.'-'.$igv_item.'-'.$igv_set);
+    //             array_push($items, $item);
+    //             $igv_base= 0;
+    //             $montoBase = 0;
+    //             $igv_item = 0;
+    //             $igv_set = 0;   
+    //     }
+        
+    //     return $items;    
+    // }
 }

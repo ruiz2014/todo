@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Admin\Local;
 use App\Models\Admin\Role;
 use App\Models\Admin\SuperAdmin\Company;
+use App\Models\Admin\Staff\Subscription;
 use App\Models\Biller\PaymentMethod;
 use App\Models\Biller\PaymentLog;
 use App\Models\Biller\Attention;
@@ -109,5 +110,32 @@ class HomeController extends Controller
                 // ->where('')
             // dd($dishes);        
         return $dishes;        
+    }
+
+    public function mierda(){
+        header('Content-Type: application/json'); // Para responder con JSON
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $datos_json = file_get_contents('php://input');
+            $suscripcion = json_decode($datos_json, true);
+            
+            if (isset($suscripcion['endpoint'])) {
+                $endpoint = $suscripcion['endpoint'];
+                $auth = $suscripcion['keys']['auth'] ?? null; // Extrae la clave de autenticación
+                $p256dh = $suscripcion['keys']['p256dh'] ?? null; // Extrae la clave P-256DH
+
+                Subscription::updateOrCreate(
+                    ['user_id' => request()->session()->get('user_id')], // Atributos para buscar el registro
+                    ['company_id' => request()->session()->get('company_id'), 'local_id'=>request()->session()->get('local_id'), 'endpoint'=>$endpoint, 'auth'=>$auth, 'p256dh'=>$p256dh] // Atributos para actualizar/crear
+                );
+                // Subscription::create(['company_id' => request()->session()->get('company_id'), 'local_id'=>request()->session()->get('local_id'), 'user_id'=>request()->session()->get('user_id'), 'endpoint'=>$endpoint, 'auth'=>$auth, 'p256dh'=>$p256dh]);
+                return response()->json(['ok' => 1, 'resp' => $auth]);
+            } else {
+                // Manejar error si no hay datos de suscripción
+                return response()->json(['ok' => 0, 'resp' => 'negativo']);
+                exit();
+            }
+
+        }
     }
 }

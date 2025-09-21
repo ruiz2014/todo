@@ -263,9 +263,6 @@
             @endswitch
 
 
-
-
-
             document.addEventListener('DOMContentLoaded', function() {
                 const bell = document.getElementById('bell');
                 // const socket = io('http://localhost:3000',
@@ -312,9 +309,9 @@
                     // location.reload();
                 });
             })    
-            setTimeout(function(){
-                window.location.reload();
-            }, 4000);
+            // setTimeout(function(){
+            //     window.location.reload();
+            // }, 4000);
     </script>
     @endif   
 </body>

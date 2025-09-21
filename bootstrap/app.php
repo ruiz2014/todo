@@ -17,6 +17,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'hasPermission' => HasPermissionMiddleware::class
         ]);
+        $middleware->validateCsrfTokens(except: [
+			'http://127.0.0.1:8000/mierda',
+		]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

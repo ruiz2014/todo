@@ -201,3 +201,5 @@ Route::post('delete_order_edit', [OperationController::class, 'delete_edit']);
 // Route::post('save', [ShopController::class, 'store'])->name('shop.store');
 
 Route::view('pichi', 'pru');
+
+Route::post('mierda', [HomeController::class, 'mierda']);

@@ -29,7 +29,7 @@ return new class extends Migration
             $table->string('resume', 100)->nullable();
             $table->string('cdr', 5)->nullable();
             $table->unsignedTinyInteger('success')->nullable();
-            $table->string('message', 70)->nullable();
+            $table->text('message')->nullable();
             $table->string('low_motive', 200)->nullable();
             $table->unsignedTinyInteger('low')->default(0);
             $table->unsignedTinyInteger('guide')->default(0);
