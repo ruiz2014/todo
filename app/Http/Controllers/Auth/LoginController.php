@@ -13,6 +13,7 @@ use Illuminate\Routing\Redirector;
 use App\Http\Requests\LoginRequest;
 use App\Models\User;
 use App\Models\Admin\BelongLocal;
+use App\Models\Admin\Staff\Subscription;
 
 class LoginController extends Controller
 {
@@ -52,6 +53,7 @@ class LoginController extends Controller
                 // Session::put('local_id', $local); 
 
                 session(['company_id'=>$company, 'local_id' => $local, 'workplace' => $workplace, 'user_id'=>Auth::user()->id, 'role'=>$rol]);
+                Subscription::where('user_id', $req->session()->get('user_id'))->update(['status' => 1 ]);
                 switch ($rol) {
                     case 1:
                         return redirect()->route('admin'); 
@@ -74,6 +76,7 @@ class LoginController extends Controller
                 $req->session()->regenerate();
 
                 session(['company_id'=>$company, 'local_id' => $local, 'workplace' => $workplace, 'user_id'=>Auth::user()->id, 'role'=>$rol]); 
+                Subscription::where('user_id', $req->session()->get('user_id'))->update(['status' => 1 ]);
                 switch ($rol) {
                     case 1:    
                         return redirect()->route('admin');
@@ -101,6 +104,7 @@ class LoginController extends Controller
 
     public function logout(Request $req, Redirector $redirect){        
         if (Auth::check()) {
+            Subscription::where('user_id', $req->session()->get('user_id'))->update(['status' => 0 ]);
             Auth::logout();
             $req->session()->invalidate();
             $req->session()->regenerateToken();
