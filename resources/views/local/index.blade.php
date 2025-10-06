@@ -17,7 +17,7 @@
                             </span>
 
                              <div class="float-right">
-                                <a href="{{ route('locals.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
+                                <a href="{{ route('locals.create') }}" class="btn btn-outline-primary btn-sm float-right"  data-placement="left">
                                   {{ __('Create New') }}
                                 </a>
                               </div>
@@ -33,18 +33,18 @@
                         <form class="d-flex">
                             <div class="input-group">
                                 <input name="search" class="form-control form-control-sm" value="{{ $text }}" type="search" placeholder="Buscar" aria-label="Search">
-                                <button class="btn btn-primary px-4" type="submit">
+                                <button class="btn btn-outline-primary px-4" type="submit">
                                     <ion-icon name="search"></ion-icon>
                                 </button>
                             </div>
                         </form>
-                        <div class="table-responsive">
+                        <div class="table-responsive mt-3">
                             <table class="table table-striped table-hover">
-                                <thead class="thead">
+                                <thead class="table-info">
                                     <tr>
                                         <th >Nombre</th>
-                                        <th >Phone</th>
-                                        <th >Address</th>
+                                        <th >Telefono</th>
+                                        <th >Direccion</th>
                                         <th></th>
                                     </tr>
                                 </thead>

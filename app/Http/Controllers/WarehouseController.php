@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\WarehouseRequest;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Log;
 use App\Helpers\CompanyHelper;
 
 class WarehouseController extends Controller
@@ -50,7 +51,7 @@ class WarehouseController extends Controller
      */
     public function store(WarehouseRequest $request): RedirectResponse
     {
-        Warehouse::create($request->validated());
+        Warehouse::create($request->validated() + ['company_id'=>$request->session()->get('company_id'), 'user_id'=>$request->session()->get('user_id')]);
 
         return Redirect::route('warehouses.index')
             ->with('success', 'Warehouse created successfully.');
@@ -91,7 +92,7 @@ class WarehouseController extends Controller
     public function update(WarehouseRequest $request, Warehouse $warehouse): RedirectResponse
     {
         try{
-            $warehouse->update($request->validated());
+            $warehouse->update($request->validated() + ['company_id'=>$request->session()->get('company_id'), 'user_id'=>$request->session()->get('user_id')]);
 
             return Redirect::route('warehouses.index')->with('success', 'Warehouse updated successfully');
         

@@ -13,16 +13,19 @@
                     <div class="card-header">
                         
 
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div class="d-flex justify-content-between small-ch align-items-start align-items-sm-center">
 
-                            <span class="card-title">
-                                {{ __('Update') }} User
+                            <span class="">
+                                {{ __('Update') }} Usuario
                             </span>
 
-                             <div class="float-right">
-                                <a class="btn btn-primary btn-sm float-right"  data-placement="left" href="{{ route('register.edit', $user->id) }}">
+                             <div class="float-right d-flex mb-2 mb-sm-0">
+                                <a class="btn btn-outline-primary btn-sm float-right"  data-placement="left" href="{{ route('register.edit', $user->id) }}">
                                     Actualizar Password
                                 </a>
+                                <a href="{{ route('users.index') }}" class="btn btn-outline-secondary btn-sm ms-3"  data-placement="left">
+                                    <ion-icon name="refresh"></ion-icon>
+                                </a> 
                               </div>
                         </div>
                     </div>

@@ -9,7 +9,7 @@
     </div>    
     <div class="col-md-6">    
         <div class="form-group mb-2 mb20">
-            <label for="tipo_doc" class="form-label-2">{{ __('Tipo Doc') }}</label>
+            <label for="tipo_doc" class="form-label-2">{{ __('Tipo Documento') }}</label>
             <select name="tipo_doc" id="" class="form-control-2 line vld draw">
                 <option value="1">DNI</option>
                 <option value="6">RUC</option>
@@ -19,7 +19,7 @@
     </div>        
     <div class="col-md-6">    
         <div class="form-group mb-2 mb20">
-            <label for="document" class="form-label-2">{{ __('Document') }}</label>
+            <label for="document" class="form-label-2">{{ __('Number') }}</label>
             <input type="text" name="document" class="form-control-2 @error('document') is-invalid @enderror" value="{{ old('document', $customer?->document) }}" id="document" placeholder="Document">
             {!! $errors->first('document', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
         </div>

@@ -32,7 +32,7 @@ class WarehouseProductController extends Controller
             $noty_id=request()->session()->get('notification');
             $noty = Notification::find($noty_id);
         }
-
+        /************************QUITAR CATEGORIAS Y LOCALES Y PRODUCTOS TAMBIEN CREO ********** */
         // $url = $request->path();
         // $request->session()->put('url_tool', $url);
         $wh_id = $id;
@@ -42,10 +42,23 @@ class WarehouseProductController extends Controller
         $locals = Local::where('company_id', request()->session()->get('company_id'))->pluck('local_name', 'id');
         $categories = Category::pluck('category_name', 'id');
         $products = Product::select(DB::raw("CONCAT_WS(' ', name,' ',description, ' ',price) AS name"),'id')->pluck('name', 'id');
-        $wh_products = WarehouseProduct::select('warehouse_products.product_id', 'p.name', 'p.description', 'p.price', 'p.category_id', 'warehouse_products.stock')
-                ->join('products as p', 'warehouse_products.product_id', '=', 'p.id')->paginate();
+        
+        $text = $request->search;
 
-        return view('admin.wh_product.index', compact('products', 'categories', 'wh_products', 'wh_id', 'locals', 'noty'));
+        $select = ['warehouse_products.product_id', 'p.name', 'p.description', 'p.price', 'p.category_id', 'warehouse_products.stock', 'c.category_name'];
+        $where = ['warehouse_products.warehouse_id' => ['=', $wh_id] ];
+        $orWhere = ['p.name'=>['like', '%'.$text.'%'], 'p.description' => ['like', '%'.$text.'%'], 'p.price' => ['like', '%'.$text.'%'], 'c.category_name' => ['like', '%'.$text.'%'], 'warehouse_products.stock' => ['like', '%'.$text.'%'] ];
+        $join = ['products as p' => ['warehouse_products.product_id', '=', 'p.id'], 'categories as c' => ['p.category_id', '=', 'c.id'] ];
+
+        $query  = WarehouseProduct::select($select);
+
+        $result = CompanyHelper::searchAll($query, $text, $join, $where, $orWhere);
+        $wh_products = $result->paginate();
+        
+        // $wh_products = WarehouseProduct::select('warehouse_products.warehouse_id', 'warehouse_products.product_id', 'p.name', 'p.description', 'p.price', 'p.category_id', 'warehouse_products.stock')
+        //         ->join('products as p', 'warehouse_products.product_id', '=', 'p.id')->paginate();
+        // dd($wh_products);
+        return view('admin.wh_product.index', compact('products', 'categories', 'wh_products', 'wh_id', 'locals', 'text', 'noty'));
     }
 
     public function newEntries(Request $request){
@@ -65,7 +78,7 @@ class WarehouseProductController extends Controller
 
         $noty = false;
         
-        return view('admin.wh_product.entry', compact('buyProducts', 'text', 'noty'))
+        return view('admin.wh_product.entry', compact('buyProducts', 'text', 'noty', 'wh_id'))
             ->with('i', ($request->input('page', 1) - 1) * $buyProducts->perPage());    
     }
 

@@ -57,11 +57,10 @@
                     <div class="card-body bg-white">
                         <div class="table-responsive">
                             <table class="table table-striped table-hover">
-                                <thead class="thead">
+                                <thead class="table-success">
                                     <tr>
-                                        <th>No</th>
-                                        <th >Name</th>
-                                        <th >Description</th>
+                                        <th >Nombre</th>
+                                        <th >Descripcion</th>
                                         <th >Lote</th>
                                         <th >Fecha de Ingreso</th>
                                         <th >Stock</th>
@@ -71,7 +70,6 @@
                                 <tbody>
                                     @foreach ($wh_products as $product)
                                         <tr>
-                                            <td></td>
                                             <td >{{ $product->name }}</td>
                                             <td >{{ $product->description }}</td>
                                             <td >{{ $product->batch }}</td>
@@ -97,7 +95,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModal2Label">Ingresar Stock</h1>
+                    <h1 class="modal-title fs-5" id="exampleModal2Label">Transferir Stock</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form action="{{ route('whp.transfer') }}" method="POST">  

@@ -19,13 +19,8 @@
                     </div>
 
                     <div class="card-body bg-white">
-                        
                                 <div class="form-group mb-2 mb20">
-                                    <strong>Company Id:</strong>
-                                    {{ $category->company_id }}
-                                </div>
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Category Name:</strong>
+                                    <strong>Nombre Categoria:</strong>
                                     {{ $category->category_name }}
                                 </div>
 

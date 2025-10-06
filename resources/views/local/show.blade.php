@@ -14,30 +14,23 @@
                             <span class="card-title">{{ __('Show') }} Local</span>
                         </div>
                         <div class="float-right">
-                            <a class="btn btn-primary btn-sm" href="{{ route('locals.index') }}"> {{ __('Back') }}</a>
+                            <a class="btn btn-outline-primary btn-sm" href="{{ route('locals.index') }}"> {{ __('Back') }}</a>
                         </div>
                     </div>
 
                     <div class="card-body bg-white">
                         
+
                                 <div class="form-group mb-2 mb20">
-                                    <strong>User Id:</strong>
-                                    {{ $local->user_id }}
-                                </div>
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Company Id:</strong>
-                                    {{ $local->company_id }}
-                                </div>
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Local Name:</strong>
+                                    <strong>Local Nombre:</strong>
                                     {{ $local->local_name }}
                                 </div>
                                 <div class="form-group mb-2 mb20">
-                                    <strong>Phone:</strong>
+                                    <strong>Telefono:</strong>
                                     {{ $local->phone }}
                                 </div>
                                 <div class="form-group mb-2 mb20">
-                                    <strong>Address:</strong>
+                                    <strong>Direccion:</strong>
                                     {{ $local->address }}
                                 </div>
 

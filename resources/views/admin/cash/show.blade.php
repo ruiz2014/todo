@@ -19,8 +19,10 @@
                     </div>
 
                     <div class="card-body bg-white">
+                    @if($cash->status == 1)    
                         <form action="{{ route('cashes.end', $cash->id) }}" method="POST">
                             @csrf
+                    @endif        
                                 <div class="form-group mb-2 mb20">
                                     <strong>Fecha de la Apertura :</strong>
                                     {{ $cash->created_at }}
@@ -42,23 +44,105 @@
                                     <strong class="show-strong">Saldo Apertura:</strong>
                                     {{ $cash->amount }} 
                                 </div>
+
+                            @foreach($payAll as $pa)
                                 <div class="form-group mb-2 mb20">
-                                    <strong class="show-strong">Saldo Contado:</strong>
-                                    {{ $contado }}
+                                    <strong class="show-strong">Saldo {{ $pa->name }}:</strong>
+                                    {{ $pa->total }}
                                 </div>
+                            @endforeach  
+                            
                                 <div class="form-group mb-2 mb20">
-                                    <strong class="show-strong">Saldo Yapes:</strong>
-                                    {{ $yape }}
+                                    <strong class="show-strong">En Credito :</strong>
+                                    {{ $payCredit->total }}
                                 </div>
+
+                                <div class="form-group mb-2 mb20">
+                                    <strong class="show-strong">Dinero Entrada :</strong>
+                                    {{ $input }}
+                            @if(!$indetails->isEmpty())  
+                                    <div class="accordion" id="accordionExample">
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header">
+                                            <button style="padding:10px 20px" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseIn" aria-expanded="true" aria-controls="collapseOne">
+                                                <span class="badge text-bg-success">Ver detalle de Entradas</span>
+                                            </button>
+                                            </h2>
+                                            <div id="collapseIn" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                                                <div class="accordion-body">
+                                                    <ol class="list-group list-group-numbered">
+                                                    @foreach($indetails as $idet)        
+                                                        <li class="list-group-item d-flex justify-content-between align-items-start">
+                                                            <div class="ms-2 me-auto">
+                                                            <div class="fw-bold">Monto :</div>
+                                                            {{ $idet->observation }}
+                                                            </div>
+                                                            <span class="badge text-bg-primary rounded-pill">{{ $idet->io_amount }}</span>
+                                                        </li>
+                                                    @endforeach    
+                                                    </ol>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                            @endif
+                                </div>
+
+                                <div class="form-group mb-2 mb20">
+                                    <strong class="show-strong">Dinero Salida:</strong>
+                                    {{ $output }}
+                                @if(!$outdetails->isEmpty())    
+                                     <div class="accordion" id="accordionExample">
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header">
+                                            <button style="padding:10px 20px" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOut" aria-expanded="true" aria-controls="collapseOne">
+                                                <span class="badge text-bg-secondary">Ver detalle de Salidas</span>
+                                            </button>
+                                            </h2>
+                                            <div id="collapseOut" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                                                <div class="accordion-body">
+                                                    <ol class="list-group list-group-numbered">
+                                                    @foreach($outdetails as $outdet)          
+                                                        <li class="list-group-item d-flex justify-content-between align-items-start">
+                                                            <div class="ms-2 me-auto">
+                                                            <div class="fw-bold">Monto :</div>
+                                                            {{ $outdet->observation }}
+                                                            </div>
+                                                            <span class="badge text-bg-primary rounded-pill">{{ $outdet->io_amount }}</span>
+                                                        </li>
+                                                    @endforeach 
+                                                    </ol>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif    
+                                </div>
+                                
                                 <div class="form-group mb-2 mb20">
                                     <strong class="show-strong">En Caja :</strong>
-                                    {{ $cash->amount + $yape + $contado }}
+                                    {{ ($cash->amount + $total + $input) - $output}}
+                                </div>
+
+                                <div class="form-group mb-2 mb20">
+                                    <strong class="show-strong">Por Cobrar :</strong>
+                                    {{ $payCredit->total }}
                                 </div>
                                 <hr>
+                    @if($cash->status == 0) 
                                 <div class="form-group mb-2 mb20">
                                     <strong class="show-strong">Efectivo Real :</strong>
-                                    <input type="number" name="amount" class="form-control">
+                                    {{ $cash->close_amount }}
+                                    <br>
+                                    <strong class="show-strong">Motivo :</strong>
+                                    <span>{{ $cash->observation }}</span>
                                 </div>
+                    @else   
+                                 <div class="form-group mb-2 mb20">
+                                    <strong class="show-strong">Efectivo Real :</strong>
+                                    <input type="number" name="amount" class="form-control">
+                                </div>  
+
                                 <div class="form-group mb-2 mb20">
                                     <strong class="show-strong">Observacion :</strong>
                                     <textarea name="observation" rows="2" class="form-control"></textarea>
@@ -69,6 +153,7 @@
                                     <button type="submit" class="btn btn-outline-success">Cerrar</button>
                                 </div>
                         </form>
+                    @endif    
                     </div>
                 </div>
             </div>

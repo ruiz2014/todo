@@ -22,11 +22,9 @@ class WarehouseRequest extends FormRequest
     public function rules(): array
     {
         return [
-			'user_id' => 'required',
 			'warehouse_name' => 'required|string',
 			'phone' => 'string',
 			'address' => 'string',
-			'company_id' => 'required',
         ];
     }
 }

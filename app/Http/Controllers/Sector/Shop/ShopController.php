@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Sector\Shop;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 
 use App\Models\Biller\PaymentMethod;
 use App\Models\Admin\Product;
@@ -95,13 +96,16 @@ class ShopController extends Controller
             "payMethod" => "required_if:type_payment,1",
             
         ];
+
         // $mensajes =[
         // ]; 
 
         // $validator = Validator::make($request->all(), $campos);
         Validator::make($request->all(), $campos)->validate(); //DEVUELVE ERROR 403
-
+        
         try{
+            // dd($request,$request->input('payMethod'));
+            $payMethod = is_array($request->input('payMethod')) ? true : false;
 
             if (TempSale::where('company_id', $company)->where('code', $request->code)->exists()) {
 
@@ -114,14 +118,16 @@ class ShopController extends Controller
                         return !is_null($value);
                     });
 
-                    if(count($filteredArray) !== count($request->input('payMethod'))){
-                    /**SI ES DIFERENTE MP CON VALUE-MP */
-                    
-                        // dd($total, $total_provi, $filteredArray, $request->input('payMethod'), array_combine($request->input('payMethod'), $filteredArray), $request, count($filteredArray), count($request->input('payMethod')));
-                        // return redirect()->route('pay.show', ['order'=> $request->code])->with('danger', 'Elegio formas de pagos que no coninciden con monto total');
-                    dd("joder1");
+                    if($payMethod){
+                        if(count($filteredArray) !== count($request->input('payMethod'))){
+                        /**SI ES DIFERENTE MP CON VALUE-MP */
+                        
+                            // dd($total, $total_provi, $filteredArray, $request->input('payMethod'), array_combine($request->input('payMethod'), $filteredArray), $request, count($filteredArray), count($request->input('payMethod')));
+                            // return redirect()->route('pay.show', ['order'=> $request->code])->with('danger', 'Elegio formas de pagos que no coninciden con monto total');
+                            dd("joder1");
+                        }
                     }
-            
+                    
                     $total_provi = (float)array_sum($filteredArray);
                     $total = TempSale::select(DB::raw('SUM(price * amount) as total'))->where('code', $request->code)->value('total');
                     
@@ -132,11 +138,10 @@ class ShopController extends Controller
                         dd("joder2");
                         // return redirect()->route('pay.show', ['order'=> $request->code])->with('danger', 'Elegio formas de pagos que no coninciden con monto total');
                     }
-
-                    $combinado = array_combine($request->input('payMethod'), $filteredArray);
+                
+                    $combinado = $payMethod == false ? 1 : array_combine($request->input('payMethod'), $filteredArray);
                 }
-
-                // dd($total, $total_provi, $filteredArray, $request->input('payMethod'), array_combine($request->input('payMethod'), $filteredArray), $request, count($filteredArray), count($request->input('payMethod')));
+                // dd($request,$request->input('payMethod'),  $filteredArray, count($filteredArray),count($request->input('payMethod')));
                 $numeration = $this->setCorrelative($request->receipt); 
                 $attention_id = Attention::create([
                     'local_id'=> Session::get('local_id'),
@@ -152,20 +157,31 @@ class ShopController extends Controller
                     'numeration'=> $numeration,
                 ]);
                 /*AQUI DEBERIA VER UN ESTADO PARA VER LA CASH*/
-                TempSale::where('code', $request->code)->update(['customer_id'=>$request->customer_id]);
+                TempSale::where('code', $request->code)->update(['customer_id'=>$request->customer_id, 'type_payment'=>$request->type_payment]);
                 
                 if($attention_id->id ){
 
                     if($request->type_payment == 1){
-                        foreach($combinado as $key => $val){
+                        if($payMethod){
+                            foreach($combinado as $key => $val){
+                                PaymentLog::create([
+                                    'company_id' => $company,
+                                    'local_id' => Session::get('local_id'),
+                                    'attention_id'=>$attention_id->id,
+                                    'method_id'=>$key,
+                                    'total'=>$val
+                                ]);
+                            }
+                        }else{
                             PaymentLog::create([
-                                'company_id' => $company,
-                                'local_id' => Session::get('local_id'),
-                                'attention_id'=>$attention_id->id,
-                                'method_id'=>$key,
-                                'total'=>$val
+                                    'company_id' => $company,
+                                    'local_id' => Session::get('local_id'),
+                                    'attention_id'=>$attention_id->id,
+                                    'method_id'=>$request->payMethod,
+                                    'total'=>$total
                             ]);
                         }
+                        
                     }else{
                         
                         CreditLog::create([

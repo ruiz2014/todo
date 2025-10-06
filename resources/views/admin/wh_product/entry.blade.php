@@ -22,8 +22,8 @@
                             </span>
 
                              <div class="float-right">
-                                <a href="" class="btn btn-primary btn-sm float-right"  data-placement="left">
-                                  
+                                <a href="{{ route('whp.show', $wh_id) }}" class="float-end btn btn-outline-secondary btn-sm ms-3"  data-placement="left">
+                                    <ion-icon name="refresh"></ion-icon>
                                 </a>
                               </div>
                         </div>
@@ -34,14 +34,14 @@
                         <form class="d-flex">
                                 <div class="input-group">
                                     <input name="search" class="form-control form-control-sm" value="{{ $text }}" type="search" placeholder="Buscar" aria-label="Search">
-                                    <button class="btn btn-primary px-4" type="submit">
+                                    <button class="btn btn-outline-success px-4" type="submit">
                                         <ion-icon name="search"></ion-icon>
                                     </button>
                                 </div>
                         </form>
-                        <div class="table-responsive">
+                        <div class="table-responsive mt-3">
                             <table class="table table-striped table-hover">
-                                <thead class="thead">
+                                <thead class="table-success">
                                     <tr>
                                         <th >Proveedor</th>
                                         <th >Document</th>

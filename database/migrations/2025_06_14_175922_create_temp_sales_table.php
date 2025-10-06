@@ -21,6 +21,7 @@ return new class extends Migration
             $table->unsignedInteger('product_id');
             $table->double('price', 8,2);
             $table->decimal('amount', 8, 2);
+            $table->unsignedTinyInteger('type_payment')->default(1); 
             $table->text('note')->nullable();
             $table->unsignedTinyInteger('status')->nullable()->default(1);
             $table->timestamps();

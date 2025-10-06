@@ -28,7 +28,7 @@ class localProductController extends Controller
         // dd();
         $select = ['local_products.product_id', 'p.name', 'p.description', 'p.price', 'p.category_id', 'c.category_name', 'local_products.stock'];
         $where = ['local_products.local_id'=> ['=', $request->session()->get('local_id')]];
-        $orWhere = ['p.name'=>['like', '%'.$text.'%'], 'p.description' => ['like', '%'.$text.'%'], 'p.price' => ['like', '%'.$text.'%'], 'c.category_name' => ['like', '%'.$text.'%']];
+        $orWhere = ['p.name'=>['like', '%'.$text.'%'], 'p.description' => ['like', '%'.$text.'%'], 'p.price' => ['like', '%'.$text.'%'], 'c.category_name' => ['like', '%'.$text.'%'], 'local_products.stock' => ['like', '%'.$text.'%'] ];
         $join = ['products as p' => ['local_products.product_id', '=', 'p.id'], 'categories as c' => ['p.category_id', '=', 'c.id'] ];
 
 

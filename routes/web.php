@@ -53,12 +53,15 @@ Route::get('quotes/keep/{order}', [QuoteController::class, 'keep'])->name('quote
 Route::get('quotes/convert/{order}', [QuoteController::class, 'convert'])->name('quotes.convert');
 Route::resource('quotes', QuoteController::class);
 
-Route::get('cashes/seller/{user}', [CashController::class, 'getSeller']);
+Route::get('cashes/seller/{user}', [CashController::class, 'getSeller']); //<--- AJAX
+Route::get('cashes/display/{cash}', [CashController::class, 'getCash']);
 Route::get('cashes/close/{id}', [CashController::class, 'close'])->name('cashes.close');
+Route::post('cashes/io_cash', [CashController::class, 'ioCash'])->name('cashes.iocash');
 Route::post('cashes/end_cash/{id}', [CashController::class, 'endCash'])->name('cashes.end');
 
 Route::resource('cashes', CashController::class);
 // Route::get('attention', [AttentionController::class, 'index'])->name('attention.index');
+Route::post('credits/total', [CreditController::class, 'storeTotal'])->name('credits.total');
 Route::resource('credits', CreditController::class);
 
 Route::middleware(['auth', 'hasPermission:1,2,3'])->prefix('admin')->group(function () {
@@ -154,7 +157,7 @@ Route::group(['middleware' => 'auth'], function(){
 
     Route::get('generado/{order}', [ShopController::class, 'generatedReceipt'])->name('shop.generated');
 
-    Route::get('restaurant', [RestaurantController::class])->name('j2');
+    Route::get('restaurant', [RestaurantController::class, 'index'])->name('j2');
     Route::get('hotel', [HotelController::class, 'index'])->name('j3');
 
 

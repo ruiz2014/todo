@@ -12,14 +12,14 @@
                     <div class="mb-3">
                         <label for="start" class="form-label">Fecha Inicial</label>
                         <input name="start" type="date" class="form-control" id="start" aria-describedby="">
-                        <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+                        <!-- <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div> -->
                     </div>
                     <div class="mb-3">
                         <label for="end" class="form-label">Fecha Final</label>
                         <input name="end" type="date" class="form-control" id="end">
                     </div>
                 </form>
-                <a href="#" onclick="document.getElementById('myForm').submit()">Enviar</a>
+                <a href="#" class="btn btn-outline-dark" onclick="document.getElementById('myForm').submit()">Enviar</a>
             </div>
         </div>
     </div>

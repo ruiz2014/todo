@@ -46,14 +46,14 @@
                         <form class="d-flex">
                             <div class="input-group">
                                 <input name="search" class="form-control form-control-sm" value="{{ $text }}" type="search" placeholder="Buscar" aria-label="Search">
-                                <button class="btn btn-outline-success px-3" type="submit">
+                                <button class="btn btn-outline-dark px-3" type="submit">
                                     <ion-icon name="search"></ion-icon>
                                 </button>
                             </div>
                         </form>
-                        <div class="table-responsive">
+                        <div class="table-responsive mt-3">
                             <table class="table table-striped table-hover">
-                                <thead class="thead">
+                                <thead class="table-dark">
                                     <tr>
                                         <th >Identificador</th>
                                         <th >Cliente</th>

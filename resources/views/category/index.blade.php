@@ -17,7 +17,7 @@
                             </span>
 
                              <div class="float-right">
-                                <a href="{{ route('categories.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
+                                <a href="{{ route('categories.create') }}" class="btn btn-outline-primary btn-sm float-right"  data-placement="left">
                                   {{ __('Create New') }}
                                 </a>
                               </div>
@@ -33,17 +33,16 @@
                         <form class="d-flex">
                             <div class="input-group">
                                 <input name="search" class="form-control form-control-sm" value="{{ $text }}" type="search" placeholder="Buscar" aria-label="Search">
-                                <button class="btn btn-primary px-4" type="submit">
+                                <button class="btn btn-outline-primary px-4" type="submit">
                                     <ion-icon name="search"></ion-icon>
                                 </button>
                             </div>
                         </form>
-                        <div class="table-responsive">
+                        <div class="table-responsive mt-3">
                             <table class="table table-striped table-hover">
-                                <thead class="thead">
+                                <thead class="table-warning">
                                     <tr>
-                                        <th >Category Name</th>
-                                        <th >Company Id</th>
+                                        <th >Name</th>
                                         <th></th>
                                     </tr>
                                 </thead>
@@ -51,7 +50,6 @@
                                     @foreach ($categories as $category)
                                         <tr>
                                             <td >{{ $category->category_name }}</td>
-                                            <td >{{ $category->company_id }}</td>
                                             <td>
                                                 <form action="{{ route('categories.destroy', $category->id) }}" method="POST">
                                                     <a class="btn btn-sm btn-primary xs-margin" href="{{ route('categories.show', $category->id) }}"><ion-icon name="eye"></ion-icon></a>

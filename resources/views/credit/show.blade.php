@@ -1,71 +1,138 @@
 @extends('layouts.app')
 
 @section('template_title')
-    {{ $attention->name ?? __('Show') . " " . __('Attention') }}
+    Attentions
 @endsection
 
 @section('content')
-    <section class="content container-fluid">
+    <div class="container-fluid">
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-sm-12">
                 <div class="card">
-                    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
-                        <div class="float-left">
-                            <span class="card-title">{{ __('Show') }} Attention</span>
-                        </div>
-                        <div class="float-right">
-                            <a class="btn btn-primary btn-sm" href="{{ route('credits.index') }}"> {{ __('Back') }}</a>
+                    <div class="card-header">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+
+                            <span id="card_title">
+                                {{ __('Attentions') }} Detalladas
+                            </span>
+
+                             <div class="float-right">
+                                <a href="{{ url()->previous() }}" class="btn btn-outline-secondary btn-sm float-right"  data-placement="left">
+                                    <ion-icon name="refresh"></ion-icon>
+                                </a>
+                              </div>
                         </div>
                     </div>
+                    @if ($message = Session::get('success'))
+                        <div class="alert alert-success m-4">
+                            <p>{{ $message }}</p>
+                        </div>
+                    @endif
 
                     <div class="card-body bg-white">
-                        
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Local Id:</strong>
-                                    {{ $attention->local_id }}
-                                </div>
+                        <form class="d-flex">
+                            <div class="input-group">
+                                <input name="search" class="form-control form-control-sm" value="{{ $text }}" type="search" placeholder="Buscar" aria-label="Search">
+                                <button class="btn btn-outline-info px-4" type="submit">
+                                    <ion-icon name="search"></ion-icon>
+                                </button>
+                            </div>
+                        </form>
+                        <div class="table-responsive mt-3">
+                            <table class="table table-striped table-hover">
+                                <thead class="table-info">
+                                    <tr>
+                                        <th >Cliente</th>
+                                        <th >Total</th>
+                                        <th>Fecha</th>
+                                        <th >Vendedor</th>
+                                        <th >Identificador</th>
+                                        <th >Estado</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($attentions as $attention)
+                                        <tr>
 
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Customer Id:</strong>
-                                    {{ $attention->customer_id }}
-                                </div>
-
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Type Payment:</strong>
-                                    {{ $attention->type_payment }}
-                                </div>
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Total:</strong>
-                                    {{ $attention->total }}
-                                </div>
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Seller:</strong>
-                                    {{ $attention->seller }}
-                                </div>
-
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Identifier:</strong>
-                                    {{ $attention->identifier }}
-                                </div>
-
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Message:</strong>
-                                    {{ $attention->message }}
-                                </div>
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Low Motive:</strong>
-                                    {{ $attention->low_motive }}
-                                </div>
-
-                             
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Status:</strong>
-                                    {{ $attention->status }}
-                                </div>
-
+                                            <td >{{ $attention->name }}</td>
+                                            <td >{{ number_format($attention->total, 2, '.', ' ') }}</td>
+                                            <td >{{ $attention->created_at }}</td>
+                                            <td >{{ $attention->seller }}</td>
+                                            <td >{{ $attention->identifier }}</td>
+                                            <td >{{ $attention->status }}</td>
+                                            <td>
+                                                <a class="btn btn-sm btn-primary xs-margin" href="{{ route('shop.generated', $attention->document_code) }}"><ion-icon name="eye"></ion-icon></a>
+                                                <a class="btn btn-sm btn-success btn-edit" id="{{ $attention->id }}" href="" data-bs-toggle="modal" data-bs-target="#exampleModal3"><ion-icon name="create"></ion-icon></a>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
+                {!! $attentions->withQueryString()->links() !!}
             </div>
         </div>
-    </section>
+        <!-- Modal-3 -->
+        <div class="modal fade" id="exampleModal3" tabindex="-1" aria-labelledby="exampleModal3Label" >
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-info text-white">
+                        <h1 class="modal-title fs-5" id="exampleModal3Label">Actualizar Pago</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                     
+                    <form method="POST" action="{{ route('credits.store') }}"  role="form">
+                        @csrf 
+                        <div class="modal-body">
+                            <div class="col-md-12 mt20 mt-2">
+                                <div class="row padding-1 p-1">
+                                    <div class="col-md-12">
+                                        <div class="form-check">
+                                            <input class="form-check-input" name="type_payment" type="checkbox" value="1" id="myCheckbox">
+                                            <label class="form-check-label" for="myCheckbox">
+                                                Esta venta fue Cancelada 
+                                            </label>
+                                        </div>
+                                        <input type="hidden" id="sale_id" name="sale_id" value="">
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div class="form-group mb-4">
+                                            <label for="methods" class="form-label-2">{{ __('Metodo de Pago') }}</label>
+                                            <select name="methods" id="methods" class="form-control-2 mt-1 line vld draw">
+                                                <option value="">Seleccione metodo</option> 
+                                            @foreach($methods as $key => $value)
+                                                <option value="{{ $key }}" >{{ $value }}</option>
+                                            @endforeach   
+
+                                            </select>
+                                            {!! $errors->first('methods', '<div class="invalid-feedback d-block" role="alert"><strong>:message</strong></div>') !!}  
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-12 mt20 mt-2">
+                                        <button type="submit" id="mierda_b" class="btn btn-primary">{{ __('Submit') }}</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    
+                    </form>
+                </div> 
+            </div>
+        </div>
+    </div>
+@endsection
+@section('script')
+    <script>
+        $('input:checkbox').prop('checked', false);
+        $('.btn-edit').click(function(){
+            let sale_id = $(this).attr("id");
+            $('#sale_id').val(sale_id);
+        })
+    </script>
 @endsection

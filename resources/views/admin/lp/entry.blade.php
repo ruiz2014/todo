@@ -13,14 +13,14 @@
                         <div style="display: flex; justify-content: space-between; align-items: center;">
 
                             <span id="card_title">
-                                {{ __('Buy Products') }}
+                                {{ __('To register') }}
                             </span>
 
-                             <div class="float-right">
-                                <a href="" class="btn btn-primary btn-sm float-right"  data-placement="left">
-                                  
+                            <div class="float-right">
+                                <a href="{{ url()->previous() }}" class="btn btn-outline-secondary btn-sm float-right"  data-placement="left">
+                                    <ion-icon name="refresh"></ion-icon>
                                 </a>
-                              </div>
+                            </div>
                         </div>
                     </div>
                     @if ($message = Session::get('success'))
@@ -38,12 +38,12 @@
                                     </button>
                                 </div>
                         </form>
-                        <div class="table-responsive">
+                        <div class="table-responsive mt-3">
                             <table class="table table-striped table-hover">
-                                <thead class="thead">
+                                <thead class="table-dark">
                                     <tr>
                                         <th >Proveedor</th>
-                                        <th >Document</th>
+                                        <th >Identificador</th>
                                         <th >Total</th>
                                         <th >Fecha</th>
                                         <th >Entrega</th>

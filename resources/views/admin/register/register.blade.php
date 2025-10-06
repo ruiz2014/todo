@@ -5,7 +5,23 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">{{ __('Register') }}</div>
+                <div class="card-header">
+                    
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                            <span id="card_title">
+                                {{ __('Register') }}
+                            </span>
+
+                            <div class="float-right">
+                                <a href="{{ url()->previous() }}" class="btn btn-outline-secondary btn-sm ms-3"  data-placement="left">
+                                    <ion-icon name="refresh"></ion-icon>
+                                </a> 
+                            </div>
+                    </div>
+
+                </div>
 
                 <div class="card-body">
                     <form method="POST" action="{{ route('register.store') }}">
@@ -63,7 +79,7 @@
 
                         <div class="row mb-0">
                             <div class="col-md-6 offset-md-4">
-                                <button type="submit" class="btn btn-primary">
+                                <button type="submit" class="btn btn-outline-primary">
                                     {{ __('Register') }}
                                 </button>
                             </div>

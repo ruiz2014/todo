@@ -23,7 +23,7 @@
             <p>{{ $message }}</p>
         </div>
     @endif
-        <a href="{{ route('whp.entry') }}" class="btn btn-outline-success" >Nuevas Entradas de Mercansia</a> 
+        <a href="{{ route('whp.entry') }}" class="btn btn-outline-success" >Nuevas Entradas de Mercancia</a> 
     </div>
     <div class="container-fluid">
         <div class="row">
@@ -39,8 +39,8 @@
                              <div class="float-right">
                                 <!-- <a href="route('whp.temp') }}" class="btn btn-primary btn-sm float-right"  data-placement="left"> -->
                                    <!-- __('Create New') }} -->
-                                </a>
-                                <a href="" id=""  class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModal3"><ion-icon name="cart-outline"></ion-icon>Crear Producto</a>
+                                <!-- </a> -->
+                                <!-- <a href="" id=""  class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModal3"><ion-icon name="cart-outline"></ion-icon>Crear Producto</a> -->
                               </div>
                         </div>
                     </div>
@@ -56,15 +56,22 @@
                     @endif
 
                     <div class="card-body bg-white">
-                        <div class="table-responsive">
+                        <form class="d-flex">
+                                <div class="input-group">
+                                    <input name="search" class="form-control form-control-sm" value="{{ $text }}" type="search" placeholder="Buscar" aria-label="Search">
+                                    <button class="btn btn-success px-4" type="submit">
+                                        <ion-icon name="search"></ion-icon>
+                                    </button>
+                                </div>
+                        </form>
+                        <div class="table-responsive mt-3">
                             <table class="table table-striped table-hover">
-                                <thead class="thead">
-                                    <tr>
-                                        <th>No</th>
-                                        <th >Name</th>
-                                        <th >Description</th>
-                                        <th >Price</th>
-                                        <th >Category Id</th>
+                                <thead class="table-success">
+                                    <tr>    
+                                        <th >Nombre</th>
+                                        <th >Descripcion</th>
+                                        <th >Precio</th>
+                                        <th >Categoria</th>
                                         <th >Stock</th>
                                         <th></th>
                                     </tr>
@@ -72,11 +79,10 @@
                                 <tbody>
                                     @foreach ($wh_products as $product)
                                         <tr>
-                                            <td></td>
                                             <td >{{ $product->name }}</td>
                                             <td >{{ $product->description }}</td>
                                             <td >{{ $product->price }}</td>
-                                            <td >{{ $product->category_id }}</td>
+                                            <td >{{ $product->category_name}}</td>
                                             <td >{{ $product->stock }}</td>
                                             <td>
                                             <a class="btn btn-outline-primary" href="{{ route('whp.view', $product->product_id) }}"><ion-icon name="eye"></ion-icon>Ver historial</a>

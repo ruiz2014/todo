@@ -107,7 +107,7 @@
         <div class="row padding-1 p-1 mb-3">
 
             <div class="col-md-6">
-                <label for="" style="width:100%;">Productos</label>
+                <label for="" style="width:100%;">{{ __('Provider') }} </label>
                 <select id="provider_id" name="provider_id" class="form-select" aria-label="Default select example" style="width:100%;">
                     <option value="">Seleccione Proveedor</option>     
                     @foreach($providers as $id => $provi)
@@ -144,7 +144,7 @@
             <div class="col-md-4 mt-3">
                 <div class="form-group mb-2 mb20">
                     <label for="" class="form-label-2">{{ __('Document') }}</label>
-                    <input type="text" min="1" name="document" class="form-control-2 @error('document') is-invalid @enderror" value="" placeholder="3.00">
+                    <input type="text" min="1" name="document" class="form-control-2 @error('document') is-invalid @enderror" value="" placeholder="F001-006">
                     {!! $errors->first('document', '<div class="invalid-feedback d-block" role="alert"><strong>:message</strong></div>') !!}
                 </div>
             </div>

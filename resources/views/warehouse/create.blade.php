@@ -11,7 +11,18 @@
 
                 <div class="card card-default">
                     <div class="card-header">
-                        <span class="card-title">{{ __('Create') }} Warehouse</span>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+
+                            <span class="card-title">
+                                {{ __('Create') }} Almacen
+                            </span>
+
+                             <div class="float-right">
+                                <a href="{{ url()->previous() }}" class="btn btn-outline-secondary btn-sm ms-3"  data-placement="left">
+                                    <ion-icon name="refresh"></ion-icon>
+                                </a> 
+                              </div>
+                        </div>
                     </div>
                     <div class="card-body bg-white">
                         <form method="POST" action="{{ route('warehouses.store') }}"  role="form" enctype="multipart/form-data">

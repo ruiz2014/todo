@@ -22,8 +22,19 @@
         </div>
     @endif
 
+
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
     <div class="container-fluid mb-3">
-         <a href="{{ route('lp.entry') }}" class="btn btn-outline-success" >Nuevas Entradas de Mercansia</a>
+         <a href="{{ route('lp.entry') }}" class="btn btn-outline-success xs-margin" >Nuevas Entradas de Mercancia</a>
         <!-- <form id="prue" action="oute('lp.store') }}" method="POST">
                 @csrf    
             <div class="row padding-1 p-1 mb-3">
@@ -62,36 +73,27 @@
                         </div>
                     </div>
 
-                    @if ($errors->any())
-                        <div class="alert alert-danger">
-                            <ul>
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
 
                     <div class="card-body bg-white">
                         <form class="d-flex">
                                 <div class="input-group">
                                     <input name="search" class="form-control form-control-sm" value="{{ $text }}" type="search" placeholder="Buscar" aria-label="Search">
-                                    <button class="btn btn-primary px-4" type="submit">
+                                    <button class="btn btn-success px-4" type="submit">
                                         <ion-icon name="search"></ion-icon>
                                     </button>
                                 </div>
                         </form>
-                        <div class="table-responsive">
+                        <div class="table-responsive mt-3">
                             
                             <table class="table table-striped table-hover">
-                                <thead class="thead">
+                                <thead class="table-success">
                                     <tr>
                                         <th >Nombre</th>
                                         <th >Descripcion</th>
                                         <th >Precio</th>
                                         <th >Categoria</th>
                                         <th >Stock</th>
-                                        <th></th>
+                                        
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -102,10 +104,7 @@
                                             <td >{{ $product->price }}</td>
                                             <td >{{ $product->category_name}}</td>
                                             <td >{{ $product->stock }}</td>
-                                            <td>
-                                                <a class="btn btn-sm btn-primary xs-margin" href=""><ion-icon name="eye"></ion-icon></a>
-                                                <!-- <a href="" id="product->product_id }}%$product->name}}"  class="xs-margin btn btn-sm btn-warning opt-prod" data-bs-toggle="modal" data-bs-target="#exampleModal"><ion-icon name="cart-outline"></ion-icon></a> -->
-                                            </td>
+                                            
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -123,24 +122,24 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModal4Label">Verificacion de Existencia</h1>
+                    <h1 class="modal-title fs-5" id="exampleModal4Label">Importar Productos</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Quiso decir : </p>
-                    <p>se encontraron productos con similar nombre ... si el producto ya en esta lista no lo cree y precione el boton VOLVER, caso contrario siga con la creacion del Producto </p>
+                    <p>Pasos para importar : </p>
+                    <p>Primero descargue este formato de excel <a href="{{ route('lp.format') }}">descargar formato</a>, esto le descargar un formato en excel que debera ser llenado 
+                        con la lista de productos y demas datos que en ella se le pida .....No modifigue la estructura de este archivo
+                        luego subalo al servidor. <br>
+                        Esta opcion solo sera posible ejecutarlo una vez ... ! OJO ¡</p>
                     <form action="{{ route('lp.import') }}" method="POST" enctype="multipart/form-data">
                         @csrf
-        
                         <input type="file" name="file" class="form-control">
                         <br>
                         <button type="submit" class="btn btn-success"><i class="fa fa-file"></i> Import User Data</button>
                     </form>
-                <a href="{{ route('lp.format') }}">descargar formato</a>
                 </div>
                 <div class="modal-footer">
                     <a href="" type="button" class="btn btn-secondary">Volver</a>
-                    <button type="button" id=""  class="btn btn-success">Importar Excel</button>
                 </div>
                 </div>
             </div>

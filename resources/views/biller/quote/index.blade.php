@@ -17,7 +17,7 @@
                             </span>
 
                              <div class="float-right">
-                                <a href="{{ route('quotes.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
+                                <a href="{{ route('quotes.create') }}" class="btn btn-outline-dark btn-sm float-right"  data-placement="left">
                                   {{ __('Create New') }}
                                 </a>
                               </div>
@@ -33,22 +33,21 @@
                         <form class="d-flex">
                             <div class="input-group">
                                 <input name="search" class="form-control form-control-sm" value="{{ $text }}" type="search" placeholder="Buscar" aria-label="Search">
-                                <button class="btn btn-primary px-4" type="submit">
+                                <button class="btn btn-outline-dark px-4" type="submit">
                                     <ion-icon name="search"></ion-icon>
                                 </button>
                             </div>
                         </form>
-                        <div class="table-responsive">
+                        <div class="table-responsive mt-3">
                             <table class="table table-striped table-hover">
-                                <thead class="thead">
+                                <thead class="table-dark">
                                     <tr>
                                         <th >Cliente</th>
-                                        <th >Identifier</th>
-                                        <th >Currency</th>
+                                        <th >Identificador</th>
+                                        <th >Moneda</th>
                                         <th >Total</th>
-                                        <th >Document Code</th>
-                                        <th >Message</th>
-                                        <th >Status</th>
+                                        <th >Codigo</th>
+                                        <th >Estado</th>
                                         <th></th>
                                     </tr>
                                 </thead>
@@ -57,16 +56,13 @@
                                         <tr>
                                             <td >{{ $quote->name }}</td>
                                             <td >{{ $quote->identifier }}</td>
-                                            <td >{{ $quote->currency }}</td>
+                                            <td >Soles</td>
                                             <td >{{ $quote->total }}</td>
                                             <td >{{ $quote->document_code }}</td>
-                                            <td >{{ $quote->message }}</td>
                                             <td >{{ $quote->status }}</td>
                                             <td>
                                                 <a class="btn btn-sm btn-primary xs-margin" href="{{ route('quotes.generated', $quote->document_code) }}"><ion-icon name="eye"></ion-icon></a>
-                                                <a class="btn btn-sm btn-success xs-margin" href="{{ route('quotes.edit', $quote->document_code) }}" onclick="confirm('Crear una nueva Cotizacion a partir de esta ...?') ? true : event.preventDefault();"><ion-icon name="create"></ion-icon></a>
-                                                <a class="btn btn-sm btn-warning xs-margin" href="{{ route('quotes.keep', $quote->document_code) }}" onclick="confirm('Editar esta Cotizacion y conservar los cambios...?') ? true : event.preventDefault();"><ion-icon name="trash"></ion-icon></a>
-                                                <!-- <ion-icon name="trash"></ion-icon> -->
+                                                <a class="btn btn-sm btn-success xs-margin" href="{{ route('quotes.edit', $quote->document_code) }}" ><ion-icon name="create"></ion-icon></a>
                                             </td>
                                         </tr>
                                     @endforeach

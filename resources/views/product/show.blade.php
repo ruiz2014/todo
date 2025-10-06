@@ -21,31 +21,24 @@
                     <div class="card-body bg-white">
                         
                                 <div class="form-group mb-2 mb20">
-                                    <strong>Name:</strong>
+                                    <strong>Nombre:</strong>
                                     {{ $product->name }}
                                 </div>
                                 <div class="form-group mb-2 mb20">
-                                    <strong>Description:</strong>
+                                    <strong>Descripcion:</strong>
                                     {{ $product->description }}
                                 </div>
+
                                 <div class="form-group mb-2 mb20">
-                                    <strong>Product Type:</strong>
-                                    {{ $product->product_type }}
-                                </div>
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Company Id:</strong>
-                                    {{ $product->company_id }}
-                                </div>
-                                <div class="form-group mb-2 mb20">
-                                    <strong>Price:</strong>
+                                    <strong>Precio:</strong>
                                     {{ $product->price }}
                                 </div>
                                 <div class="form-group mb-2 mb20">
-                                    <strong>Category Id:</strong>
+                                    <strong>Categoria:</strong>
                                     {{ $product->category_id }}
                                 </div>
                                 <div class="form-group mb-2 mb20">
-                                    <strong>Provider Id:</strong>
+                                    <strong>Proveedor:</strong>
                                     {{ $product->provider_id }}
                                 </div>
                                 <div class="form-group mb-2 mb20">

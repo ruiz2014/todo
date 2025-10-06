@@ -17,4 +17,9 @@ class TempSale extends Model
     {
         return $this->hasOne('App\Models\User', 'id', 'user_id');
     }
+
+    public function attention()
+    {
+        return $this->belongsTo(Attention::class, 'code', 'document_code');
+    }
 }

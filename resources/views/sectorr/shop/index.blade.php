@@ -114,7 +114,6 @@
     <form id="form_sale" action="{{ route('shop.store') }}" method="POST">
             @csrf    
         <div class="row padding-1 p-1 mb-3">
-
             <div class="col-md-6">
                 <label for="" style="width:100%;">Comprobante</label>
                 <select name="receipt" class="form-select" aria-label="Default select example" style="width:100%;">
@@ -163,7 +162,7 @@
         <div class="row padding-1 p-1 mb-3">     
 
             <div class="col-md-6">
-                <label for="" style="width:100%;">Productos</label>
+                <label for="" style="width:100%;">{{ __('Products') }}</label>
                 <select id="product_id" class="form-select" aria-label="Default select example" style="width:100%;">
                     <option value="">Seleccione productos</option>     
                     @foreach($products as $id => $prod)
@@ -182,7 +181,7 @@
             </div>
 
         </div>
-        <button id="btn-add" class="btn btn-outline-success mb-3" type="button">Agregar</button>
+        <button id="btn-add" class="btn btn-outline-success mb-3" type="button">{{ __('Add') }}</button>
     </form>
         <div class="row mb-3">
             <div class="col-sm-12">
@@ -242,6 +241,29 @@
 
         <div class="row">
             <div class="col-md-6">
+                <div class="ps-3 mb-3" id="new_pay">
+                    @foreach($payment_methods as $pay)  
+                    <div class="form-check d-flex mb-2">
+                        <div class="w-50">
+                            <input class="form-check-input" type="radio" name="payMethod" value="{{ $pay->id }}" id="radioPay{{$pay->id}}" form="form_sale">
+                            <label class="form-check-label" for="radioPay{{$pay->id}}">
+                                {{ $pay->name }}
+                            </label>
+                        </div>
+                        <input type="number" class="form-control-2" name="payMethodVal[]" id="radioMethod{{$pay->id}}" form="form_sale">
+                    </div>
+                    @endforeach
+                    <div class="form-check d-flex mb-2">
+                        <div class="w-50">
+                            <input class="form-check-input" type="radio" name="payMethod" value="3" id="radioPay3" form="form_sale">
+                            <label class="form-check-label" for="radioPay3">
+                                Detallado
+                            </label>
+                        </div>    
+                    </div>
+                </div>
+
+
             {!! $errors->first('payMethod', '<div class="invalid-feedback d-block" role="alert"><strong>:message</strong></div>') !!}
                 <ul class="list-group mb-4" id="payMethod">
                 @foreach($payment_methods as $pay)    
@@ -337,13 +359,21 @@
             let tb_data = document.getElementById('tbody')
             let type_payment = document.getElementById('type_payment');
             let payMethod = document.getElementById('payMethod');
+            let new_pay = document.getElementById('new_pay');
+            
             let clear_btn = document.getElementById('clean');
             let btn_generate = document.getElementById('btn-generate');
+
+            const simple = document.querySelectorAll('#new_pay input[type=radio]');
+            const simple_number = document.querySelectorAll('#new_pay input[type=number]');
+            const detailed = document.querySelectorAll('#payMethod li input[type=checkbox]');
+            const detailed_number = document.querySelectorAll('#payMethod li input[type=number]');
 
             let idSelect = null;
             let textSelect = null;
             let priceSelect = null;
             let productos = new Array();
+            let radioPay = null;
 
             let temp_result = {!! $temps !!};
             showResponse(temp_result, 'joder');
@@ -352,7 +382,7 @@
             btn_generate.onclick = ()=>{ validar();} 
 
             type_payment.selectedIndex = 0;
-
+            payMethod.style.display = "none";
             $('#product_id').change(function(){
                 idSelect = $(this).val();
                 // alert(idSelect)
@@ -588,19 +618,47 @@
             }
             /******************************* */
 
-             $('#type_payment').change(function(){
+// atAttributeForm(opt)
+
+            new_pay.onchange = function(ev){
+                if(ev.target.checked){
+                    radioPay = ev.target.id;
+                    if(ev.target.id === 'radioPay3'){
+                        atAttributeForm(2, simple, simple_number, detailed, detailed_number);
+                        payMethod.style.display = "block";
+                        $('#radioMethod1').val(0);
+                        $('#radioMethod2').val(0);
+                    }else{
+
+                        // console.log(detailed)
+                        cleanPayMethodCheck(detailed, detailed_number);
+                        atAttributeForm(1, simple, simple_number, detailed, detailed_number);
+
+                        // payMethod.style.display = "none";
+                        if(ev.target.id === 'radioPay1'){
+                            $('#radioMethod1').val(total);
+                            $('#radioMethod2').val(0);
+                        }else{
+                            $('#radioMethod2').val(total);
+                            $('#radioMethod1').val(0);
+                        }
+                    } 
+                }
+            }
+
+
+
+            $('#type_payment').change(function(){
                 let type_pay = $(this).val();
                 if(type_pay == 2 ){
-                    document.querySelectorAll('#payMethod li input[type=checkbox]').forEach(function(checkElement) {
-                        checkElement.checked = false;
-                    });
-                    document.querySelectorAll('#payMethod li input[type=number]').forEach(function(checkElement) {
-                        checkElement.value = false;
-                    });
-                    payMethod.style.display = "none";
+
+                    cleanPayMethodCheck(detailed, detailed_number);
+                    cleanPayMethodRadio(simple, simple_number);
+                    
                     return 0;
                 }
-                payMethod.style.display = "block";
+                new_pay.style.display = "block";
+                // payMethod.style.display = "block";
             })
 
             payMethod.onclick = function(ev){
@@ -643,20 +701,41 @@
                     return 0;
                 }
 
-                if(type_payment == 1){
-                     let total =  document.getElementById('total').innerHTML;
+                let total =  null;
+                let total_pay = null;
+                
+                if(type_payment == 1 && radioPay === 'radioPay3'){
+                    
+                    total =  document.getElementById('total').innerHTML;
                     total_pay = 0;
                     document.querySelectorAll('#payMethod input[type=checkbox]').forEach((e)=>{
                         if(e.checked === true){
                             total_pay += parseFloat(document.getElementById(`payMethod_${e.value}`).value);
                         }
                     });
+
                     // console.log(total+ ' ' +total_pay)
                     if(parseFloat(total) !== total_pay){
                         alert("El monto no es igual")
                         return 0;
-                    } 
+                    }
+                    
+                }else if(type_payment == 1 && radioPay !== 'radioPay3'){
+                    total =  document.getElementById('total').innerHTML;
+                    document.querySelectorAll('#new_pay input[type=radio]').forEach((e)=>{
+                        if(e.checked === true){
+                            total_pay += parseFloat(document.getElementById(`radioMethod${e.value}`).value);
+                        }
+                    });
+
+                    // console.log(total+ ' ' +total_pay)
+                    if(parseFloat(total) !== total_pay){
+                        alert("El monto no es igual")
+                        return 0;
+                    }
                 }
+
+                console.log(total+ ' ' +total_pay)
                 
                 generate_receipt();
             }
@@ -723,6 +802,66 @@
                 $('#igv').html(igv.toFixed(2))
             }
         })
+
+        function cleanPayMethodCheck(detailed, detailed_number){
+
+            detailed.forEach(function(checkElement) {
+                checkElement.checked = false;
+            });
+            detailed_number.forEach(function(checkElement) {
+                checkElement.value = false;
+            });
+                           
+            payMethod.style.display = "none";
+        }
+
+        function cleanPayMethodRadio(simple, simple_number){
+            // console.log(simple)
+            simple.forEach(function(radioElement) {
+                radioElement.checked = false; 
+            })
+            
+            simple_number.forEach(function(radioElement) {
+                radioElement.value = false;
+            });
+
+            new_pay.style.display = "none";               
+        }
+
+        function atAttributeForm(opt, simple, simple_number, detailed, detailed_number){
+
+            if(opt == 1){
+                simple.forEach(function(radioElement) {
+                    radioElement.setAttribute('form', 'form_sale'); 
+                })
+                
+                simple_number.forEach(function(radioElement) {
+                    radioElement.setAttribute('form', 'form_sale'); 
+                });
+
+                detailed.forEach(function(checkElement) {
+                    checkElement.removeAttribute('form');
+                });
+                detailed_number.forEach(function(checkElement) {
+                    checkElement.removeAttribute('form');
+                });
+            }else{
+                simple.forEach(function(radioElement) {
+                    radioElement.removeAttribute('form'); 
+                })
+                
+                simple_number.forEach(function(radioElement) {
+                    radioElement.removeAttribute('form'); 
+                });
+
+                detailed.forEach(function(checkElement) {
+                    checkElement.setAttribute('form', 'form_sale');
+                });
+                detailed_number.forEach(function(checkElement) {
+                    checkElement.setAttribute('form', 'form_sale');
+                });
+            }
+        }
     </script>
 
 @endsection

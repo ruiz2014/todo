@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Admin\Staff\Establishment;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use App\Http\Requests\EstablishmentRequest;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
@@ -38,7 +39,7 @@ class EstablishmentController extends Controller
     public function store(EstablishmentRequest $request): RedirectResponse
     {
         try{
-            Establishment::create($request->validated());
+            Establishment::create($request->validated()+ ['type'=>1]);
 
             return Redirect::route('establishments.index')->with('success', 'Establishment created successfully.');
 

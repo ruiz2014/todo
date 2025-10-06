@@ -17,7 +17,7 @@
                             </span>
 
                              <div class="float-right">
-                                <a href="{{ route('warehouses.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
+                                <a href="{{ route('warehouses.create') }}" class="btn btn-outline-success btn-sm float-right"  data-placement="left">
                                   {{ __('Create New') }}
                                 </a>
                               </div>
@@ -33,19 +33,18 @@
                         <form class="d-flex">
                             <div class="input-group">
                                 <input name="search" class="form-control form-control-sm" value="{{ $text }}" type="search" placeholder="Buscar" aria-label="Search">
-                                <button class="btn btn-primary px-4" type="submit">
+                                <button class="btn btn-outline-success px-4" type="submit">
                                     <ion-icon name="search"></ion-icon>
                                 </button>
                             </div>
                         </form>
-                        <div class="table-responsive">
+                        <div class="table-responsive mt-3">
                             <table class="table table-striped table-hover">
-                                <thead class="thead">
+                                <thead class="table-success">
                                     <tr>
-                                        <th >Warehouse Name</th>
-                                        <th >Phone</th>
-                                        <th >Address</th>
-                                        <th >Company Id</th>
+                                        <th >Nombre</th>
+                                        <th >Telefono</th>
+                                        <th >Direccion</th>
                                         <th></th>
                                     </tr>
                                 </thead>
@@ -55,7 +54,6 @@
 										<td >{{ $warehouse->warehouse_name }}</td>
 										<td >{{ $warehouse->phone }}</td>
 										<td >{{ $warehouse->address }}</td>
-										<td >{{ $warehouse->company_id }}</td>
 
                                         <td>
                                                 <form action="{{ route('warehouses.destroy', $warehouse->id) }}" method="POST">

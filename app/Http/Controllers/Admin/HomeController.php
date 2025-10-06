@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Log;
 
 use App\Models\Admin\Local;
 use App\Models\Admin\Role;
@@ -40,13 +41,13 @@ class HomeController extends Controller
         $months = $this->monthlyCare()->pluck('months');
         $monthlyCare = $this->monthlyCare()->pluck('total');
 
-        $attentionDay = Attention::where(DB::raw('CAST(created_at as DATE)'), $date)->count();    //$this->currentDay($currentMonth, $currentDay);
+        $attentionDay = Attention::where('local_id', request()->session()->get('local_id'))->where(DB::raw('CAST(created_at as DATE)'), $date)->count();    //$this->currentDay($currentMonth, $currentDay);
         $totalDay = $this->currentDay($currentMonth, $currentDay);
         $attentionWeek = $this->currentWeek($currentWeek);
         $bestSeller = $this->selling($currentMonth)->pluck('name');
         $bestSellerQty = $this->selling($currentMonth)->pluck('dish');
         $creditoDay = Attention::where('type_payment', 2)->where(DB::raw('CAST(created_at as DATE)'), $date)->sum('total');
-
+// dd($bestSeller, $bestSellerQty);
         return view('admin.home.index', compact('companys', 'locals', 'local', 'rol', 'receipts', 'pays', 'attentionDay', 'totalDay', 'creditoDay', 'monthlyCare', 'months', 'bestSeller', 'bestSellerQty', 'attentionWeek'));
         // return view('admin.home.index');
     }
@@ -56,6 +57,7 @@ class HomeController extends Controller
         $methods = PaymentMethod::select(DB::raw('SUM(pl.total) as total'), 'payment_methods.name', 'payment_methods.image')
                     ->leftJoin('payment_logs as pl', 'payment_methods.id', '=', 'pl.method_id')
                     ->join('attentions as at', 'pl.attention_id', '=', 'at.id')
+                    ->where('payment_methods.company_id', request()->session()->get('company_id'))
                     ->where(DB::raw('MONTH(at.created_at)'), $month)
                     ->groupBy('payment_methods.name')
                     ->get();
@@ -64,6 +66,7 @@ class HomeController extends Controller
 
     public function monthlyCare(){
         $attentions = Attention::select(DB::raw('MONTH(created_at) as month'), DB::raw('COUNT(id) as attentions'), DB::raw('SUM(total) as total'), DB::raw('ELT(MONTH(created_at), "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Setiembre", "Octubre", "Noviembre", "Diciembre") as months'), 'created_at')
+                    ->where('local_id', request()->session()->get('local_id'))              
                     ->orderBy('month')            
                     ->groupBy('months')
                     ->get();
@@ -73,6 +76,7 @@ class HomeController extends Controller
 
     public function currentDay($month, $day){
         $attentions = Attention::select(DB::raw('COUNT(id) as attentions'), DB::raw('SUM(total) as total'), DB::raw('DAY(created_at) as day'))
+                    ->where('local_id', request()->session()->get('local_id'))  
                     ->where('type_payment', 1)            
                     ->where(DB::raw('MONTH(created_at)'), $month)
                     ->where(DB::raw('DAY(created_at)'), $day)
@@ -82,6 +86,7 @@ class HomeController extends Controller
 
     public function currentWeek($week){
         $week = Attention::select(DB::raw('SUM(total) as total'), DB::raw('COUNT(id) as attentions'))
+                    ->where('local_id', request()->session()->get('local_id'))              
                     ->where(DB::raw('WEEK(created_at, 1)'), $week)
                     ->first();
         // dd($week);
@@ -90,6 +95,7 @@ class HomeController extends Controller
 
     public function receipts($month){
         $receipts = Attention::select(DB::raw('COUNT(sunat_code) as cod'), 'sunat_code')
+                    ->where('local_id', request()->session()->get('local_id'))            
                     ->where(DB::raw('MONTH(created_at)'), $month)
                     ->orderBy('sunat_code')
                     ->groupBy('sunat_code')
@@ -101,11 +107,12 @@ class HomeController extends Controller
     public function selling($month){
         $dishes = TempSale::select(DB::raw('COUNT(temp_sales.product_id) as dish'), 'name')
                 ->join('products as pd', 'temp_sales.product_id', '=', 'pd.id')
-                // ->where('pd.category_id', 2)
+                ->where('temp_sales.company_id', request()->session()->get('company_id'))
                 ->where(DB::raw('MONTH(temp_sales.created_at)'), $month)
                 // ->orderBy('dish', 'desc')
                 ->orderBy('dish', 'desc')
                 ->groupBy('product_id')
+                ->limit(5)
                 ->get();
                 // ->where('')
             // dd($dishes);        
@@ -113,29 +120,38 @@ class HomeController extends Controller
     }
 
     public function mierda(){
-        header('Content-Type: application/json'); // Para responder con JSON
+        try{
+            header('Content-Type: application/json'); // Para responder con JSON
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $datos_json = file_get_contents('php://input');
-            $suscripcion = json_decode($datos_json, true);
-            
-            if (isset($suscripcion['endpoint'])) {
-                $endpoint = $suscripcion['endpoint'];
-                $auth = $suscripcion['keys']['auth'] ?? null; // Extrae la clave de autenticación
-                $p256dh = $suscripcion['keys']['p256dh'] ?? null; // Extrae la clave P-256DH
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                $datos_json = file_get_contents('php://input');
+                $suscripcion = json_decode($datos_json, true);
+                
+                if (isset($suscripcion['endpoint'])) {
+                    $endpoint = $suscripcion['endpoint'];
+                    $auth = $suscripcion['keys']['auth'] ?? null; // Extrae la clave de autenticación
+                    $p256dh = $suscripcion['keys']['p256dh'] ?? null; // Extrae la clave P-256DH
 
-                Subscription::updateOrCreate(
-                    ['user_id' => request()->session()->get('user_id')], // Atributos para buscar el registro
-                    ['company_id' => request()->session()->get('company_id'), 'local_id'=>request()->session()->get('local_id'), 'endpoint'=>$endpoint, 'auth'=>$auth, 'p256dh'=>$p256dh] // Atributos para actualizar/crear
-                );
-                // Subscription::create(['company_id' => request()->session()->get('company_id'), 'local_id'=>request()->session()->get('local_id'), 'user_id'=>request()->session()->get('user_id'), 'endpoint'=>$endpoint, 'auth'=>$auth, 'p256dh'=>$p256dh]);
-                return response()->json(['ok' => 1, 'resp' => $auth]);
-            } else {
-                // Manejar error si no hay datos de suscripción
-                return response()->json(['ok' => 0, 'resp' => 'negativo']);
-                exit();
+                    Subscription::updateOrCreate(
+                        ['user_id' => request()->session()->get('user_id')], // Atributos para buscar el registro
+                        ['company_id' => request()->session()->get('company_id'), 'local_id'=>request()->session()->get('local_id'), 'endpoint'=>$endpoint, 'auth'=>$auth, 'p256dh'=>$p256dh] // Atributos para actualizar/crear
+                    );
+                    // Subscription::create(['company_id' => request()->session()->get('company_id'), 'local_id'=>request()->session()->get('local_id'), 'user_id'=>request()->session()->get('user_id'), 'endpoint'=>$endpoint, 'auth'=>$auth, 'p256dh'=>$p256dh]);
+                    return response()->json(['ok' => 1, 'resp' => $auth]);
+                } else {
+                    // Manejar error si no hay datos de suscripción
+                    return response()->json(['ok' => 0, 'resp' => 'negativo']);
+                    exit();
+                }
+
             }
-
+        }catch (\Throwable $th) {
+                // dd(get_class_methods($th));
+                Log::info("Line No : ".__LINE__." : File Path : ".__FILE__." message ".$th->getMessage()." linea : ".$th->getLine()." codigo :".$th->getCode());
+                Log::error('Velocity CartController: ' . $th->getMessage(), ["hola"=>"hola"]);
+                // dd("error en base ". $th->getMessage());//throw $th;
+                
+            return response()->json(['ok' => 0, 'resp' => 'negativo']);
         }
     }
 }

@@ -106,14 +106,58 @@
             margin:50px 100px 0px
         }
 
+    .table-success{
+      --bs-table-bg: #09C839;
+      --bs-table-accent-bg: #35954D;
+      
+    }
+
+    .table-dark {
+      --bs-table-bg: #051422; 
+      --bs-table-accent-bg: #495057; 
+      /* --bs-table-bg: #677da2; 
+      --bs-table-accent-bg: #1a6deee5; */
+    }
+    .table-info{
+      --bs-table-bg: #677da2; 
+      --bs-table-accent-bg: #1b6ee8;
+       /* --bs-table-bg: #4393B0; /* Color de fondo oscuro */
+     /* --bs-table-accent-bg: #0A8CBD; /* Color de acento oscuro */  
+    }
+
+    .btn-outline-warning {
+        --bs-btn-color: #6b571c;
+        --bs-btn-border-color: #6b571c;
+        --bs-btn-hover-color: #f7f3f3;
+        --bs-btn-hover-bg: #d4aa29;
+        --bs-btn-hover-border-color: #d4aa29;
+    }
+
+    .table-primary{
+        --bs-table-bg: #677da2; 
+      --bs-table-accent-bg: #1b6ee8;
+    }
+
+    .table-warning{
+        --bs-table-bg: #6b571c;;
+        --bs-table-accent-bg: #ce9f14ad;
+    }
+
     /*TABLE RESPONSIVE CON COLUMNA FIJA Y SCROLL*/
 
     .table th:first-child,
     .table td:first-child {
       position: sticky;
       left: 0;
-      background-color: #f8f9fa; /* Example background color */
       z-index: 1; /* Ensure it stays on top of other content */
+    }
+
+    .table th{
+        font-weight: 500;
+        color:white;
+    }
+    .table td:first-child{
+        background-color: #f1f2f4; 
     }
 
     .table td{
@@ -167,6 +211,10 @@
         }
 
         @media only screen and (max-width: 583px){
+            .small-ch{
+                flex-direction: column-reverse;
+            }
+
             .xs-margin {
                 margin-bottom: 5px;
             }

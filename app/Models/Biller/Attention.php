@@ -25,4 +25,9 @@ class Attention extends Model
     {
         return $this->hasOne(Voucher::class, 'sunat_code', 'sunat_code');
     }
+
+    // public function tempsale()
+    // {
+    //     return $this->belonTo('App\Models\Biller\TempSale', 'id', 'customer_id');
+    // }
 }

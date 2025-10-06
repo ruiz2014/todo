@@ -19,6 +19,7 @@ return new class extends Migration
             $table->double('amount', 8,2);
             $table->double('previous_amount', 8,2)->nullable();
             $table->string('observation', 250)->nullable();
+            $table->double('close_amount', 8,2)->nullable();
             $table->dateTime('close_cash')->nullable();
             $table->unsignedTinyInteger('type');
             $table->unsignedInteger('local_cash');

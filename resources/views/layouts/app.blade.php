@@ -30,12 +30,103 @@
     input[name="search"] ~ button ion-icon {
         padding: 0px 20px;
     }
+
+
+    .loader {
+        transform: rotateZ(45deg);
+        perspective: 1000px;
+        border-radius: 50%;
+        width: 48px;
+        height: 48px;
+        color: #fff;
+      }
+        .loader:before,
+        .loader:after {
+          content: '';
+          display: block;
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: inherit;
+          height: inherit;
+          border-radius: 50%;
+          transform: rotateX(70deg);
+          animation: 1s spin linear infinite;
+        }
+        .loader:after {
+          color: #FF3D00;
+          transform: rotateY(70deg);
+          animation-delay: .4s;
+        }
+
+        .caja_loader{
+            position: relative;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.3);
+            z-index: 9999;
+            display:none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+      @keyframes rotate {
+        0% {
+          transform: translate(-50%, -50%) rotateZ(0deg);
+        }
+        100% {
+          transform: translate(-50%, -50%) rotateZ(360deg);
+        }
+      }
+
+      @keyframes rotateccw {
+        0% {
+          transform: translate(-50%, -50%) rotate(0deg);
+        }
+        100% {
+          transform: translate(-50%, -50%) rotate(-360deg);
+        }
+      }
+
+      @keyframes spin {
+        0%,
+        100% {
+          box-shadow: .2em 0px 0 0px currentcolor;
+        }
+        12% {
+          box-shadow: .2em .2em 0 0 currentcolor;
+        }
+        25% {
+          box-shadow: 0 .2em 0 0px currentcolor;
+        }
+        37% {
+          box-shadow: -.2em .2em 0 0 currentcolor;
+        }
+        50% {
+          box-shadow: -.2em 0 0 0 currentcolor;
+        }
+        62% {
+          box-shadow: -.2em -.2em 0 0 currentcolor;
+        }
+        75% {
+          box-shadow: 0px -.2em 0 0 currentcolor;
+        }
+        87% {
+          box-shadow: .2em -.2em 0 0 currentcolor;
+        }
+      }
 </style>
 
 </head>
 <body>
     <!-- <div id="app"> -->
-
+    <div class="caja_loader" id="loader">
+        <span class="loader"></span>
+    </div>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="{{ route('home') }}">Navbar</a>
@@ -190,6 +281,25 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <script>
+
+        $('.caja_loader').hide();
+            $('.dropdown-item, a[aria-current="page"], .btn').click(function(){
+                $('.caja_loader').show();
+                setTimeout(()=>{ mostrar()}, 500);
+        });
+
+        function mostrar(){
+            // alert("hola")
+            $('.caja_loader').hide();
+        }
+
+        window.addEventListener('load', cerrarLoader);
+
+        function cerrarLoader(){
+             //alert("hola");
+            let loader = document.getElementById('loader');
+            loader.style.display = 'none';
+        }
 
         const checkPermission = ()=>{
             if((!'serviceWorker' in navigator)){

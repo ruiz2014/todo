@@ -36,6 +36,8 @@
                 <td align="center"><b>Precio</b></td>
                 <td align="center"><b>Cantidad</b></td>
                 <td align="center"><b>Total</b></td>
+                <td align="center"><b>Credito</b></td>
+                <td align="center"><b>Credito Pagado</b></td>
                 <td align="center"><b>Responsable</b></td>
                 <td align="center"><b>Fecha</b></td>
             </tr>
@@ -47,8 +49,18 @@
                 <td class="">{{  number_format($report->price, 2) }}</td>
                 <td class="">{{  $report->amount }}</td>
                 <td class="">{{  number_format($report->price * $report->amount , 2)  }}</td>
+                <td class="">{{  $report->type_payment == 2 ? 'Si' : '' }}</td> 
+                <td class="">
+                    @if($report->type_payment == 2)
+                        @if($report->attention->type_payment == 1)
+                            <span>Pagado</span>
+                        @endif
+                    @endif
+                </td> 
+                
                 <td class="">{{  $report->user->name }}</td>
                 <td class="">{{  $report->created_at}}</td> 
+                
             </tr> 
         @endforeach            
         </tbody>

@@ -10,16 +10,17 @@
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-header">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div class="d-flex justify-content-between align-items-center">
 
-                            <span id="card_title">
+                            <span id="">
                                 {{ __('Users') }}
                             </span>
 
                              <div class="float-right">
-                                <a href="{{ route('register.create') }}" class="btn btn-primary btn-sm float-right"  data-placement="left">
+                                <a href="{{ route('register.create') }}" class="btn btn-outline-primary btn-sm float-right"  data-placement="left">
                                   {{ __('Create New') }}
                                 </a>
+                                
                               </div>
                         </div>
                     </div>
@@ -38,11 +39,11 @@
                                     </button>
                                 </div>
                         </form>
-                        <div class="table-responsive">
+                        <div class="table-responsive mt-3">
                             <table class="table table-striped table-hover">
-                                <thead class="thead">
+                                <thead class="table-dark">
                                     <tr>
-                                        <th >Name</th>
+                                        <th >Nombre</th>
                                         <th >Email</th>
                                         <th >Rol</th>
                                         <th></th>

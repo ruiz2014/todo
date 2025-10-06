@@ -38,15 +38,15 @@
                                 </button>
                             </div>
                         </form>
-                        <div class="table-responsive">
+                        <div class="table-responsive mt-3">
                             <table class="table table-striped table-hover">
-                                <thead class="thead">
+                                <thead class="table-primary">
                                     <tr>
-                                        <th >Name</th>
-                                        <th >Tipo Doc</th>
-                                        <th >Document</th>
-                                        <th >Phone</th>
-                                        <th >Address</th>
+                                        <th >Nombre</th>
+                                        <th >Documento</th>
+                                        <th >Numero</th>
+                                        <th >Telefono</th>
+                                        <th >Direccion</th>
                                         <th >Email</th>
                                         <th></th>
                                     </tr>

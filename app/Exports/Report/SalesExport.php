@@ -35,7 +35,11 @@ class SalesExport implements FromView, WithTitle, ShouldAutoSize
             'voucher'=>'Ventas',
             'start'=> $this->start, 
             'end'=> $this->end,
-            'sales' => TempSale::where('company_id', $this->company_id)->where('local_id', $this->local_id)->where('status', 2)->whereBetween(DB::raw('DATE(created_at)'), [$this->start, $this->end])->get(),
+            'sales' => TempSale::where('company_id', $this->company_id)
+                        ->where('local_id', $this->local_id)
+                        ->where('status', 2)
+                        ->whereBetween(DB::raw('DATE(created_at)'), [$this->start, $this->end])
+                        ->get(),
             'yape' => PaymentLog::where('company_id', $this->company_id)->where('local_id', $this->local_id)->where('method_id', 2)->whereBetween(DB::raw('DATE(created_at)'), [$this->start, $this->end])->sum('total'),
             'contado' => PaymentLog::where('company_id', $this->company_id)->where('local_id', $this->local_id)->where('method_id', 1)->whereBetween(DB::raw('DATE(created_at)'), [$this->start, $this->end])->sum('total'),
             'tarjeta' => PaymentLog::where('company_id', $this->company_id)->where('local_id', $this->local_id)->where('method_id', 3)->whereBetween(DB::raw('DATE(created_at)'), [$this->start, $this->end])->sum('total'),

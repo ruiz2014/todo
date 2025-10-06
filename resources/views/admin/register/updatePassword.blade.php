@@ -5,7 +5,21 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">{{ __('Register') }}</div>
+                <div class="card-header">
+                    
+                    <div class="d-flex justify-content-between small-ch align-items-start align-items-sm-center">
+
+                            <span id="card_title">
+                               {{ __('Update') }}
+                            </span>
+
+                            <div class="float-right">
+                                <a href="{{ url()->previous() }}" class="btn btn-outline-secondary btn-sm ms-3"  data-placement="left">
+                                    <ion-icon name="refresh"></ion-icon>
+                                </a> 
+                            </div>
+                    </div>
+                </div>
 
                 <div class="card-body">
                     <form method="POST" action="{{ route('register.update', $user->id) }}">
