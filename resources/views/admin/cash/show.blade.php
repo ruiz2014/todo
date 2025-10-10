@@ -129,7 +129,7 @@
                                     {{ $payCredit->total }}
                                 </div>
                                 <hr>
-                    @if($cash->status == 0) 
+                        @if($cash->status == 0) 
                                 <div class="form-group mb-2 mb20">
                                     <strong class="show-strong">Efectivo Real :</strong>
                                     {{ $cash->close_amount }}
@@ -137,7 +137,7 @@
                                     <strong class="show-strong">Motivo :</strong>
                                     <span>{{ $cash->observation }}</span>
                                 </div>
-                    @else   
+                        @else   
                                  <div class="form-group mb-2 mb20">
                                     <strong class="show-strong">Efectivo Real :</strong>
                                     <input type="number" name="amount" class="form-control">

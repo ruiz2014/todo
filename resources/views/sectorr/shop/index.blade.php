@@ -111,78 +111,80 @@
         </div>
     @endif
 
-    <form id="form_sale" action="{{ route('shop.store') }}" method="POST">
-            @csrf    
-        <div class="row padding-1 p-1 mb-3">
-            <div class="col-md-6">
-                <label for="" style="width:100%;">Comprobante</label>
-                <select name="receipt" class="form-select" aria-label="Default select example" style="width:100%;">
-                    <option value="00">Ticket</option>
-                    <option value="03">Boleta</option>
-                    <option value="01">Factura</option>
-                </select>
-            </div>
-        
-            <div class="col-md-6 mtb-xs">
-                <div class="position-relative">
-                    <label for="contact" class="form-label-2">{{ __('Customer') }}</label>
-                    <div class="d-flex input-group-sm">
-                        <div class="input-group-prepend">
-                            <!-- <span class="input-group-text" id="inputGroup-sizing-sm">Small</span> -->
-                            <button type="button" id="clean" class="btn btn-primary btn-sm"><ion-icon name="brush-outline"></ion-icon></button>
+    @if($cash)
+
+                <form id="form_sale" action="{{ route('shop.store') }}" method="POST">
+                @csrf    
+            <div class="row padding-1 p-1 mb-3">
+                <div class="col-md-6">
+                    <label for="" style="width:100%;">Comprobante</label>
+                    <select name="receipt" class="form-select" aria-label="Default select example" style="width:100%;">
+                        <option value="00">Ticket</option>
+                        <option value="03">Boleta</option>
+                        <option value="01">Factura</option>
+                    </select>
+                </div>
+            
+                <div class="col-md-6 mtb-xs">
+                    <div class="position-relative">
+                        <label for="contact" class="form-label-2">{{ __('Customer') }}</label>
+                        <div class="d-flex input-group-sm">
+                            <div class="input-group-prepend">
+                                <!-- <span class="input-group-text" id="inputGroup-sizing-sm">Small</span> -->
+                                <button type="button" id="clean" class="btn btn-primary btn-sm"><ion-icon name="brush-outline"></ion-icon></button>
+                            </div>
+                            <input type="text" id="term" autocomplete="off" class="form-control-2" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+                            <input type="hidden" name="customer_id" id="customer_id">
+                            <input type="hidden" name="code" id="code" value="{{ $code }}">
                         </div>
-                        <input type="text" id="term" autocomplete="off" class="form-control-2" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
-                        <input type="hidden" name="customer_id" id="customer_id">
-                        <input type="hidden" name="code" id="code" value="{{ $code }}">
+                        
+                        <div class="result position-absolute">
+                            <ul id="box-search">
+                                    <!-- <li>juan</li>
+                                    <li>luis</li>
+                                    <li>varios</li> -->
+                            </ul>
+                        </div>
                     </div>
-                    
-                    <div class="result position-absolute">
-                        <ul id="box-search">
-                                <!-- <li>juan</li>
-                                <li>luis</li>
-                                <li>varios</li> -->
-                        </ul>
-                    </div>
-                </div>
-                {!! $errors->first('customer_id', '<div class="invalid-feedback d-block" role="alert"><strong>:message</strong></div>') !!}
-                {!! $errors->first('code', '<div class="invalid-feedback d-block" role="alert"><strong>:message</strong></div>') !!}
-            </div> 
-            
-            <div class="col-md-6 mt-md-3">
-                <label for="" style="width:100%;">Tipo Pago</label>
-                <select name="type_payment" id="type_payment" class="form-select" aria-label="Default select example" style="width:100%;">
-                    <option value="1" selected>Contado</option>
-                    <option value="2">Credito</option>
-                    <!--<option value="01">Factura</option> -->
-                </select>
-                {!! $errors->first('type_payment', '<div class="invalid-feedback d-block" role="alert"><strong>:message</strong></div>') !!}
-            </div>
-        </div>
-        
-        <div class="row padding-1 p-1 mb-3">     
-
-            <div class="col-md-6">
-                <label for="" style="width:100%;">{{ __('Products') }}</label>
-                <select id="product_id" class="form-select" aria-label="Default select example" style="width:100%;">
-                    <option value="">Seleccione productos</option>     
-                    @foreach($products as $id => $prod)
-                    <option value="{{$id}}">{{$prod}}</option>
-                    @endforeach
-                </select>
-            </div>
-            
-            
-            <div class="col-md-3 mt-3">
-                <div class="form-group mb-2 mb20">
-                    <label for="" class="form-label-2">{{ __('Amount') }}</label>
-                    <input type="number" min="1" name="amount" class="form-control-2 @error('amount') is-invalid @enderror" value="" id="amount_form" placeholder="3.00">
-                    {!! $errors->first('amount', '<div class="invalid-feedback d-block" role="alert"><strong>:message</strong></div>') !!}
+                    {!! $errors->first('customer_id', '<div class="invalid-feedback d-block" role="alert"><strong>:message</strong></div>') !!}
+                    {!! $errors->first('code', '<div class="invalid-feedback d-block" role="alert"><strong>:message</strong></div>') !!}
+                </div> 
+                
+                <div class="col-md-6 mt-md-3">
+                    <label for="" style="width:100%;">Tipo Pago</label>
+                    <select name="type_payment" id="type_payment" class="form-select" aria-label="Default select example" style="width:100%;">
+                        <option value="1" selected>Contado</option>
+                        <option value="2">Credito</option>
+                        <!--<option value="01">Factura</option> -->
+                    </select>
+                    {!! $errors->first('type_payment', '<div class="invalid-feedback d-block" role="alert"><strong>:message</strong></div>') !!}
                 </div>
             </div>
+            
+            <div class="row padding-1 p-1 mb-3">     
 
-        </div>
-        <button id="btn-add" class="btn btn-outline-success mb-3" type="button">{{ __('Add') }}</button>
-    </form>
+                <div class="col-md-6">
+                    <label for="" style="width:100%;">{{ __('Products') }}</label>
+                    <select id="product_id" class="form-select" aria-label="Default select example" style="width:100%;">
+                        <option value="">Seleccione productos</option>     
+                        @foreach($products as $id => $prod)
+                        <option value="{{$id}}">{{$prod}}</option>
+                        @endforeach
+                    </select>
+                </div>
+                
+                
+                <div class="col-md-3 mt-3">
+                    <div class="form-group mb-2 mb20">
+                        <label for="" class="form-label-2">{{ __('Amount') }}</label>
+                        <input type="number" min="1" name="amount" class="form-control-2 @error('amount') is-invalid @enderror" value="" id="amount_form" placeholder="3.00">
+                        {!! $errors->first('amount', '<div class="invalid-feedback d-block" role="alert"><strong>:message</strong></div>') !!}
+                    </div>
+                </div>
+
+            </div>
+            <button id="btn-add" class="btn btn-outline-success mb-3" type="button">{{ __('Add') }}</button>
+        </form>
         <div class="row mb-3">
             <div class="col-sm-12">
                 <div class="card">
@@ -302,6 +304,79 @@
                 <button id="btn-generate" class="btn btn-outline-primary" >Generar Comprobante</button>
             </div>
         </div>
+
+    @else
+        
+        <div class="row padding-1 p-1 mb-3">
+            <div class="col-md-6">
+                Nesecita abrir caja ... antes de comenzar a generar ventas <a href="" id=""  class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#exampleModal3"><ion-icon name="archive"></ion-icon><ion-icon name="cart-outline"></ion-icon>Abrir Caja</a>
+            </div>
+        </div>
+
+                <!-- Modal-1 -->
+        <div class="modal fade" id="exampleModal3" tabindex="-1" aria-labelledby="exampleModal3Label" >
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-white">
+                        <h1 class="modal-title fs-5" id="exampleModal3Label">Abrir Caja</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                     
+                    <form method="POST" action="{{ route('cashes.store') }}"  role="form">
+                        @csrf 
+                        <div class="modal-body">
+                            <div class="col-md-12 mt20 mt-2">
+                                <div class="row padding-1 p-1">
+                                    <div class="col-md-12">
+                                        <div class="form-group mb-4">
+                                            <label for="local_cash" class="form-label-2">{{ __('Locales') }}</label>
+                                            <select name="local_cash" id="local_cash" class="form-control-2 mt-1 line vld draw">
+                                                <option value="{{ $local->id}}">{{ $local->local_name}}</option>    
+                                           
+                                            </select>
+                                            {!! $errors->first('local_cash', '<div class="invalid-feedback d-block" role="alert"><strong>:message</strong></div>') !!}  
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div class="form-group mb-4">
+                                            <label for="seller" class="form-label-2">{{ __('Usuarios') }}</label>
+                                            <select name="seller" id="seller" class="form-control-2 mt-1 line vld draw">
+                                                <option value="{{ auth()->id() }}" selected>{{ auth()->user()->name }}</option>
+                                            </select>
+                                            {!! $errors->first('seller', '<div class="invalid-feedback d-block" role="alert"><strong>:message</strong></div>') !!}  
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">    
+                                        <div class="form-group mb-2 mb20">
+                                            <label for="amount_id" class="form-label-2">{{ __('Monto') }}</label>
+                                            <input type="number" name="amount" class="form-control-2 @error('amount') is-invalid @enderror" value="{{ old('amount') }}" id="stock" placeholder="Stock">
+                                            {!! $errors->first('amount', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
+                                        </div>
+                                    </div>
+        
+                                    <div class="col-md-12 mt20 mt-2">
+                                        <button type="submit" id="mierda_b" class="btn btn-primary">{{ __('Submit') }}</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    
+                    </form>
+                </div> 
+            </div>
+        </div>
+    @endif
+
+
+
+
+
+
+
+
     </div>
 
     <style>

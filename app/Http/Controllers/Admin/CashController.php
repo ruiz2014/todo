@@ -58,7 +58,8 @@ class CashController extends Controller
         try{
             Cash::create($request->validated() + ['company_id' => $request->session()->get('company_id'), 'local_id'=>$request->session()->get('local_id'), 'user_id'=>$request->session()->get('user_id'), 'type'=>1]);
 
-            return Redirect::route('cashes.index')->with('success', 'Cash created successfully.');
+            // return Redirect::route('cashes.index')->with('success', 'Cash created successfully.');
+            return back()->with('success', 'Cash created successfully.');
 
         }catch (\Throwable $th) {
 

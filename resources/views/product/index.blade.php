@@ -30,8 +30,13 @@
                         </div>                       
                     </div>
                     @if ($message = Session::get('success'))
-                        <div class="alert alert-success m-4">
-                            <p>{{ $message }}</p>
+                        <div class="alert alert-success">
+                            {{ $message }}
+                        </div>
+                    @endif
+                    @if ($message = Session::get('danger'))
+                        <div class="alert alert-danger">
+                            {{ $message }}
                         </div>
                     @endif
 
@@ -86,7 +91,7 @@
             </div>
         </div>
         <!-- Modal -->
-    <div class="modal fade" id="exampleModal3" tabindex="-1" aria-labelledby="exampleModal4Label" aria-hidden="false">
+        <div class="modal fade" id="exampleModal3" tabindex="-1" aria-labelledby="exampleModal4Label" aria-hidden="false">
             <div class="modal-dialog">
                 <div class="modal-content">
                 <div class="modal-header">
@@ -95,8 +100,8 @@
                 </div>
                 <div class="modal-body">
                     <p>Pasos para importar : </p>
-                    <p>Primero descargue este formato de excel <a href="{{ route('lp.format') }}">descargar formato</a>, esto le descargar un formato en excel que debera ser llenado 
-                        con la lista de productos y demas datos que en ella se le pida .....No modifigue la estructura de este archivo
+                    <p>Primero descargue este formato de excel <a href="{{ asset('lista Productos.xlsx') }}">descargar formato</a>, esto le descargar un formato en excel que debera ser llenado 
+                        con el nombre del producto, descripcion y precio....No modifigue la estructura de este archivo, las cabeceras de las columnas ni agregue algun dato mas.
                         luego subalo al servidor. <br>
                         Esta opcion solo sera posible ejecutarlo una vez ... ! OJO ¡</p>
                     <form action="{{ route('products.import') }}" method="POST" enctype="multipart/form-data">
@@ -112,7 +117,7 @@
                 </div>
                 </div>
             </div>
-    </div>
+        </div>
     </div>
 @endsection
 

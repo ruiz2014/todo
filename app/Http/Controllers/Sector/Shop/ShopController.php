@@ -11,11 +11,13 @@ use App\Models\Biller\PaymentMethod;
 use App\Models\Admin\Product;
 use App\Models\Biller\PaymentLog;
 use App\Models\Admin\LocalProduct;
+use App\Models\Admin\Local;
 use App\Models\Biller\Attention;
 use App\Models\Biller\TempSale;
 use App\Models\Biller\CreditLog;
 use App\Models\Admin\Kardex;
 use App\Models\Admin\SuperAdmin\Company;
+use App\Models\Admin\Cash;
 
 use App\Traits\Receipts\BillTrait;
 use App\Traits\Receipts\TicketTrait;
@@ -37,7 +39,12 @@ class ShopController extends Controller
         //  dd($products);
         $payment_methods = PaymentMethod::where('company_id', Session::get('company_id'))->get();
         $temps = new TempSale(); 
-        return view('sectorr.shop.index', compact('payment_methods', 'products', 'code', 'customers', 'temps'));
+        $local = Local::select('id', 'local_name')->where('id', Session::get('local_id'))->first();
+        $cash = Cash::where('seller', Session::get('user_id'))->where('status', 1)->exists();
+
+        // dd($cash);
+
+        return view('sectorr.shop.index', compact('payment_methods', 'products', 'code', 'customers', 'temps', 'local', 'cash'));
         // dd("aqui tipo Tienda");
     }
 

@@ -6,6 +6,7 @@ use App\Models\Admin\Product;
 use App\Models\Admin\Category;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use App\Http\Requests\ProductRequest;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
@@ -119,18 +120,24 @@ class ProductController extends Controller
     }
 
     public function productImport(Request $request){
-        
-        $company_id = request()->session()->get('company_id');
-        $user_id = request()->session()->get('user_id');
+        try{
+            $company_id = request()->session()->get('company_id');
+            $user_id = request()->session()->get('user_id');
 
-        $last = Product::where('company_id', $company_id)->latest()->first();
-        $request->validate([
-            'file' => 'required|file|mimes:xlsx,xls,csv'
-        ]);
+            $last = Product::where('company_id', $company_id)->latest()->first();
+            $request->validate([
+                'file' => 'required|file|mimes:xlsx,xls,csv'
+            ]);
 
-        Excel::import(new ProductsImport($company_id, $user_id), $request->file('file'));
-        dd($last);
-        return redirect('/')->with('success', 'All good!');
+            Excel::import(new ProductsImport($company_id, $user_id), $request->file('file'));
+            // dd($last);
+            return back()->with('success', 'Se importaron los poductos con exito!');
+
+        }catch (\Throwable $th) {
+            Log::info("Line No : ".__LINE__." : File Path : ".__FILE__." message ".$th->getMessage()." linea : ".$th->getLine()." codigo :".$th->getCode());
+            Log::error('Velocity CartController: ' . $th->getMessage(), ["product"=>"productImport"]);
+             return back()->with('danger', 'Hubo un problema al importar el archivo. '.$th->getMessage());
+        }
         
     }
 }

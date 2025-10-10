@@ -151,7 +151,7 @@ class WarehouseProductController extends Controller
         }
 
         $wh_id = request()->session()->get('wh');
-        $locals = Local::pluck('local_name', 'id');
+        $locals = Local::where('company_id', request()->session()->get('company_id'))->pluck('local_name', 'id');
        
         $wh_products = WarehouseLog::select('warehouse_logs.id', 'warehouse_logs.product_id', 'p.name', 'p.description', 'p.price', DB::raw("DATE_FORMAT(warehouse_logs.created_at, '%d-%m-%Y') as date"), 'warehouse_logs.batch', 'warehouse_logs.entry')
                 ->join('products as p', 'warehouse_logs.product_id', '=', 'p.id')

@@ -35,7 +35,7 @@ class BuyProductController extends Controller
         
         $text = $request->search;
         $select = ['buy_products.id', 'buy_products.code', 'buy_products.total', 'buy_products.document', 'buy_products.created_at', 'e.name as l_type', 'p.name'];
-        $where = ['buy_products.company_id'=> ['=', $request->session()->get('company_id')]];
+        $where = ['buy_products.company_id'=> ['=', $request->session()->get('company_id')], 'e.company_id'=>['=', $request->session()->get('company_id')]];
         $orWhere = ['buy_products.total'=>['like', '%'.$text.'%'], 'buy_products.document' => ['like', '%'.$text.'%'], 'p.name' => ['like', '%'.$text.'%'], 'e.name' => ['like', '%'.$text.'%'], 'buy_products.created_at'=> ['like', '%'.$text.'%']];
         $join = ['providers as p' => ['buy_products.provider_id', '=', 'p.id'], 'establishments as e' => ['buy_products.location_type', '=', 'e.type']];
 
@@ -57,7 +57,7 @@ class BuyProductController extends Controller
         $payment_methods = []; //PaymentMethod::where('company_id', Session::get('company_id'))->get();
         $providers = Provider::where('company_id', request()->session()->get('company_id'))->pluck('name', 'id');
         $buyProduct = new BuyProduct();
-        $products = Product::where('company_id', request()->session()->get('company_id'))->pluck('name', 'id');
+        $products = Product::select(DB::raw("CONCAT_WS(' ', products.name,' ',products.description) AS name"), 'products.id')->where('company_id', request()->session()->get('company_id'))->pluck('name', 'id');
         $establishments  = Establishment::where('company_id', request()->session()->get('company_id'))->get(); //pluck('name', 'id');
 
         return view('buy-product.create', compact('code', 'products', 'providers', 'buyProduct', 'establishments', 'payment_methods'));

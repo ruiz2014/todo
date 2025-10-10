@@ -127,10 +127,9 @@
                 </div>
                 <div class="modal-body">
                     <p>Pasos para importar : </p>
-                    <p>Primero descargue este formato de excel <a href="{{ route('lp.format') }}">descargar formato</a>, esto le descargar un formato en excel que debera ser llenado 
-                        con la lista de productos y demas datos que en ella se le pida .....No modifigue la estructura de este archivo
-                        luego subalo al servidor. <br>
-                        Esta opcion solo sera posible ejecutarlo una vez ... ! OJO ¡</p>
+                    <p>Primero descargue este formato de excel <a href="{{ route('lp.format') }}">descargar formato</a>, esto le descargar un formato en excel con la lista de productos
+                     que ha registrado,.....No modifigue la estructura de este archivo, solo llene el stock de los producto presentes en su local..... luego subalo al servidor. <br>
+                    Esta opcion solo sera posible ejecutarlo una vez ... ! OJO ¡</p>
                     <form action="{{ route('lp.import') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <input type="file" name="file" class="form-control">

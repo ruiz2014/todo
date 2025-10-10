@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use App\Models\Admin\Product;
 use App\Models\Admin\LocalProduct;
 use App\Models\Admin\BuyProduct;
@@ -46,7 +46,7 @@ class localProductController extends Controller
         $text = $request->search;
         // dd($local_id, $text);
         $select = ['buy_products.id', 'buy_products.code', 'buy_products.total', 'buy_products.document', 'buy_products.created_at', 'buy_products.status', 'e.name as l_type', 'p.name'];
-        $where = ['buy_products.company_id'=> ['=', $request->session()->get('company_id')], 'buy_products.location_type'=> ['=', 1], 'buy_products.location_id'=> ['=', $local_id]];
+        $where = ['buy_products.company_id'=> ['=', $request->session()->get('company_id')], 'buy_products.location_type'=> ['=', 1], 'buy_products.location_id'=> ['=', $local_id], 'e.company_id'=>['=', $request->session()->get('company_id')]];
         $orWhere = ['buy_products.total'=>['like', '%'.$text.'%'], 'buy_products.document' => ['like', '%'.$text.'%'], 'p.name' => ['like', '%'.$text.'%'], 'e.name' => ['like', '%'.$text.'%'], 'buy_products.created_at'=> ['like', '%'.$text.'%']];
         $join = ['providers as p' => ['buy_products.provider_id', '=', 'p.id'], 'establishments as e' => ['buy_products.location_type', '=', 'e.type']];
 

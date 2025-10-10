@@ -17,7 +17,10 @@ use App\Models\Biller\EditQuote;
 use App\Models\Biller\PaymentMethod;
 // use App\Models\Biller\PaymentLog;
 use App\Models\Admin\LocalProduct;
+use App\Models\Admin\Local;
+use App\Models\Admin\Cash;
 use App\Models\Admin\SuperAdmin\Company;
+
 
 use App\Helpers\CompanyHelper;
 use App\Helpers\OperationHelper;
@@ -46,7 +49,7 @@ class QuoteController extends Controller
 
         $result = CompanyHelper::searchAll($query, $text, $join, $where, $orWhere);
         $quotes = $result->orderBy('quotes.id', 'desc')->paginate();
-        
+
         return view('biller.quote.index', compact('quotes', 'text', 'noty'))
             ->with('i', ($request->input('page', 1) - 1) * $quotes->perPage());    
     }
@@ -67,10 +70,13 @@ class QuoteController extends Controller
                     ->where('lp.local_id', Session::get('local_id'))
                     ->pluck('products.name', 'products.id');
         $customers = DB::table('customers')->where('company_id', Session::get('company_id'))->get(); 
-        $temps = new TempQuote();           
+        $temps = new TempQuote(); 
+
+        $local = Local::select('id', 'local_name')->where('id', Session::get('local_id'))->first();
+        $cash = Cash::where('seller', Session::get('user_id'))->where('status', 1)->exists();         
         // $payment_methods = PaymentMethod::where('company_id', Session::get('company_id'))->get();
 
-        return view('biller.quote.form', compact('url_add', 'url_modify', 'url_delete', 'products', 'code', 'customers', 'temps', 'route', 'btn_txt', 'btn_txt_edit', 'parameter'));
+        return view('biller.quote.form', compact('url_add', 'url_modify', 'url_delete', 'products', 'code', 'customers', 'temps', 'route', 'btn_txt', 'btn_txt_edit', 'parameter', 'local', 'cash'));
     }
 
     /**
