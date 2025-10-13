@@ -370,7 +370,11 @@
     <script>
 
         window.addEventListener("DOMContentLoaded", function(){
-    
+            
+            $('#product_id').select2( {
+                theme: 'bootstrap-5'
+            } );
+
             let term = document.getElementById('term');
             let box = document.getElementById('box-search');
             let table = document.getElementById('table_shop')
@@ -401,7 +405,7 @@
                 textSelect = $(this).find('option:selected').text();
                 let getPrice = textSelect.split(' ').reverse();
                 priceSelect  = getPrice[0];
-                $('#amount_form').focus();
+                $('#amount_form').val(1);
                 // console.log(priceSelect);
             })
 
@@ -409,7 +413,6 @@
             term.value = 'Seleccione Cliente';
             // customer_id.value = 1;
             
-
             term.onclick = function(e){ 
                 const url = `/tool/search?customer=`;
                 if(box.childElementCount > 0){

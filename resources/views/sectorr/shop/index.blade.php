@@ -100,20 +100,20 @@
     <div class="container-fluid">
 
     @if ($message = Session::get('success'))
-        <div class="alert alert-success m-4" role="alert">
-            <p>{{ $message }}</p>
+        <div class="alert alert-success" role="alert">
+            {{ $message }}
         </div>
     @endif
 
     @if ($message = Session::get('danger'))
-        <div class="alert alert-danger m-4" role="alert">
-            <p>{{ $message }}</p>
+        <div class="alert alert-danger" role="alert">
+            {{ $message }}
         </div>
     @endif
 
     @if($cash)
 
-                <form id="form_sale" action="{{ route('shop.store') }}" method="POST">
+        <form id="form_sale" action="{{ route('shop.store') }}" method="POST">
                 @csrf    
             <div class="row padding-1 p-1 mb-3">
                 <div class="col-md-6">
@@ -196,11 +196,6 @@
                             </span>
                         </div>
                     </div>
-                    @if ($message = Session::get('success'))
-                        <div class="alert alert-success m-4">
-                           <p>{{ $message }}</p>
-                        </div>
-                    @endif
 
                     <div class="card-body bg-white">
                         <!-- <div class="table-responsive">

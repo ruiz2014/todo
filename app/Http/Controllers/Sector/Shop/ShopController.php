@@ -24,6 +24,8 @@ use App\Traits\Receipts\TicketTrait;
 use DB;
 use Session;
 
+use App\Helpers\CompanyHelper;
+
 class ShopController extends Controller
 {
     use BillTrait, TicketTrait;
@@ -66,7 +68,6 @@ class ShopController extends Controller
         return response()->json(['ok' => 1, 'orders' => $orders]);
 
         die();
-
     }
 
     public function modifyAmount(Request $req){
@@ -224,30 +225,24 @@ class ShopController extends Controller
                         case '03' :
                                 $respo = $this->setTicket($request->code);
                                 $voucher = 'Boleta';
-                                // if($respo['success'])
-                                //     return redirect()->route('pay.generated', ['order'=>$respo['attentionId']])->with($respo['alert'], 'Boleta '.$respo['nameId'].' '.$respo['message']);  
-                                // else
-                                //     return redirect()->route('pay.index')->with($respo['alert'], $respo['message']); 
                                 break;
                         case '01' :
                                 $respo = $this->setBill($request->code); //TRAIT BILL
                                 // dd($respo);
                                 $voucher = 'Factura';
-                                // if($respo['success'])
-                                //     return redirect()->route('pay.generated', ['order'=>$respo['attentionId']])->with($respo['alert'], 'Factura '.$respo['nameId'].' '.$respo['message']); 
-                                // else
-                                //     return redirect()->route('pay.index')->with($respo['alert'], $respo['message']);   
                                 break; 
                         default :
-                                // $respo = $this->ticket($request->code);
                                 $voucher = 'Ticket';
                                 $identifier = 'T001-'.str_pad($attention_id->numeration, 8, "0", STR_PAD_LEFT);
                                 TempSale::where('code', $request->code)->update(['status'=> 2]);
                                 Attention::where('id', $attention_id->id)->update(['identifier' => $identifier, 'message' => 'Ticket Generado', 'success'=> 1, 'completed' => 1, 'status'=>1]);
-                                return redirect()->route('shop.generated', ['order' => $request->code ])->with('success', 'Ticket Generado .....Se realizo correctamente la venta');        
+                                
+                                return CompanyHelper::a_casa('shop.generated', $request->code, 'success', 'Ticket Generado .....Se realizo correctamente la venta');      
                     }
 
-                    return redirect()->route('shop.generated', ['order' => $request->code ])->with($respo['alert'], $respo['message']);
+                    return CompanyHelper::a_casa('shop.generated', $request->code, $respo['alert'], $respo['message']);
+                    
+                    // return redirect()->route('shop.generated', ['order' => $request->code ])->with($respo['alert'], $respo['message']);
                 }
 
             }

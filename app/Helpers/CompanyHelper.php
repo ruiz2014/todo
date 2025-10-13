@@ -4,6 +4,7 @@ namespace App\Helpers;
 
 use Illuminate\Database\Eloquent\Collection;
 use App\Models\Admin\SuperAdmin\Sector;
+use App\Models\Admin\SuperAdmin\SetUpCompany;
 use Session;
 use DB;
 
@@ -173,5 +174,15 @@ class CompanyHelper
                 return 'Voided/20608894447/'.$string.'-'.$path;
             break;
         }
+    }
+
+    public static function a_casa($route, $code = null, $alert = null, $message = null){
+        if(SetUpCompany::where('company_id', Session::get('company_id'))->value('redirect_after')){
+            $cadena = back()->with('success', 'operacion exitosa .....');
+        }else{
+            $cadena = redirect()->route('shop.generated', ['order' => $code ])->with($alert, $message);
+        }
+        
+        return $cadena;
     }
 }

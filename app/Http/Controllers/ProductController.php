@@ -13,6 +13,7 @@ use Illuminate\View\View;
 use App\Imports\ProductsImport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Helpers\CompanyHelper;
+use App\Models\Admin\SuperAdmin\SetUpCompany;
 
 class ProductController extends Controller
 {
@@ -32,9 +33,11 @@ class ProductController extends Controller
         $result = CompanyHelper::searchAll($query, $text, $join, $where, $orWhere);
         $products = $result->paginate();
 
+        $uploadedProduct = SetUpCompany::where('company_id', request()->session()->get('company_id'))->value('uploaded_products');
+
         // $products = Product::paginate();
 
-        return view('product.index', compact('products', 'text'))
+        return view('product.index', compact('products', 'text', 'uploadedProduct'))
             ->with('i', ($request->input('page', 1) - 1) * $products->perPage());
     }
 
@@ -130,8 +133,8 @@ class ProductController extends Controller
             ]);
 
             Excel::import(new ProductsImport($company_id, $user_id), $request->file('file'));
-            // dd($last);
-            return back()->with('success', 'Se importaron los poductos con exito!');
+            SetUpCompany::where('company_id', $company_id)->update(['uploaded_products' => 1]);
+            return back()->with('success', 'Se importaron los productos con exito!');
 
         }catch (\Throwable $th) {
             Log::info("Line No : ".__LINE__." : File Path : ".__FILE__." message ".$th->getMessage()." linea : ".$th->getLine()." codigo :".$th->getCode());

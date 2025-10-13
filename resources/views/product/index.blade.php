@@ -5,11 +5,13 @@
 @endsection
 
 @section('content')
+@if($uploadedProduct == 0)
     <div class="container-fluid mb-3">
         <div>
             <button data-bs-toggle="modal" data-bs-target="#exampleModal3" class="btn btn-outline-success" >Importar Productos</button>
         </div>
     </div> 
+@endif    
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-12">
@@ -90,6 +92,7 @@
                 {!! $products->withQueryString()->links() !!}
             </div>
         </div>
+    @if($uploadedProduct == 0)    
         <!-- Modal -->
         <div class="modal fade" id="exampleModal3" tabindex="-1" aria-labelledby="exampleModal4Label" aria-hidden="false">
             <div class="modal-dialog">
@@ -118,6 +121,7 @@
                 </div>
             </div>
         </div>
+    @endif    
     </div>
 @endsection
 

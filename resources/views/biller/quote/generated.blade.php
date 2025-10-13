@@ -26,6 +26,14 @@
                 </span>
 
                 <div class="float-right">
+
+                    <a href="{{ url('generate-pdf/'.$quote->id.'/cotizacion') }}" class="btn btn-outline-primary float-right"  data-placement="left">
+                        <ion-icon name="save"></ion-icon> A4
+                    </a>
+                    <a href="{{ url('generate-pdf-ticket/'.$quote->id.'/cotizacion') }}" class="btn btn-outline-success float-right"  data-placement="left">
+                        <ion-icon name="clipboard"></ion-icon> Ticket
+                    </a>
+
                     <a href="{{ route('quotes.convert', $quote->document_code ) }}" class="btn btn-outline-success" >convertir a venta</a>
                     <a href="{{ url()->previous() }}" class="btn btn-outline-secondary btn-sm float-right"  data-placement="left">
                         <ion-icon name="refresh"></ion-icon>

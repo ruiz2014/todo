@@ -17,6 +17,14 @@
                 </span>
 
                 <div class="float-right">
+                    <a href="{{ url('generate-pdf/'.$attention->id.'/factura') }}" class="btn btn-outline-primary float-right"  data-placement="left">
+                        <ion-icon name="save"></ion-icon> A4
+                    </a>
+
+                    <a href="{{ url('generate-pdf-ticket/'.$attention->id.'/factura') }}" class="btn btn-outline-success float-right"  data-placement="left">
+                        <ion-icon name="clipboard"></ion-icon> Ticket
+                    </a>
+
                     <a href="{{ url()->previous() }}" class="btn btn-outline-secondary btn-sm float-right"  data-placement="left">
                         <ion-icon name="refresh"></ion-icon>
                     </a>

@@ -31,9 +31,9 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\Sector\Shop\ShopController;
 use App\Http\Controllers\Sector\Hotel\HotelController;
 use App\Http\Controllers\Sector\Restaurant\RestaurantController;
+use App\Http\Controllers\Operation\PdfController;
 
 use App\Helpers\CompanyHelper;
-
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -202,6 +202,9 @@ Route::post('modify_amount_edit', [OperationController::class, 'modifyAmount_edi
 Route::post('delete_order_edit', [OperationController::class, 'delete_edit']);
 
 // Route::post('save', [ShopController::class, 'store'])->name('shop.store');
+
+Route::get('generate-pdf/{id}/{type}', [PDFController::class, 'generatePDF']);
+Route::get('generate-pdf-ticket/{id}/{type}', [PDFController::class, 'generatePDF']);
 
 Route::view('pichi', 'pru');
 

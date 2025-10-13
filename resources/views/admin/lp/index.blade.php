@@ -51,7 +51,9 @@
             </div> 
             <button id="btn-add" class="btn btn-outline-success mb-3" type="submit">Agregar</button>  
         </form>      -->
+    @if($uploadedProduct == 0)      
         <button data-bs-toggle="modal" data-bs-target="#exampleModal3" class="btn btn-outline-warning" >importar productos</button>
+    @endif
     </div>  
 
     <div class="container-fluid">
@@ -117,6 +119,7 @@
         </div>
     </div>
 
+    @if($uploadedProduct == 0) 
         <!-- Modal -->
     <div class="modal fade" id="exampleModal3" tabindex="-1" aria-labelledby="exampleModal4Label" aria-hidden="false">
             <div class="modal-dialog">
@@ -143,6 +146,7 @@
                 </div>
             </div>
     </div>
+    @endif
         <!-- Modal -->
     <!-- <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -187,8 +191,8 @@
                     </div>
                 </form>     
             </div>
-        </div>
-    </div>  -->
+        </div> 
+    </div> --> 
 @endsection
 @section('script')  
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>

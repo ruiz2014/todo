@@ -10,6 +10,7 @@ use App\Models\Admin\BuyProduct;
 use App\Models\Biller\TempBuy;
 use App\Models\Admin\Kardex;
 use App\Models\Admin\ProductEntry;
+use App\Models\Admin\SuperAdmin\SetUpLocal;
 use Illuminate\Support\Facades\Redirect;
 use App\Helpers\CompanyHelper;
 
@@ -37,7 +38,9 @@ class localProductController extends Controller
         $result = CompanyHelper::searchAll($query, $text, $join, $where, $orWhere);
         $local_products = $result->paginate();
 
-        return view('admin.lp.index', compact('products', 'local_products', 'text'));
+        $uploadedProduct = SetUpLocal::where('company_id', request()->session()->get('company_id'))->where('local_id', request()->session()->get('local_id'))->value('uploaded_products');
+
+        return view('admin.lp.index', compact('products', 'local_products', 'text', 'uploadedProduct'));
     }
 
     public function newEntries(Request $request){
@@ -126,6 +129,7 @@ class localProductController extends Controller
         ]);
         
         Excel::import(new LocalProductImport($company_id, $local_id, $user_id), $request->file('file'));
+        SetUpLocal::where('company_id', $company_id)->where('local_id', $local_id)->update(['uploaded_products' => 1]);
         dd("algo que esea");
     }
 }
