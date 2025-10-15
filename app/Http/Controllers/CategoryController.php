@@ -25,7 +25,7 @@ class CategoryController extends Controller
 
         $query  = Category::select($select);
         $result = CompanyHelper::searchAll($query, $text, $join, $where, $orWhere);
-        $categories = $result->paginate(1);
+        $categories = $result->paginate();
         
         // $categories = Category::paginate();
         // dd($request->session()->all());

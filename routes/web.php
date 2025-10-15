@@ -209,3 +209,22 @@ Route::get('generate-pdf-ticket/{id}/{type}', [PDFController::class, 'generatePD
 Route::view('pichi', 'pru');
 
 Route::post('mierda', [HomeController::class, 'mierda']);
+
+
+
+// Route::get('salon', [DiningHallController::class, 'hall'])->name('hall');
+
+Route::post('check', [RestaurantController::class, 'check']);
+Route::post('add_order', [RestaurantController::class, 'addOrder']);
+Route::post('modify_amount', [RestaurantController::class, 'modifyAmount']);
+Route::post('delete_order', [RestaurantController::class, 'deleteOrder']);
+// Route::post('add_note', [DiningHallController::class, 'addNote']);
+Route::post('send_kitchen', [RestaurantController::class, 'sendToKitchen']);
+// Route::post('qr_debt', [DiningHallController::class, 'qrDebt']);
+// Route::get('see_debt/{code}/{type}', [DiningHallController::class, 'seeDebt']);
+// // Route::get('pdf_debt/{code}', [DiningHallController::class, 'pdfDebt']);
+// Route::post('finalize_order', [DiningHallController::class, 'finalizeOrder'])->name('finalizeOrder');
+
+
+// Route::post('dish_ready', [KitchenController::class, 'dishReady']);
+// Route::get('kitchen', [KitchenController::class, 'index']);

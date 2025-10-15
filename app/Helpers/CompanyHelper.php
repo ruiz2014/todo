@@ -37,6 +37,10 @@ class CompanyHelper
 //         return $status;
 //     }
 
+    public static function getBelong(){
+        return DB::table('companies')->where("id", Session::get('company_id'))->value("sector_id");
+    }
+
     public static function getSector(){
         // $company = Session::get('company_id');
         $url = 'panel';

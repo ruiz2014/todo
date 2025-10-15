@@ -47,7 +47,7 @@ class ProductController extends Controller
     public function create(): View
     {
         $product = new Product();
-        $categories = Category::pluck('category_name', 'id');
+        $categories = Category::where("company_id", request()->session()->get('company_id'))->pluck('category_name', 'id');
 
         return view('product.create', compact('product', 'categories'));
     }
@@ -60,8 +60,9 @@ class ProductController extends Controller
         try{
             $id_user = $request->session()->get('user_id');
             $id_company = $request->session()->get('company_id');
-            // dd($id_user,  $id_company);
-            Product::create($request->validated() + ['user_id' => $id_user , 'company_id'=>$id_company]);
+            $belong = CompanyHelper::getBelong();
+            // dd($id_user,  $id_company, $belong);
+            Product::create($request->validated() + ['user_id' => $id_user , 'company_id'=>$id_company, 'belong'=>$belong]);
 
             return Redirect::route('products.index')->with('success', 'Product created successfully.');
             
@@ -90,7 +91,7 @@ class ProductController extends Controller
     public function edit($id): View
     {
         $product = Product::find($id);
-        $categories = Category::pluck('category_name', 'id');
+        $categories = Category::where("company_id", request()->session()->get('company_id'))->pluck('category_name', 'id');
 
         return view('product.edit', compact('product', 'categories'));
     }
