@@ -21,6 +21,7 @@ use App\Models\Admin\Cash;
 
 use App\Traits\Receipts\BillTrait;
 use App\Traits\Receipts\TicketTrait;
+use App\Traits\Common\GeneratedReceiptTrait;
 use DB;
 use Session;
 
@@ -28,7 +29,7 @@ use App\Helpers\CompanyHelper;
 
 class ShopController extends Controller
 {
-    use BillTrait, TicketTrait;
+    use BillTrait, TicketTrait, GeneratedReceiptTrait;
     
     public function index($quote = null){
         $code = date('YmdHis').''.Session::get('user_id');
@@ -93,6 +94,7 @@ class ShopController extends Controller
 
     public function store(Request $request){
 
+        // dd($request);
         $local = Session::get('local_id');
         $company = Session::get('company_id');
 
@@ -102,7 +104,6 @@ class ShopController extends Controller
             "code"=>"required",
             "type_payment" => "required",
             "payMethod" => "required_if:type_payment,1",
-            
         ];
 
         // $mensajes =[
@@ -142,7 +143,9 @@ class ShopController extends Controller
                     if($total !== $total_provi){
                         /**COMPARA VALORES LE TEMP_SALE CON LOS TRAIDO EL EL ARREGLO "$filteredArray" **/
 
-                        //dd($total, $total_provi, $filteredArray, $request->input('payMethod'), array_combine($request->input('payMethod'), $filteredArray), $request, count($filteredArray), count($request->input('payMethod')));
+                        // dd($total, $total_provi, $filteredArray, $request->input('payMethod'), array_combine($request->input('payMethod'), $filteredArray), $request, count($filteredArray), count($request->input('payMethod')));
+                        // dd($total, $total_provi, $filteredArray, $request->input('payMethod'), array_combine($request->input('payMethod'), $filteredArray), $request);
+
                         dd("joder2");
                         // return redirect()->route('pay.show', ['order'=> $request->code])->with('danger', 'Elegio formas de pagos que no coninciden con monto total');
                     }
@@ -150,6 +153,7 @@ class ShopController extends Controller
                     $combinado = $payMethod == false ? 1 : array_combine($request->input('payMethod'), $filteredArray);
                 }
                 // dd($request,$request->input('payMethod'),  $filteredArray, count($filteredArray),count($request->input('payMethod')));
+                dd($combinado , $total, $total_provi, $filteredArray, $request->input('payMethod'), $request);
                 $numeration = $this->setCorrelative($request->receipt); 
                 $attention_id = Attention::create([
                     'local_id'=> Session::get('local_id'),
@@ -163,6 +167,7 @@ class ShopController extends Controller
                     'seller'=>Session::get('user_id'),
                     'serie'=>1,
                     'numeration'=> $numeration,
+                    'belong' => 1
                 ]);
                 /*AQUI DEBERIA VER UN ESTADO PARA VER LA CASH*/
                 TempSale::where('code', $request->code)->update(['customer_id'=>$request->customer_id, 'type_payment'=>$request->type_payment]);
@@ -221,6 +226,10 @@ class ShopController extends Controller
                         } 
                     }
 
+                    $this->model = TempSale::class; //TRAIT BILL Y TICKET
+                    $this->table = 'temp_sales'; //TRAIT BILL Y TICKET
+                    $this->statusEnd = 2; //TRAIT BILL Y TICKET
+
                     switch($request->receipt){
                         case '03' :
                                 $respo = $this->setTicket($request->code);
@@ -269,21 +278,54 @@ class ShopController extends Controller
 // dd($order);
         // $article=Attention::with("voucher")->first();
         // dd($article);
-        $attention = Attention::where('document_code', $order)->first();
-        // dd($attention);
-        $company = Company::find($request->session()->get('company_id'));
-        $temps = TempSale::where('code', $attention->document_code)->get();
-        $methods = PaymentMethod::join('payment_logs as pl', 'payment_methods.id', '=', 'pl.method_id')
-                                ->join('attentions as at', 'pl.attention_id', '=', 'at.id')
-                                ->where('at.document_code', $attention->document_code)
-                                ->select('pl.total', 'payment_methods.name')
-                                ->get();
+
+
+/** Vale*/
+
+        // $attention = Attention::where('document_code', $order)->first();
+
+        // $company = Company::find($request->session()->get('company_id'));
+        // $temps = TempSale::where('code', $attention->document_code)->get();
+        // $methods = PaymentMethod::join('payment_logs as pl', 'payment_methods.id', '=', 'pl.method_id')
+        //                         ->join('attentions as at', 'pl.attention_id', '=', 'at.id')
+        //                         ->where('at.document_code', $attention->document_code)
+        //                         ->select('pl.total', 'payment_methods.name')
+        //                         ->get();
                   
-        // $table = $temps->value("table_id");
-        $payment_methods = PaymentMethod::all();
-        // dd($table, $temps, $attention);  
-        $total = TempSale::where('code', $attention->document_code)->sum(DB::raw('amount * price'));
-        // dd($payment_methods, $attention, $company, $temps, $methods);
+        // // $table = $temps->value("table_id");
+        // $payment_methods = PaymentMethod::all();
+        // // dd($table, $temps, $attention);  
+        // $total = TempSale::where('code', $attention->document_code)->sum(DB::raw('amount * price'));
+
+
+        // // dd($payment_methods, $attention, $company, $temps, $methods);
+
+/**vale */
+        $this->generatedReceiptT($order);
+
+// $this->main_data = Attention::where('document_code', $code)->first();
+//         $this->company = Company::find(request()->session()->get('company_id'));
+//         $this->name_document = $this->main_data->voucher->name;
+//         $this->temps = DB::table($table)->where('code', $attention->document_code)->get();
+//         $this->methods = PaymentMethod::join('payment_logs as pl', 'payment_methods.id', '=', 'pl.method_id')
+//                                 ->join('attentions as at', 'pl.attention_id', '=', 'at.id')
+//                                 ->where('at.document_code', $attention->document_code)
+//                                 ->select('pl.total', 'payment_methods.name')
+//                                 ->get();
+
+//         $this->payment_methods = PaymentMethod::all(); 
+//         $this->total = $attention->total;
+
+
+        $attention = $this->main_data;
+        $company = $this->company;
+        $temps = $this->temps;
+        $methods = $this->methods;
+        $payment_methods = $this->payment_methods;
+        $total = $this->total;
+
+        // dd($temps, $attention, $total); 
+
         return view('nose.generated_receipt', compact('notify', 'company', 'attention', 'total', 'payment_methods', 'temps', 'methods'));
     }
 

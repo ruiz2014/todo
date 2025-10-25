@@ -31,6 +31,8 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\Sector\Shop\ShopController;
 use App\Http\Controllers\Sector\Hotel\HotelController;
 use App\Http\Controllers\Sector\Restaurant\RestaurantController;
+use App\Http\Controllers\Sector\Restaurant\KitchenController;
+use App\Http\Controllers\Sector\Restaurant\CheckOutController;
 use App\Http\Controllers\Operation\PdfController;
 
 use App\Helpers\CompanyHelper;
@@ -215,16 +217,28 @@ Route::post('mierda', [HomeController::class, 'mierda']);
 // Route::get('salon', [DiningHallController::class, 'hall'])->name('hall');
 
 Route::post('check', [RestaurantController::class, 'check']);
-Route::post('add_order', [RestaurantController::class, 'addOrder']);
-Route::post('modify_amount', [RestaurantController::class, 'modifyAmount']);
-Route::post('delete_order', [RestaurantController::class, 'deleteOrder']);
+Route::post('add_order_r', [RestaurantController::class, 'addOrder']);
+Route::post('modify_amount_r', [RestaurantController::class, 'modifyAmount']);
+Route::post('delete_order_r', [RestaurantController::class, 'deleteOrder']);
 // Route::post('add_note', [DiningHallController::class, 'addNote']);
-Route::post('send_kitchen', [RestaurantController::class, 'sendToKitchen']);
+Route::post('send_kitchen_r', [RestaurantController::class, 'sendToKitchen']);
 // Route::post('qr_debt', [DiningHallController::class, 'qrDebt']);
 // Route::get('see_debt/{code}/{type}', [DiningHallController::class, 'seeDebt']);
 // // Route::get('pdf_debt/{code}', [DiningHallController::class, 'pdfDebt']);
-// Route::post('finalize_order', [DiningHallController::class, 'finalizeOrder'])->name('finalizeOrder');
+Route::post('finalize_order', [RestaurantController::class, 'finalizeOrder'])->name('finalizeOrder');
 
 
-// Route::post('dish_ready', [KitchenController::class, 'dishReady']);
-// Route::get('kitchen', [KitchenController::class, 'index']);
+Route::post('dish_ready', [KitchenController::class, 'dishReady']);
+Route::get('kitchen', [KitchenController::class, 'index']);
+
+// Route::get('generado_check/{order}', [CheckOutController::class, 'generatedReceipt'])->name('pay.generated');
+Route::get('caja', [CheckOutController::class, 'index'])->name('pay.index');
+Route::get('caja/pago/{order}', [CheckOutController::class, 'show'])->name('pay.show');
+Route::post('caja/pago/enviar', [CheckOutController::class, 'store'])->name('pay.store');
+// Route::get('caja/generado/{order}', [PaymentBoxController::class, 'generatedReceipt'])->name('pay.generated');
+
+// Route::get('user/register', [RegisterController::class, 'create'])->name('formRegistro');
+// Route::post('user/register', [RegisterController::class, 'store'])->name('register.store');
+// Route::get('user/editPassword/{id}', [RegisterController::class, 'editPassword'])->name('formEdit');
+// Route::post('user/updatePassword/{id}', [RegisterController::class, 'updatePassword'])->name('register.update');
+// Route::resource('users', App\Http\Controllers\Admin\UserController::class);

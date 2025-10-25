@@ -12,8 +12,8 @@
 	
 		@foreach($temps as $item)
 				<tr>
-					<td style="text-align:center;padding:5px 0px;font-size:9px;">{{ $item->product->name }}</td>
-					<td style="text-align:center;padding:5px 0px;font-size:9px;">{{ $item->product->description }}</td>
+					<td style="text-align:center;padding:5px 0px;font-size:9px;">{{ $item->name }}</td>
+					<td style="text-align:center;padding:5px 0px;font-size:9px;">{{ $item->description }}</td>
 					<td style="text-align:center;font-size:9px;">{{ $item->amount }}</td>
 					<td style="text-align:center;font-size:9px;">{{ $item->price }}</td>
 					<td style="text-align:center;font-size:9px;">{{ $item->amount * $item->price  }}</td>

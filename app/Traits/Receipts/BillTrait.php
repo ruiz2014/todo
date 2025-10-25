@@ -36,6 +36,9 @@ trait BillTrait {
     // protected $total = '';
     // protected $subTotal = '';
     // protected $igv = '';
+    protected $model = null;
+    protected $table = null;
+    protected $statusEnd = null;
 
     public function setBill($code){
 
@@ -60,7 +63,7 @@ trait BillTrait {
             $items = [];
             
             $sale_data = $this->getSale($code);  //TRAIT BillingToolsTrait
-            $sale_items = $this->getDetails('temp_sales', $code);
+            $sale_items = $this->getDetails($this->table, $code);
 
             if(!$sale_items->isEmpty()){
 
@@ -113,7 +116,7 @@ trait BillTrait {
                 // Log_Receipt::create([ 'user_id'=>1, 'customer_id'=>$attentionData->customer_id, 'document_code'=>$order, 'identifier'=>$xml, 'total'=>$total, 'hash'=>$hash, 'resume'=>$resumen, 'cdr'=>$code]);
                 $message .=''.$cdr->getDescription().PHP_EOL;
 
-                if($update_ts){ TempSale::where('code', $code)->update(['status'=> 2]); }
+                if($update_ts){ $this->model::where('code', $code)->update(['status'=> $this->statusEnd ]); }
                 
                 Attention::where('id', $sale_data->id)->update(['message'=>$message, 'completed'=>1, 'status' => 1]);
 

@@ -17,11 +17,11 @@
                 </span>
 
                 <div class="float-right">
-                    <a href="{{ url('generate-pdf/'.$attention->id.'/factura') }}" class="btn btn-outline-primary float-right"  data-placement="left">
+                    <a href="{{ url('generate-pdf/'.$attention->document_code.'/factura') }}" class="btn btn-outline-primary float-right"  data-placement="left">
                         <ion-icon name="save"></ion-icon> A4
                     </a>
 
-                    <a href="{{ url('generate-pdf-ticket/'.$attention->id.'/factura') }}" class="btn btn-outline-success float-right"  data-placement="left">
+                    <a href="{{ url('generate-pdf-ticket/'.$attention->document_code.'/factura') }}" class="btn btn-outline-success float-right"  data-placement="left">
                         <ion-icon name="clipboard"></ion-icon> Ticket
                     </a>
 
@@ -127,7 +127,7 @@
 
                     <div class="table-responsive-sm">
                         <table class="table table-sm table-striped">
-                            <thead>
+                            <thead class="table-dark">
                                 <tr>
                                     <th scope="col" width="2%" class="center">#</th>
                                     <th scope="col" width="20%">Producto/Servicio</th>
@@ -141,8 +141,8 @@
                             @foreach($temps as $temp)    
                                 <tr>
                                     <td class="text-left">1</td>
-                                    <td class="item_name">{{ $temp->product->name }}</td>
-                                    <td class="item_desc d-none d-sm-table-cell">{{ $temp->product->description }}</td>
+                                    <td class="item_name">{{ $temp->name }}</td>
+                                    <td class="item_desc d-none d-sm-table-cell">{{ $temp->description }}</td>
 
                                     <td class="text-right">{{ $temp->price }}</td>
                                     <td class="text-right">{{ $temp->amount }}</td>

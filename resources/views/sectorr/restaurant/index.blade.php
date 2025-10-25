@@ -140,7 +140,7 @@
                 <a id="vemos" class="btn btn-outline-info">Imprimir</a>
                 <button id="show_debt" class="btn btn-outline-info">Mostrar QR</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <form action="ute('finalizeOrder') }}" method="post">
+                <form action="{{ route('finalizeOrder') }}" method="post">
                     @csrf
                     <input type="hidden" name="order_table" value="" id="order">
                     <button type="submit" class="btn btn-outline-primary" id="finalize_order" >Save changes</button>

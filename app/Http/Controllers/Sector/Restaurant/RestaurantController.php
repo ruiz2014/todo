@@ -127,6 +127,22 @@ class RestaurantController extends Controller
         return response()->json(['ok' => 0, 'orders' => []]);
     }
 
+    public function finalizeOrder(Request $req){
+        $check = TempRestaurant::where('table_id', $req->order_table)
+            ->where('status', 3)
+            // ->where('business_id', 1)
+            ->where(DB::raw("CAST(created_at AS DATE)"), '=', DB::raw("DATE(now())"))
+            ->value('code');
+// dd($check);
+        if($check){ 
+            TempRestaurant::where('code', $check)->update(['status' => 4]);
+            return redirect()->route('j2')->with('success', 'La orden fue enviada a caja');
+        }  
+        
+        return redirect()->route('j2')->with('danger', 'No se encontro la orden de la mesa');
+
+    }
+
     // public function store(RoomRequest $request): RedirectResponse
     // {
     //     // dd($request);

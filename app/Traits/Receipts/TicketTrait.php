@@ -24,6 +24,10 @@ trait TicketTrait {
 
     use BillingConfigurationTrait, BillingToolsTrait;
 
+    protected $model = null;
+    protected $table = null;
+    protected $statusEnd = null;
+
     public function setTicket($code){
 
         $response = [
@@ -44,7 +48,7 @@ trait TicketTrait {
             $items = [];
 
             $sale_data = $this->getSale($code);  //TRAIT BillingToolsTrait
-            $sale_items = $this->getDetails('temp_sales', $code);
+            $sale_items = $this->getDetails($this->table, $code);
 
             if(!$sale_items->isEmpty()){
                 $serie = $this->formatSerie($sale_data->serie, $sale_data->sunat_code);
@@ -78,7 +82,7 @@ trait TicketTrait {
                 $this->writeXml($invoice, $see->getFactory()->getLastXml(), $rucCustomer, 2); 
                 // dd($hash, $xml_id, $xmlSigned);
             
-                TempSale::where('code', $code)->update(['status'=> 2]);
+                $this->model::where('code', $code)->update(['status'=> $this->statusEnd]);
                 
                 Attention::where('id', $sale_data->id)->update(['hash'=>$hash, 'identifier'=>$xml_id, 'resume' => $resumen, 'message'=>$message, 'dispatched'=> 1]);
 

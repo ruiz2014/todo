@@ -117,7 +117,7 @@
                 @csrf    
             <div class="row padding-1 p-1 mb-3">
                 <div class="col-md-6">
-                    <label for="" style="width:100%;">Comprobante</label>
+                    <label for="" style="width:100%;">{{ __('Type of receipt') }}</label>
                     <select name="receipt" class="form-select" aria-label="Default select example" style="width:100%;">
                         <option value="00">Ticket</option>
                         <option value="03">Boleta</option>
@@ -252,8 +252,8 @@
                     @endforeach
                     <div class="form-check d-flex mb-2">
                         <div class="w-50">
-                            <input class="form-check-input" type="radio" name="payMethod" value="3" id="radioPay3" form="form_sale">
-                            <label class="form-check-label" for="radioPay3">
+                            <input class="form-check-input" type="radio" name="payMethod" value="3" id="radioPay_detail" form="form_sale">
+                            <label class="form-check-label" for="radioPay_detail">
                                 Detallado
                             </label>
                         </div>    
@@ -384,60 +384,40 @@
      /* z-index: 1; /* Ensure it stays on top of other content */
     /*} */
 
-    .result{
-        background: #fcfdff;
-        z-index: 1;
-        width: 100%;
-    }
-    #box-search{
-        border:1px solid black;
-        border-top: none;
-        margin:0px;
-        padding-left: 0px;
-        /* height: 150px;*/
-        overflow-y: auto;
-    }
-    #box-search li{
-        list-style: none;
-        padding: 3px 0px 3px 10px;
-    }
-    #box-search li:hover{
-        background: #007bff;
-        color:white;
-    }
+    
     </style>
 @endsection
 @section('script')  
     <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>
  
     <script>
-        window.onload = function() {
-            const checkboxs = document.querySelectorAll('input[type="checkbox"]');
-            checkboxs.forEach(function(checkbox) {
-                checkbox.checked = false;
-            });
-        };
+        // window.onload = function() {
+        //     const checkboxs = document.querySelectorAll('input[type="checkbox"]');
+        //     checkboxs.forEach(function(checkbox) {
+        //         checkbox.checked = false;
+        //     });
+        // };
         window.addEventListener("DOMContentLoaded", function(){
 
             $('#product_id').select2( {
                 theme: 'bootstrap-5'
             } );
             
-            let term = document.getElementById('term');
-            let box = document.getElementById('box-search');
+            // let term = document.getElementById('term');
+            // let box = document.getElementById('box-search');
             let table = document.getElementById('table_shop')
             let tb_data = document.getElementById('tbody')
-            let type_payment = document.getElementById('type_payment');
-            let payMethod = document.getElementById('payMethod');
-            let new_pay = document.getElementById('new_pay');
+            // let type_payment = document.getElementById('type_payment');
+            // let payMethod = document.getElementById('payMethod');
+            // let new_pay = document.getElementById('new_pay');
             
-            let clear_btn = document.getElementById('clean');
+            // let clear_btn = document.getElementById('clean');
             let btn_generate = document.getElementById('btn-generate');
 
-            const simple = document.querySelectorAll('#new_pay input[type=radio]');
-            const simple_number = document.querySelectorAll('#new_pay input[type=number]');
-            const detailed = document.querySelectorAll('#payMethod li input[type=checkbox]');
-            const detailed_number = document.querySelectorAll('#payMethod li input[type=number]');
+            // const simple = document.querySelectorAll('#new_pay input[type=radio]');
+            // const simple_number = document.querySelectorAll('#new_pay input[type=number]');
+            // const detailed = document.querySelectorAll('#payMethod li input[type=checkbox]');
+            // const detailed_number = document.querySelectorAll('#payMethod li input[type=number]');
 
             let idSelect = null;
             let textSelect = null;
@@ -448,10 +428,10 @@
             let temp_result = {!! $temps !!};
             showResponse(temp_result, 'joder');
        
-            clear_btn.onclick = ()=>{ clean(); } 
+            // clear_btn.onclick = ()=>{ clean(); } 
             btn_generate.onclick = ()=>{ validar();} 
 
-            type_payment.selectedIndex = 0;
+            // type_payment.selectedIndex = 0;
             payMethod.style.display = "none";
             $('#product_id').change(function(){
                 idSelect = $(this).val();
@@ -469,73 +449,73 @@
             // customer_id.value = 1;
             
 
-            term.onclick = function(e){ 
-                term.value = "";
-                const url = `/tool/search?customer=`;
-                if(box.childElementCount > 0){
-                    box.innerHTML = "";
-                    box.style.height = '0px'
-                    return
-                }
-                box.style.height = '150px'
-                search(e, url)
-                // console.log(box.childElementCount); 
-            }
+            // term.onclick = function(e){ 
+            //     term.value = "";
+            //     const url = `/tool/search?customer=`;
+            //     if(box.childElementCount > 0){
+            //         box.innerHTML = "";
+            //         box.style.height = '0px'
+            //         return
+            //     }
+            //     box.style.height = '150px'
+            //     search(e, url)
+            //     // console.log(box.childElementCount); 
+            // }
 
-            term.addEventListener("keyup", (e)=>{
-                // console.log(e.type)
-                const url = `/tool/search?customer=${term.value}`;
-                search(e, url)
-            })
+            // term.addEventListener("keyup", (e)=>{
+            //     // console.log(e.type)
+            //     const url = `/tool/search?customer=${term.value}`;
+            //     search(e, url)
+            // })
 
-            function search(e, url){
-                // alert(url)
+            // function search(e, url){
+            //     // alert(url)
             
-                fetch(url,{
-                    method: "get",
-                    headers: { 
-                        'Content-Type': 'application/json',
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log(data);
-                    box.innerHTML = "";
-                    data.forEach(p =>{
-                        box.innerHTML += `<li data-document=${p.document} data-search=${p.id}> ${p.name} </li>`;
-                    })
+            //     fetch(url,{
+            //         method: "get",
+            //         headers: { 
+            //             'Content-Type': 'application/json',
+            //         }
+            //     })
+            //     .then(response => response.json())
+            //     .then(data => {
+            //         console.log(data);
+            //         box.innerHTML = "";
+            //         data.forEach(p =>{
+            //             box.innerHTML += `<li data-document=${p.document} data-search=${p.id}> ${p.name} </li>`;
+            //         })
                     
-                    box.addEventListener("click", function(li) {
+            //         box.addEventListener("click", function(li) {
 
-                        term.value = li.target.innerHTML
-                        customer_id.value = li.target.dataset.search
-                        box.innerHTML = "";
-                        box.style.height = '0px'
-                        // customer_doc.value = li.target.dataset.document
+            //             term.value = li.target.innerHTML
+            //             customer_id.value = li.target.dataset.search
+            //             box.innerHTML = "";
+            //             box.style.height = '0px'
+            //             // customer_doc.value = li.target.dataset.document
 
-                        if(e.type == 'click'){
-                            console.log(e.type)
-                            term.onmousedown = function()
-                            {
-                                return false;
-                            }
-                        }
+            //             if(e.type == 'click'){
+            //                 console.log(e.type)
+            //                 term.onmousedown = function()
+            //                 {
+            //                     return false;
+            //                 }
+            //             }
                         
-                    }, false);
-                })
-            }
+            //         }, false);
+            //     })
+            // }
         
-            function clean(){
-                term.value=''; 
-                customer_id.value=''
-                // customer_doc.value = '';
-                box.innerHTML = "";
-                box.style.height = '0px'
-                term.onmousedown = function()
-                {
-                    return true;
-                }
-            }
+            // function clean(){
+            //     term.value=''; 
+            //     customer_id.value=''
+            //     // customer_doc.value = '';
+            //     box.innerHTML = "";
+            //     box.style.height = '0px'
+            //     term.onmousedown = function()
+            //     {
+            //         return true;
+            //     }
+            // }
           /***********FIN SEARCH CUSSTOMER********* */
 
             /***************ADD SALE*************** */
@@ -690,52 +670,54 @@
 
 // atAttributeForm(opt)
 
-            new_pay.onchange = function(ev){
-                if(ev.target.checked){
-                    radioPay = ev.target.id;
-                    if(ev.target.id === 'radioPay3'){
-                        atAttributeForm(2, simple, simple_number, detailed, detailed_number);
-                        payMethod.style.display = "block";
-                        $('#radioMethod1').val(0);
-                        $('#radioMethod2').val(0);
-                    }else{
+            // new_pay.onchange = function(ev){
+            //     if(ev.target.checked){
+            //         radioPay = ev.target.id;
+            //         if(ev.target.id === 'radioPay_detail'){
+            //             atAttributeForm(2, simple, simple_number, detailed, detailed_number);
+            //             payMethod.style.display = "block";
+            //             $('#radioMethod1').val(0);
+            //             $('#radioMethod2').val(0);
+            //         }else{
+            //             // console.log(detailed)
+            //             cleanPayMethodCheck(detailed, detailed_number);
+            //             atAttributeForm(1, simple, simple_number, detailed, detailed_number);
 
-                        // console.log(detailed)
-                        cleanPayMethodCheck(detailed, detailed_number);
-                        atAttributeForm(1, simple, simple_number, detailed, detailed_number);
+            //             // payMethod.style.display = "none";
+            //             if(ev.target.id === 'radioPay1'){
+            //                 $('#radioMethod1').val(total);
+            //                 $('#radioMethod2').val(0);
+            //             }else{
+            //                 $('#radioMethod2').val(total);
+            //                 $('#radioMethod1').val(0);
+            //             }
+            //         } 
+            //     }
+            // }
 
-                        // payMethod.style.display = "none";
-                        if(ev.target.id === 'radioPay1'){
-                            $('#radioMethod1').val(total);
-                            $('#radioMethod2').val(0);
-                        }else{
-                            $('#radioMethod2').val(total);
-                            $('#radioMethod1').val(0);
-                        }
-                    } 
-                }
-            }
+            // $('#type_payment').change(function(){
+            //     let type_pay = $(this).val();
+            //     if(type_pay == 2 ){
 
-
-
-            $('#type_payment').change(function(){
-                let type_pay = $(this).val();
-                if(type_pay == 2 ){
-
-                    cleanPayMethodCheck(detailed, detailed_number);
-                    cleanPayMethodRadio(simple, simple_number);
+            //         cleanPayMethodCheck(detailed, detailed_number);
+            //         cleanPayMethodRadio(simple, simple_number);
                     
-                    return 0;
-                }
-                new_pay.style.display = "block";
-                // payMethod.style.display = "block";
+            //         return 0;
+            //     }
+            //     new_pay.style.display = "block";
+            //     // payMethod.style.display = "block";
+            // })
+
+            $('#new_pay').change(function(ev){
+                radioPay = ev.target.id;
             })
 
             payMethod.onclick = function(ev){
                 // if(ev.target.value){
+                // alert("paymethod")
                 if(ev.target.checked){
                     document.getElementById(`payMethod_${ev.target.value}`).style.display="block"
-                    // console.log(ev.target.checked, ev.target.value)
+                    console.log(ev.target.checked, ev.target.value)
                 }else{
                     verbo = document.getElementById(`payMethod_${ev.target.value}`)
                     if(typeof verbo !== 'undefined' && verbo !== null) {
@@ -744,6 +726,7 @@
                     }
                     // document.getElementById(`payMethod_${ev.target.value}`).value=""
                 }
+                console.log(verbo, ev.target.value, 'hola')
             }
 
             function validar(){
@@ -774,7 +757,7 @@
                 let total =  null;
                 let total_pay = null;
                 
-                if(type_payment == 1 && radioPay === 'radioPay3'){
+                if(type_payment == 1 && radioPay === 'radioPay_detail'){
                     
                     total =  document.getElementById('total').innerHTML;
                     total_pay = 0;
@@ -790,7 +773,7 @@
                         return 0;
                     }
                     
-                }else if(type_payment == 1 && radioPay !== 'radioPay3'){
+                }else if(type_payment == 1 && radioPay !== 'radioPay_detail'){
                     total =  document.getElementById('total').innerHTML;
                     document.querySelectorAll('#new_pay input[type=radio]').forEach((e)=>{
                         if(e.checked === true){
@@ -873,65 +856,65 @@
             }
         })
 
-        function cleanPayMethodCheck(detailed, detailed_number){
+        // function cleanPayMethodCheck(detailed, detailed_number){
 
-            detailed.forEach(function(checkElement) {
-                checkElement.checked = false;
-            });
-            detailed_number.forEach(function(checkElement) {
-                checkElement.value = false;
-            });
+        //     detailed.forEach(function(checkElement) {
+        //         checkElement.checked = false;
+        //     });
+        //     detailed_number.forEach(function(checkElement) {
+        //         checkElement.value = false;
+        //     });
                            
-            payMethod.style.display = "none";
-        }
+        //     payMethod.style.display = "none";
+        // }
 
-        function cleanPayMethodRadio(simple, simple_number){
-            // console.log(simple)
-            simple.forEach(function(radioElement) {
-                radioElement.checked = false; 
-            })
+        // function cleanPayMethodRadio(simple, simple_number){
+        //     // console.log(simple)
+        //     simple.forEach(function(radioElement) {
+        //         radioElement.checked = false; 
+        //     })
             
-            simple_number.forEach(function(radioElement) {
-                radioElement.value = false;
-            });
+        //     simple_number.forEach(function(radioElement) {
+        //         radioElement.value = false;
+        //     });
 
-            new_pay.style.display = "none";               
-        }
+        //     new_pay.style.display = "none";               
+        // }
 
-        function atAttributeForm(opt, simple, simple_number, detailed, detailed_number){
+        // function atAttributeForm(opt, simple, simple_number, detailed, detailed_number){
 
-            if(opt == 1){
-                simple.forEach(function(radioElement) {
-                    radioElement.setAttribute('form', 'form_sale'); 
-                })
+        //     if(opt == 1){
+        //         simple.forEach(function(radioElement) {
+        //             radioElement.setAttribute('form', 'form_sale'); 
+        //         })
                 
-                simple_number.forEach(function(radioElement) {
-                    radioElement.setAttribute('form', 'form_sale'); 
-                });
+        //         simple_number.forEach(function(radioElement) {
+        //             radioElement.setAttribute('form', 'form_sale'); 
+        //         });
 
-                detailed.forEach(function(checkElement) {
-                    checkElement.removeAttribute('form');
-                });
-                detailed_number.forEach(function(checkElement) {
-                    checkElement.removeAttribute('form');
-                });
-            }else{
-                simple.forEach(function(radioElement) {
-                    radioElement.removeAttribute('form'); 
-                })
+        //         detailed.forEach(function(checkElement) {
+        //             checkElement.removeAttribute('form');
+        //         });
+        //         detailed_number.forEach(function(checkElement) {
+        //             checkElement.removeAttribute('form');
+        //         });
+        //     }else{
+        //         simple.forEach(function(radioElement) {
+        //             radioElement.removeAttribute('form'); 
+        //         })
                 
-                simple_number.forEach(function(radioElement) {
-                    radioElement.removeAttribute('form'); 
-                });
+        //         simple_number.forEach(function(radioElement) {
+        //             radioElement.removeAttribute('form'); 
+        //         });
 
-                detailed.forEach(function(checkElement) {
-                    checkElement.setAttribute('form', 'form_sale');
-                });
-                detailed_number.forEach(function(checkElement) {
-                    checkElement.setAttribute('form', 'form_sale');
-                });
-            }
-        }
+        //         detailed.forEach(function(checkElement) {
+        //             checkElement.setAttribute('form', 'form_sale');
+        //         });
+        //         detailed_number.forEach(function(checkElement) {
+        //             checkElement.setAttribute('form', 'form_sale');
+        //         });
+        //     }
+        // }
     </script>
 
 @endsection

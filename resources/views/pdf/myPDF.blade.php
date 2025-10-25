@@ -103,9 +103,10 @@
 					</td>
 				
 					<td align="right">
+				@if(!$main_data->sunat_code == '00')		
 						<img src="data:image/png;base64, {!! base64_encode(QrCode::format('png')->size(120)->generate($main_data->resume)) !!}" alt="">
+				@endif	
 					</td>
-					
 				</tr>
 			  </table>
 			@endif

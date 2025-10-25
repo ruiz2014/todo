@@ -17,6 +17,7 @@ return new class extends Migration
             $table->unsignedInteger('user_id');
             $table->string('name', 100);
             $table->string('description', 245)->nullable();
+            $table->unsignedTinyInteger('belong')->default(1);
             $table->unsignedTinyInteger('product_type')->nullable()->default(1);
             $table->decimal('price', 10, 2);
             $table->unsignedInteger('category_id')->default(1);

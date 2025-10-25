@@ -20,15 +20,17 @@ use DB;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use App\Http\Controllers\NumeroALetras;
+use App\Traits\Common\GeneratedReceiptTrait;
 
 
 class PdfController extends Controller
 {
-    protected $temps =[];
-    protected $methods =[];
-    protected $total = 0;
-    protected $main_data =[];
-    protected $name_document =null;
+    use GeneratedReceiptTrait;
+    // protected $temps =[];
+    // protected $methods =[];
+    // protected $total = 0;
+    // protected $main_data =[];
+    // protected $name_document =null;
 
     public function generatePDF(Request $request, $id, $type=null)
     {
@@ -65,7 +67,7 @@ class PdfController extends Controller
         $main_data = $this->main_data;
         $temps = $this->temps;
         $methods = $this->methods;
-        $payment_methods = PaymentMethod::all();
+        $payment_methods = $this->payment_methods; //PaymentMethod::all();
         $total = $this->total;
         $name_document = $this->name_document;
         $numberToLetters = $this->NumberToLetters();
@@ -76,17 +78,36 @@ class PdfController extends Controller
         return $pdf->download($this->main_data->identifier.'.pdf');
     }
 
-    public function paid($id): void{
-        $this->main_data = Attention::where('id', $id)->first();
-        $this->name_document = $this->main_data->voucher->name;
-        $this->temps = TempSale::where('code', $this->main_data->document_code)->get();
-        $this->methods = PaymentMethod::join('payment_logs as pl', 'payment_methods.id', '=', 'pl.method_id')
-                                ->join('attentions as at', 'pl.attention_id', '=', 'at.id')
-                                ->where('at.document_code', $this->main_data->document_code)
-                                ->select('pl.total', 'payment_methods.name')
-                                ->get();
+    public function paid($code): void{
+        $this->generatedReceiptT($code); //...TRAIT GENERATERECEIPTTRAIT
+        // $this->main_data = Attention::where('id', $id)->first();
+        // $this->name_document = $this->main_data->voucher->name;
+        // $this->temps = TempSale::where('code', $this->main_data->document_code)->get();
+        // $this->methods = PaymentMethod::join('payment_logs as pl', 'payment_methods.id', '=', 'pl.method_id')
+        //                         ->join('attentions as at', 'pl.attention_id', '=', 'at.id')
+        //                         ->where('at.document_code', $this->main_data->document_code)
+        //                         ->select('pl.total', 'payment_methods.name')
+        //                         ->get();
 
-        $this->total = TempSale::where('code', $this->main_data->document_code)->sum(DB::raw('amount * price'));
+        // $this->total = TempSale::where('code', $this->main_data->document_code)->sum(DB::raw('amount * price'));
+    
+        
+
+        // $this->main_data = Attention::where('document_code', $code)->first();
+        // $this->company = Company::find(request()->session()->get('company_id'));
+        // $this->name_document = $this->main_data->voucher->name;
+        // $this->temps = DB::table($table)
+        //         ->join('products as pr', $table.'.product_id', '=', 'pr.id')
+        //         ->where('code', $this->main_data->document_code)->get();
+        // $this->methods = PaymentMethod::join('payment_logs as pl', 'payment_methods.id', '=', 'pl.method_id')
+        //                         ->join('attentions as at', 'pl.attention_id', '=', 'at.id')
+        //                         ->where('at.document_code', $this->main_data->document_code)
+        //                         ->select('pl.total', 'payment_methods.name')
+        //                         ->get();
+
+        // $this->payment_methods = PaymentMethod::all(); 
+        // $this->total = $this->main_data->total;
+    
     }
 
     public function quoted($id): void{

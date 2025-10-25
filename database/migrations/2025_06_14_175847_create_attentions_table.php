@@ -25,6 +25,7 @@ return new class extends Migration
             $table->smallInteger('serie')->default(1);
             $table->string('identifier', 20)->nullable();
             $table->unsignedInteger('numeration')->nullable();
+            $table->unsignedTinyInteger('belong');
             $table->string('hash', 50)->nullable();
             $table->string('resume', 100)->nullable();
             $table->string('cdr', 5)->nullable();

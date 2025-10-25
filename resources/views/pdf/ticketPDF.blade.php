@@ -83,7 +83,7 @@
 			<tbody>
 			@foreach($temps as $item)
 				<tr>
-						<td style="font-size:9px;text-align:center;padding:5px 0px">{{ $item->product->name }}</td>
+						<td style="font-size:9px;text-align:center;padding:5px 0px">{{ $item->name }}</td>
 						<td style="font-size:10px;text-align:center;">{{ $item->amount }}</td>
 						<td style="font-size:10px;text-align:center;">{{ $item->price }}</td>
 						<td style="font-size:10px;text-align:center;">{{ $item->price * $item->amount }}</td>
@@ -168,8 +168,10 @@
         @if($sunat == 1)    
             <tr>
                 <td align="center">
+                @if(!$main_data->sunat_code == '00')	    
                     <!-- <img width="80" src="'. base_url().'img/qr/'.$factura->id_factura.'.png" > -->
                      <img width="80" src="data:image/png;base64, {!! base64_encode(QrCode::format('png')->size(120)->generate($main_data->resume)) !!}" alt="">
+                @endif
                 </td>
             </tr>
         @endif    

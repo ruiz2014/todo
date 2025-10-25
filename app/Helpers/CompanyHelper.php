@@ -184,7 +184,7 @@ class CompanyHelper
         if(SetUpCompany::where('company_id', Session::get('company_id'))->value('redirect_after')){
             $cadena = back()->with('success', 'operacion exitosa .....');
         }else{
-            $cadena = redirect()->route('shop.generated', ['order' => $code ])->with($alert, $message);
+            $cadena = redirect()->route($route, ['order' => $code ])->with($alert, $message);
         }
         
         return $cadena;
