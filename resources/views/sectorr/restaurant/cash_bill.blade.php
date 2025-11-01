@@ -291,7 +291,13 @@
 
 @endsection
 @section('script')
+<script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>  
 <script>
+    const socket = io('http://localhost:3000',
+        {
+            path: "/socket.io",
+            transports: ["websocket"],
+        });
     window.addEventListener("DOMContentLoaded", function(){
         let total_pay = 0;
         let customer_id = document.getElementById('customer_id');
@@ -477,6 +483,9 @@
 
 
         function generate_receipt(){
+
+            socket.emit('hall', 'se libero la mesa mierda no jodas....')
+
             const form = document.getElementById('form_sale'); //document.querySelector('form');
                 // const formData = new FormData(form);
                 // // Para obtener un valor

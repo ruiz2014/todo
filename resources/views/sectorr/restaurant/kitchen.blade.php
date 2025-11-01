@@ -235,7 +235,7 @@
 
     socket.on('kitchen', (msg)=>{
             let body = ''
-            alert('llego')
+            //alert('llego')
             // audio.play();
             console.log(msg)
             msg.forEach(p =>{

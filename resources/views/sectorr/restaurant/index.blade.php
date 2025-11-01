@@ -165,6 +165,55 @@
 
 
     <script>
+
+        const checkPermission = ()=>{
+            if((!'serviceWorker' in navigator)){
+                throw new Error('se fue todo a la mierda')
+            }
+
+            if(!('Notification' in window)){
+                throw new Error('no aguanta nada');
+            }
+        }
+
+        const registerSw = async () =>{
+            const registration  = await navigator.serviceWorker?.register("{{ asset('js/serviceworker.js') }}");
+            return registration;
+        }
+
+        const requestNotificationPermision = async () =>{
+                const permission = await Notification.requestPermission();
+                
+                if(permission !== 'granted'){
+                    throw new Error('Notification no pasa nada');
+                }
+                    // else{
+                    //     new Notification("hello word")
+                    // }
+            }
+
+        const main = async () => {
+            // alert("salio");
+            checkPermission();
+            await registerSw();
+            await requestNotificationPermision();
+            // reg.showNotification("hello wordl");
+        } 
+
+        main();
+
+
+
+
+
+
+
+
+
+
+
+
+
         const socket = io('http://localhost:3000',
         {
             path: "/socket.io",
@@ -193,7 +242,24 @@
 
         socket.on('hall', (msg)=>{
             alert("llego algo de cocina")
-            audio.play();
+            // audio.play();
+            speak()
+            let bolas = { title: "Este es mi texte", message: "tienes un plato para recoger de cocina.." };
+            fetch('http://localhost:3000/send-kitchen', {
+                method: "POST",
+                headers: { 
+                    'Content-Type': 'application/json',
+                                // 'Accept':'application/json'
+                },
+                        // mode: 'no-cors',
+                redirect: 'follow',
+                body: JSON.stringify(bolas)
+                })
+                .then(response => response.json())
+                .then(datos => {
+                    console.log(datos)
+                            // location.reload();
+                });
         })
 
         finalize.onclick = ()=>{ validar();}
@@ -477,6 +543,34 @@
                         console.log(i.table_id);
                     })
                 })
+        }
+
+        function speak() {
+            //alert("Hola");
+            // // Create a SpeechSynthesisUtterance
+            //const utterance = new SpeechSynthesisUtterance("Welcome to this tutorial!");
+
+            // // Select a voice
+            //const voices = speechSynthesis.getVoices();
+            //utterance.voice = voices[0]; // Choose a specific voice
+
+            // // Speak the text
+            //speechSynthesis.speak(utterance);
+            const speech = new SpeechSynthesisUtterance("la mesa 7 tiene un plato listo para recoger de cocina..");
+            speech.volume = 1;
+            // speech.rate = 0.8;
+            // speech.pitch = 0.2;
+            speech.lang = 'es-ES'
+            var timer = setInterval(() => {
+                var voices = speechSynthesis.getVoices();
+                if(voices.lenght != 0){
+                   speech.voice = voices[0];
+                    // speech.voiceURI = voices[0].voiceURI;
+                   clearInterval(timer);
+                }
+            }, 1000);
+
+            window.speechSynthesis.speak(speech);
         }
 
     </script>

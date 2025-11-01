@@ -70,6 +70,42 @@
 @push('scripts')
     <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>  
     <script>
+        const checkPermission = ()=>{
+            if((!'serviceWorker' in navigator)){
+                throw new Error('se fue todo a la mierda')
+            }
+
+            if(!('Notification' in window)){
+                throw new Error('no aguanta nada');
+            }
+        }
+
+        const registerSw = async () =>{
+            const registration  = await navigator.serviceWorker?.register("{{ asset('js/serviceworker.js') }}");
+            return registration;
+        }
+
+        const requestNotificationPermision = async () =>{
+                const permission = await Notification.requestPermission();
+                
+                if(permission !== 'granted'){
+                    throw new Error('Notification no pasa nada');
+                }
+                    // else{
+                    //     new Notification("hello word")
+                    // }
+            }
+
+        const main = async () => {
+            // alert("salio");
+            checkPermission();
+            await registerSw();
+            await requestNotificationPermision();
+            // reg.showNotification("hello wordl");
+        } 
+
+        main();
+
         const socket = io('http://localhost:3000',
         {
             path: "/socket.io",
@@ -79,9 +115,28 @@
         socket.on('box', (msg)=>{
             alert("llego algo de cocina")
             audio.play();
+
+            speak()
+            let bolas = { title: "Este es mi texte", message: "Esto es de caja maldito y su ptm.." };
+            fetch('http://localhost:3000/send-kitchen', {
+                method: "POST",
+                headers: { 
+                    'Content-Type': 'application/json',
+                                // 'Accept':'application/json'
+                },
+                        // mode: 'no-cors',
+                redirect: 'follow',
+                body: JSON.stringify(bolas)
+                })
+                .then(response => response.json())
+                .then(datos => {
+                    console.log(datos)
+                            // location.reload();
+                });
+
             setTimeout(function() {
             location.reload();
-            }, 3000);
+            }, 5000);
             // location.reload();
 
             // let body = ''
@@ -101,16 +156,6 @@
         })
 
         function speak() {
-            alert("Hola");
-            // // Create a SpeechSynthesisUtterance
-            // const utterance = new SpeechSynthesisUtterance("Welcome to this tutorial!");
-
-            // // Select a voice
-            // const voices = speechSynthesis.getVoices();
-            // utterance.voice = voices[0]; // Choose a specific voice
-
-            // // Speak the text
-            // speechSynthesis.speak(utterance);
 
             const speech = new SpeechSynthesisUtterance("hola esto es un ejemplo de texto ....");
             speech.volume = 1;
@@ -121,7 +166,7 @@
                 var voices = speechSynthesis.getVoices();
                 if(voices.lenght != 0){
                    speech.voice = voices[0];
-                   speech.voiceURI = voices[0].voiceURI;
+                //    speech.voiceURI = voices[0].voiceURI;
                    clearInterval(timer);
                 }
             }, 1000);
