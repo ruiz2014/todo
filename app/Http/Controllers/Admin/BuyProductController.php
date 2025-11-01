@@ -43,8 +43,8 @@ class BuyProductController extends Controller
 
         $result = CompanyHelper::searchAll($query, $text, $join, $where, $orWhere);
         $buyProducts = $result->orderBy('buy_products.id', 'desc')->paginate();
-        
-        return view('buy-product.index', compact('buyProducts', 'text', 'noty'))
+        $algo = true;
+        return view('buy-product.index', compact('buyProducts', 'text', 'noty', 'algo'))
             ->with('i', ($request->input('page', 1) - 1) * $buyProducts->perPage());    
     }
 
@@ -59,7 +59,7 @@ class BuyProductController extends Controller
         $buyProduct = new BuyProduct();
         $products = Product::select(DB::raw("CONCAT_WS(' ', products.name,' ',products.description) AS name"), 'products.id')->where('company_id', request()->session()->get('company_id'))->pluck('name', 'id');
         $establishments  = Establishment::where('company_id', request()->session()->get('company_id'))->get(); //pluck('name', 'id');
-
+        
         return view('buy-product.create', compact('code', 'products', 'providers', 'buyProduct', 'establishments', 'payment_methods'));
     }
 

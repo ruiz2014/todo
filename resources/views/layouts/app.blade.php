@@ -279,6 +279,7 @@
     <script type="module" src="https://cdn.jsdelivr.net/npm/ionicons@latest/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://cdn.jsdelivr.net/npm/ionicons@latest/dist/ionicons/ionicons.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>   
     
     <script>
 
@@ -300,6 +301,8 @@
             let loader = document.getElementById('loader');
             loader.style.display = 'none';
         }
+
+    @isset($algo)
 
         const checkPermission = ()=>{
             if((!'serviceWorker' in navigator)){
@@ -334,56 +337,50 @@
             await requestNotificationPermision();
             // reg.showNotification("hello wordl");
         } 
+
         main();
-    </script>
+    @yield('notification')  
+    @isset($noty)
      
-    
-    @stack('scripts')
-    @yield('script')
-    @if (session('notification'))
-    
-    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>   
-        @yield('notification')
+
+        let title = 'Notificacion';
+        let message = 'Tiene una Notificacion';
         
-        
-        <script>
-            let title = 'Notificacion';
-            let message = 'Tiene una Notificacion';
-           @if(session('notification') == 4)
+        @if(session('notification') == 4)
             
-                alert('{{ $noty->notes }}');
+            alert('{{ $noty->notes }}');
            
-            @endif
+        @endif
 
-            @switch(session('notification'))
-                @case(1)
-                    title = '{{ $noty->title }}';
-                    message = '{{ $noty->notes }}';
-                    @break
+        @switch(session('notification'))
+            @case(1)
+                title = '{{ $noty->title }}';
+                message = '{{ $noty->notes }}';
+                @break
 
-                @case(4)
-                    title = '{{ $noty->title }}';
-                    message = '{{ $noty->notes }}';
-                    @break
+            @case(4)
+                title = '{{ $noty->title }}';
+                message = '{{ $noty->notes }}';
+                @break
 
-                @default
+            @default
                 // alert("este es ")
-                    title = '{{ $noty->title }}';
-                    message = '{{ $noty->notes }}';
-            @endswitch
+                title = '{{ $noty->title }}';
+                message = '{{ $noty->notes }}';
+        @endswitch
+        
 
-
-            document.addEventListener('DOMContentLoaded', function() {
-                const bell = document.getElementById('bell');
+        document.addEventListener('DOMContentLoaded', function() {
+        const bell = document.getElementById('bell');
                 // const socket = io('http://localhost:3000',
                 // {
                 //     path: "/socket.io",
                 //     transports: ["websocket12"],
                 // });
             
-                socket.on('chat', (msg)=>{
-                    bell.classList.add('bell-item');
-                })
+        socket.on('chat', (msg)=>{
+            bell.classList.add('bell-item');
+        })
 
                 /*****************ORIGINAL DESCOMENTAR*************** */
                 // fetch(`http://localhost:3000/send-notification`, {
@@ -401,28 +398,43 @@
                 //     console.log(datos)
                 // });
 
-                let bolas = { title: title, message: message };
-                fetch('http://localhost:3000/send-kitchen', {
-                    method: "POST",
-                    headers: { 
-                            'Content-Type': 'application/json',
+        let bolas = { title: title, message: message };
+        fetch('http://localhost:3000/send-kitchen', {
+            method: "POST",
+            headers: { 
+                'Content-Type': 'application/json',
                             // 'Accept':'application/json'
-                    },
+            },
                     // mode: 'no-cors',
-                    redirect: 'follow',
-                    body: JSON.stringify(bolas)
-
-                })
-                .then(response => response.json())
-                .then(datos => {
-                    console.log(datos)
-                    // location.reload();
-                });
-            })    
+            redirect: 'follow',
+            body: JSON.stringify(bolas)
+            })
+            .then(response => response.json())
+            .then(datos => {
+                console.log(datos)
+                        // location.reload();
+            });
+        })    
             // setTimeout(function(){
             //     window.location.reload();
             // }, 4000);
+        @endisset
+    @endisset
+
+
     </script>
-    @endif   
+     
+    
+    @stack('scripts')
+    @yield('script')
+    <!-- if (session('n__otification'))
+    
+    ript src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>   
+        y__ield('notification')
+        
+        
+
+    </script>
+    ndif    -->
 </body>
 </html>

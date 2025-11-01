@@ -37,6 +37,7 @@ class RestaurantController extends Controller
 
         $rooms = Room::select('id', 'name')->get();
         $tables = Table::select('id', 'identifier', 'room_id')->get();
+        
         // dd($dishes, $drinks, $fittings, $others, $tables, $rooms);
         return view('sectorr.restaurant.index', compact('dishes', 'drinks', 'fittings', 'others', 'rooms', 'tables'));
     }
@@ -155,6 +156,14 @@ class RestaurantController extends Controller
     //     return Redirect::route('room.index')
     //         ->with('success', 'Category created successfully.');
     // }
+
+    public function checkOccupied(){
+        $tables = TempRestaurant::select('table_id', 'code')->where('status', '<=', 3)
+                    ->where(DB::raw("CAST(created_at AS DATE)"), '=', DB::raw("DATE(now())"))
+                    ->get();
+
+        return response()->json(['ok' => 1, 'tables'=>$tables ]);            
+    }
 
     protected function getProducts($type, $group){
         // $result = Product::select(DB::raw("CONCAT(name,' ',price) AS name"),'id')->where('category_id', $type)->where('group', $group)->where('status', 1)->pluck('name', 'id');

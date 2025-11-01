@@ -151,9 +151,9 @@ Route::group(['middleware' => 'auth'], function(){
     Route::get('local_products', [LocalProductController::class, 'index'])->name('lp.index');
 
     Route::get('shop', [ShopController::class, 'index'])->name('shop.index');
-    Route::post('add_order', [ShopController::class, 'addOrder']);
-    Route::post('delete_order', [ShopController::class, 'deleteOrder']);
-    Route::post('modify_amount', [ShopController::class, 'modifyAmount']);
+    // Route::post('add_order', [ShopController::class, 'addOrder']);
+    // Route::post('delete_order', [ShopController::class, 'deleteOrder']);
+    // Route::post('modify_amount', [ShopController::class, 'modifyAmount']);
     Route::post('save', [ShopController::class, 'store'])->name('shop.store');
     Route::get('report', [ShopController::class, 'shopReport'])->name('shop.report');
 
@@ -195,9 +195,9 @@ Route::group(['middleware' => 'auth'], function(){
     })->name('downloadCdr');
 });
 
-Route::post('add_order_quote', [OperationController::class, 'add']); 
-Route::post('delete_order_2', [OperationController::class, 'delete']);
-Route::post('modify_amount_2', [OperationController::class, 'modifyAmount']); 
+Route::post('add_order', [OperationController::class, 'add']); 
+Route::post('delete_order', [OperationController::class, 'delete']);
+Route::post('modify_amount', [OperationController::class, 'modifyAmount']); 
 
 Route::post('add_order_quote_edit', [OperationController::class, 'add_edit']); 
 Route::post('modify_amount_edit', [OperationController::class, 'modifyAmount_edit']);
@@ -217,11 +217,13 @@ Route::post('mierda', [HomeController::class, 'mierda']);
 // Route::get('salon', [DiningHallController::class, 'hall'])->name('hall');
 
 Route::post('check', [RestaurantController::class, 'check']);
-Route::post('add_order_r', [RestaurantController::class, 'addOrder']);
-Route::post('modify_amount_r', [RestaurantController::class, 'modifyAmount']);
-Route::post('delete_order_r', [RestaurantController::class, 'deleteOrder']);
+Route::post('add_order_restaurant', [RestaurantController::class, 'addOrder']);
+Route::post('modify_amount_restaurant', [RestaurantController::class, 'modifyAmount']);
+Route::post('delete_order_restaurant', [RestaurantController::class, 'deleteOrder']);
+Route::post('check_occupied', [RestaurantController::class, 'checkOccupied']);
+
 // Route::post('add_note', [DiningHallController::class, 'addNote']);
-Route::post('send_kitchen_r', [RestaurantController::class, 'sendToKitchen']);
+Route::post('send_kitchen', [RestaurantController::class, 'sendToKitchen']);
 // Route::post('qr_debt', [DiningHallController::class, 'qrDebt']);
 // Route::get('see_debt/{code}/{type}', [DiningHallController::class, 'seeDebt']);
 // // Route::get('pdf_debt/{code}', [DiningHallController::class, 'pdfDebt']);

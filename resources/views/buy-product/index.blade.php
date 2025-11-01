@@ -75,7 +75,6 @@
 @endsection
 @section('notification') 
 
-    <script>
         const socket = io('http://localhost:3000',
         {
             path: "/socket.io",
@@ -84,5 +83,5 @@
     
         // alert("esto es una gran mierda sabes eso")
         socket.emit('chat', "Se creo una compra");
-    </script>
+  
 @endsection

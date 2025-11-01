@@ -53,7 +53,9 @@
 @section('content')
     <div class="container mt-4">
         <div class="row">
-        
+
+            @include('partials.audio', ['name'=>'cocina'])
+        <!-- <button onclick="speak()">Speak</button> -->
             <div class="table-responsive">
                 @csrf
                 <table id="mytable" class="table table-bordred table-striped">
@@ -93,6 +95,7 @@
 <!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.0/dist/jquery.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script> -->
 <script src="https://unpkg.com/ionicons@latest/dist/ionicons.js"></script>
+<script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script> 
 
 <!-- <script>
     function mueveReloj(){
@@ -171,22 +174,69 @@
 </script>
 
 
-<script type="module"> 
+<script> 
 
-    import { io } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
-    // const socket = io('https://chapi.nafer.com.pe');
-    const socket = io('http://localhost:3000');
-    
-    
-    
-    $('#aver').click(function(){
-        alert("hola");
-        socket.emit('chat', 'hola este es ')
-    })
+    const checkPermission = ()=>{
+            if((!'serviceWorker' in navigator)){
+                throw new Error('se fue todo a la mierda')
+            }
 
-    socket.on('chat', (msg)=>{
+            if(!('Notification' in window)){
+                throw new Error('no aguanta nada');
+            }
+        }
+
+        const registerSw = async () =>{
+            const registration  = await navigator.serviceWorker?.register("{{ asset('js/serviceworker.js') }}");
+            return registration;
+        }
+
+        const requestNotificationPermision = async () =>{
+                const permission = await Notification.requestPermission();
+                
+                if(permission !== 'granted'){
+                    throw new Error('Notification no pasa nada');
+                }
+                    // else{
+                    //     new Notification("hello word")
+                    // }
+            }
+
+        const main = async () => {
+            // alert("salio");
+            checkPermission();
+            await registerSw();
+            await requestNotificationPermision();
+            // reg.showNotification("hello wordl");
+        } 
+
+        main();
+
+
+
+    // import { io } from "https://cdn.socket.io/4.8.1/socket.io.min.js";
+    // // const socket = io('https://chapi.nafer.com.pe');
+    // const socket = io('http://localhost:3000');
+    const socket = io('http://localhost:3000',
+    {
+        path: "/socket.io",
+        transports: ["websocket"],
+    });
+    
+    
+    
+        const audio = document.querySelector("audio");
+        let sound = false;
+        let timer;
+    // $('#aver').click(function(){
+    //     alert("hola");
+    //     socket.emit('chat', 'hola este es ')
+    // })
+
+    socket.on('kitchen', (msg)=>{
             let body = ''
             alert('llego')
+            // audio.play();
             console.log(msg)
             msg.forEach(p =>{
                 body += `<tr>
@@ -203,6 +253,24 @@
             })
             $('#message-tbody').prepend(body)
             miTime()
+            speak()
+
+            let bolas = { title: "Este es mi texte", message: "llego un maldito plato de la sala.." };
+            fetch('http://localhost:3000/send-kitchen', {
+                method: "POST",
+                headers: { 
+                    'Content-Type': 'application/json',
+                                // 'Accept':'application/json'
+                },
+                        // mode: 'no-cors',
+                redirect: 'follow',
+                body: JSON.stringify(bolas)
+                })
+                .then(response => response.json())
+                .then(datos => {
+                    console.log(datos)
+                            // location.reload();
+                });
     })
 
     $(document).on('click', '.status', function(){
@@ -228,6 +296,34 @@
         })
         alert(temp_id);
     })
+
+     function speak() {
+            //alert("Hola");
+            // // Create a SpeechSynthesisUtterance
+            //const utterance = new SpeechSynthesisUtterance("Welcome to this tutorial!");
+
+            // // Select a voice
+            //const voices = speechSynthesis.getVoices();
+            //utterance.voice = voices[0]; // Choose a specific voice
+
+            // // Speak the text
+            //speechSynthesis.speak(utterance);
+            const speech = new SpeechSynthesisUtterance("la mesa 7 tiene un plato listo para recoger de cocina..");
+            speech.volume = 1;
+            // speech.rate = 0.8;
+            // speech.pitch = 0.2;
+            speech.lang = 'es-ES'
+            var timer = setInterval(() => {
+                var voices = speechSynthesis.getVoices();
+                if(voices.lenght != 0){
+                   speech.voice = voices[0];
+                    // speech.voiceURI = voices[0].voiceURI;
+                   clearInterval(timer);
+                }
+            }, 1000);
+
+            window.speechSynthesis.speak(speech);
+    }
 
     // function eliminarFila(id, status){
     //     alert("Joder tio");

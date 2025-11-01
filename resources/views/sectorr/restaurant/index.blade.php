@@ -26,6 +26,7 @@
             </div>
         @endif
 
+    @include('partials.audio', ['name'=>'mesero'])
 
     <ul class="nav nav-tabs wrapper-tabs" id="myTab" role="tablist" style="">
         @foreach($rooms as $room)
@@ -58,8 +59,6 @@
         <div class="row">
 
         </div>
-
-
     </div>
 
      <!-- Modal -->
@@ -151,14 +150,31 @@
           </div>
         </div>
 
+    <style>
+        .occupied{
+            background:#bf0707;
+        }
+    </style>
 @endsection
 @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>
     <script src="https://unpkg.com/ionicons@latest/dist/ionicons.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
+    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>  
+
 
     <script>
+        const socket = io('http://localhost:3000',
+        {
+            path: "/socket.io",
+            transports: ["websocket"],
+        });
+        // alert("esto es una gran mierda sabes eso")
+        // socket.emit('hall', "Se envio un orden a cocina .....");
+
+
+        let finalize = document.getElementById('finalize_order');
         const btn = document.querySelectorAll(".btnModal");
         const modalRegistro = document.querySelector("#exampleModal");
         const myModal = new bootstrap.Modal(modalRegistro);
@@ -172,6 +188,30 @@
         let productos = new Array();  //<--- BORRARRRRRRRRRRRRRR
         let obj = {}
         let total = 0;
+
+        ocuped();
+
+        socket.on('hall', (msg)=>{
+            alert("llego algo de cocina")
+            audio.play();
+        })
+
+        finalize.onclick = ()=>{ validar();}
+
+        function validar(){
+
+            generate_receipt();
+        }
+
+        /*++++++++++++++++++ESTA FUNCION SI SIRVE ++++++ OJO*/
+        function generate_receipt(){
+                // alert("salio")
+            let form = document.querySelector('form');
+            socket.emit('box', 'LLego algo para que vea su pago')
+            form.submit();
+        }
+
+
 
         btn.forEach(mod => {
             mod.addEventListener("click",function(e){
@@ -239,7 +279,7 @@
             var data = { order: producto };
             $('#tbody').empty();
             let body = ''
-            fetch(`add_order`, {
+            fetch(`add_order_restaurant`, {
                 method: "POST",
                 headers: { 
                     'Content-Type': 'application/json',
@@ -253,6 +293,7 @@
                 if(datos.ok){
                     showResponse(datos['orders']);
                     $('#send-kitchen').prop('disabled', false);
+                    $("#"+table).addClass('occupied')
                 }else{
                     console.log(datos)
                 }
@@ -282,7 +323,7 @@
                     amount --;
 
             var data = { id: id, amount: amount }; 
-            fetch(`modify_amount`, {
+            fetch(`modify_amount_restaurant`, {
                 method: "POST",
                 headers: { 
                     'Content-Type': 'application/json',
@@ -307,7 +348,7 @@
             var data = { id: id };
             $('#tbody').empty();
             let body = ''
-            fetch(`delete_order`, {
+            fetch(`delete_order_restaurant`, {
                 method: "POST",
                 headers: { 
                     'Content-Type': 'application/json',
@@ -399,8 +440,7 @@
                         if(datos.ok){
                             $('#tbody').empty();
                             showResponse(datos.orders);
-
-                            // socket.emit('chat', datos.sendOrders)
+                            socket.emit('kitchen', datos.sendOrders)
                             // // socket.emit('new_message', { 
                             // //     name: data.name,
                             // //     email: data.email,
@@ -421,7 +461,23 @@
 
         });
 
-
+        function ocuped(){
+            fetch(`check_occupied`, {
+                method: "POST",
+                headers: { 
+                    'Content-Type': 'application/json',
+                    "X-CSRF-Token": document.querySelector('input[name=_token]').value
+                },
+                // body: JSON.stringify(data)
+                })
+                .then(response => response.json())
+                .then(datos => {
+                    datos.tables.forEach( i =>{
+                        $("#"+i.table_id).addClass('occupied')
+                        console.log(i.table_id);
+                    })
+                })
+        }
 
     </script>
 @endpush

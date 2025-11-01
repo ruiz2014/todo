@@ -389,7 +389,8 @@
 @endsection
 @section('script')  
     <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>
- 
+    <script src="{{ asset('js/main/ptmr.js') }}"></script>
+
     <script>
         // window.onload = function() {
         //     const checkboxs = document.querySelectorAll('input[type="checkbox"]');
@@ -397,6 +398,11 @@
         //         checkbox.checked = false;
         //     });
         // };
+        const url_add = '{{ url("add_order") }}';
+        const url_delete = '{{ url("delete_order") }}';
+        const url_modify = '{{ url("modify_amount") }}';
+        const format = 1;
+        let temp_result = {!! $temps !!};
         window.addEventListener("DOMContentLoaded", function(){
 
             $('#product_id').select2( {
@@ -425,8 +431,8 @@
             let productos = new Array();
             let radioPay = null;
 
-            let temp_result = {!! $temps !!};
-            showResponse(temp_result, 'joder');
+            // let temp_result = {!! $temps !!};
+           // showResponse(temp_result, 'joder');
        
             // clear_btn.onclick = ()=>{ clean(); } 
             btn_generate.onclick = ()=>{ validar();} 
@@ -519,153 +525,153 @@
           /***********FIN SEARCH CUSSTOMER********* */
 
             /***************ADD SALE*************** */
-            $("#btn-add").click(function(){
+            // $("#btn-add").click(function(){
 
-                let qty = $('#amount_form').val();
+            //     let qty = $('#amount_form').val();
 
-                if(!$.isNumeric(idSelect) || !$.isNumeric(qty)){
-                    Swal.fire({
-                        icon: "error",
-                        title: "Oops...",
-                        text: "Debe seleccionar un producto primero o la cantidad",
-                    });
-                    return 0;
-                }
-                tb_data.innerHTML=''
-                let producto = {code:code.value, id:idSelect, name:textSelect, amount:qty, price:priceSelect}
-                productos.push(producto) 
-                var data = { order: producto };
-                $('#tbody').empty();
-                let body = ''
-                fetch(`{{ url("add_order") }}`, {
-                    method: "POST",
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        "X-CSRF-Token": document.querySelector('input[name=_token]').value
-                    },
-                    body: JSON.stringify(data)
-                })
-                .then(response => response.json())
-                .then(datos => {
-                    console.log(datos)
+            //     if(!$.isNumeric(idSelect) || !$.isNumeric(qty)){
+            //         Swal.fire({
+            //             icon: "error",
+            //             title: "Oops...",
+            //             text: "Debe seleccionar un producto primero o la cantidad",
+            //         });
+            //         return 0;
+            //     }
+            //     tb_data.innerHTML=''
+            //     let producto = {code:code.value, id:idSelect, name:textSelect, amount:qty, price:priceSelect}
+            //     productos.push(producto) 
+            //     var data = { order: producto };
+            //     $('#tbody').empty();
+            //     let body = ''
+            //     fetch(`{{ url("add_order") }}`, {
+            //         method: "POST",
+            //         headers: { 
+            //             'Content-Type': 'application/json',
+            //             "X-CSRF-Token": document.querySelector('input[name=_token]').value
+            //         },
+            //         body: JSON.stringify(data)
+            //     })
+            //     .then(response => response.json())
+            //     .then(datos => {
+            //         console.log(datos)
 
-                    if(datos.ok){
-                        showResponse(datos['orders'], 'new');
-                        $('#send-kitchen').prop('disabled', false);
-                    }else{
-                        console.log(datos)
-                    }
-                });
-                console.log(productos)
-                idSelect = null;
-                textSelect = null;
-                priceSelect = null;
-                $('#product_id').val("");
-                $('#product_id').change();
-                $('#amount_form').val("");
-            });
+            //         if(datos.ok){
+            //             showResponse(datos['orders'], 'new');
+            //             $('#send-kitchen').prop('disabled', false);
+            //         }else{
+            //             console.log(datos)
+            //         }
+            //     });
+            //     console.log(productos)
+            //     idSelect = null;
+            //     textSelect = null;
+            //     priceSelect = null;
+            //     $('#product_id').val("");
+            //     $('#product_id').change();
+            //     $('#amount_form').val("");
+            // });
             /***********FIN ADD SALE********* */ 
 
             /*************ELIMINAR FILA****************** */
-            window.eliminarFila = (id) => {
-                var data = { id: id };
-                let body = ''
-                $('#tbody').empty();
-                fetch(`{{ url("delete_order") }}`, {
-                    method: "POST",
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        "X-CSRF-Token": document.querySelector('input[name=_token]').value
-                    },
-                    body: JSON.stringify(data)
-                })
-                .then(response => response.json())
-                .then(datos => {
-                    console.log(datos)
-                    if(datos.ok){
-                        if(datos['orders'].length === 0){
-                            tax(0, 'nothy')
-                            return 0
-                        }
-                        showResponse(datos['orders'], 'delete');
-                    }else{
-                        console.log(datos)
-                    }
-                });
-            }
+            // window.eliminarFila = (id) => {
+            //     var data = { id: id };
+            //     let body = ''
+            //     $('#tbody').empty();
+            //     fetch(`{{ url("delete_order") }}`, {
+            //         method: "POST",
+            //         headers: { 
+            //             'Content-Type': 'application/json',
+            //             "X-CSRF-Token": document.querySelector('input[name=_token]').value
+            //         },
+            //         body: JSON.stringify(data)
+            //     })
+            //     .then(response => response.json())
+            //     .then(datos => {
+            //         console.log(datos)
+            //         if(datos.ok){
+            //             if(datos['orders'].length === 0){
+            //                 tax(0, 'nothy')
+            //                 return 0
+            //             }
+            //             showResponse(datos['orders'], 'delete');
+            //         }else{
+            //             console.log(datos)
+            //         }
+            //     });
+            // }
             /*******************************/
 
             /***************MODIFICAR AMOUNT*************** */
-            window.modifyAmount = async (id, price, op)=>{
+            // window.modifyAmount = async (id, price, op)=>{
 
-                const addBtn = document.getElementById(`btn_add_${id}`);
-                const subBtn = document.getElementById(`btn_sub_${id}`);
-                addBtn.disabled = true; // Deshabilita el botón
-                subBtn.disabled = true; // Deshabilita el botón
+            //     const addBtn = document.getElementById(`btn_add_${id}`);
+            //     const subBtn = document.getElementById(`btn_sub_${id}`);
+            //     addBtn.disabled = true; // Deshabilita el botón
+            //     subBtn.disabled = true; // Deshabilita el botón
 
-                let amount = $("#amount_"+id).text();
-                if(op == 'add')
-                    amount ++;
-                else
-                    amount --;
+            //     let amount = $("#amount_"+id).text();
+            //     if(op == 'add')
+            //         amount ++;
+            //     else
+            //         amount --;
 
-                if(amount < 1){
-                    resul = ++amount;
-                    $("#amount_"+id).text(resul.toFixed(2));
-                    Swal.fire({
-                        icon: "error",
-                        title: "Oops...",
-                        text: "No se puede disminuir cantidad",
-                    });
-                    return 0;
-                }
+            //     if(amount < 1){
+            //         resul = ++amount;
+            //         $("#amount_"+id).text(resul.toFixed(2));
+            //         Swal.fire({
+            //             icon: "error",
+            //             title: "Oops...",
+            //             text: "No se puede disminuir cantidad",
+            //         });
+            //         return 0;
+            //     }
 
-                var data = { id: id, amount: amount }; 
-                // console.log(data)
+            //     var data = { id: id, amount: amount }; 
+            //     // console.log(data)
                 
-                try {
-                    response = await fetch(`{{ url("modify_amount") }}`, {
-                        method: "POST",
-                        headers: { 
-                            'Content-Type': 'application/json',
-                            "X-CSRF-Token": document.querySelector('input[name=_token]').value
-                        },
-                        body: JSON.stringify(data)
-                    })
+            //     try {
+            //         response = await fetch(`{{ url("modify_amount") }}`, {
+            //             method: "POST",
+            //             headers: { 
+            //                 'Content-Type': 'application/json',
+            //                 "X-CSRF-Token": document.querySelector('input[name=_token]').value
+            //             },
+            //             body: JSON.stringify(data)
+            //         })
 
-                    const dataJson = await response.json();
-                    console.log(dataJson)
+            //         const dataJson = await response.json();
+            //         console.log(dataJson)
 
-                    if(dataJson.ok){
-                            $("#amount_"+id).text(amount.toFixed(2));
-                            $("#operation_"+id).html(price * amount)
-                            tax(price * 1, op)
-                    }else{
-                            alert("no se pudo realizar el cambio de cantidad")
-                            resul = (op === 'add' ? --amount : ++amount);
-                            $("#amount_"+id).text(resul.toFixed(2));
-                    }
+            //         if(dataJson.ok){
+            //                 $("#amount_"+id).text(amount.toFixed(2));
+            //                 $("#operation_"+id).html(price * amount)
+            //                 tax(price * 1, op)
+            //         }else{
+            //                 alert("no se pudo realizar el cambio de cantidad")
+            //                 resul = (op === 'add' ? --amount : ++amount);
+            //                 $("#amount_"+id).text(resul.toFixed(2));
+            //         }
 
-                } catch (error) {
-                    console.error('Error al obtener los datos:', error);
-                } finally {
-                    addBtn.disabled = false; // Deshabilita el botón
-                    subBtn.disabled = false; 
-                }
-                // .then(response => response.json()) 
-                // .then(datos => {
-                //     console.log(datos)
-                //     if(datos.ok){
-                //         $("#amount_"+id).text(amount.toFixed(2));
-                //         $("#operation_"+id).html(price * amount)
-                //         tax(price * 1, op)
-                //     }else{
-                //         alert("no se pudo realizar el cambio de cantidad")
-                //         resul = (op === 'add' ? --amount : ++amount);
-                //         $("#amount_"+id).text(resul.toFixed(2));
-                //     }
-                // });   
-            }
+            //     } catch (error) {
+            //         console.error('Error al obtener los datos:', error);
+            //     } finally {
+            //         addBtn.disabled = false; // Deshabilita el botón
+            //         subBtn.disabled = false; 
+            //     }
+            //     // .then(response => response.json()) 
+            //     // .then(datos => {
+            //     //     console.log(datos)
+            //     //     if(datos.ok){
+            //     //         $("#amount_"+id).text(amount.toFixed(2));
+            //     //         $("#operation_"+id).html(price * amount)
+            //     //         tax(price * 1, op)
+            //     //     }else{
+            //     //         alert("no se pudo realizar el cambio de cantidad")
+            //     //         resul = (op === 'add' ? --amount : ++amount);
+            //     //         $("#amount_"+id).text(resul.toFixed(2));
+            //     //     }
+            //     // });   
+            // }
             /******************************* */
 
 // atAttributeForm(opt)
@@ -801,59 +807,59 @@
             }
 
             
-            function showResponse(data, op){
-                let body = ''
-                total = 0;
-                // alert("este problema");
-                data.forEach( i =>{
-                    console.log(i) 
-                    tax(i.price * i.amount, op);
-                    body += `<tr>
-                            <td data-label="Producto">
-                                ${i.name}
-                            </td>
-                            <td data-label="Cantidad" class="td-amount">
-                                <button class="btn btn-outline-secondary btn-amount" id="btn_add_${i.id}" onclick="modifyAmount(${i.id}, ${i.price}, 'add')" style="position:relative;top:2px;"><ion-icon name="add-outline"></ion-icon></button>
-                                    <span id="amount_${i.id}">${i.amount}</span>
-                                <button class="btn btn-outline-secondary btn-amount" id="btn_sub_${i.id}" onclick="modifyAmount(${i.id}, ${i.price}, 'sub')" style="position:relative;top:2px;"> <ion-icon name="remove-outline"></ion-icon> </button>
-                            </td>
-                            <td data-label="Precio uni."> 
-                                ${i.price}
-                            </td>        
-                            <td data-label="Total" id="operation_${i.id}">
-                            ${i.price * i.amount}
-                            </td>
-                            <td>
-                                <div class="btn-group d-block">
-                                    <button type="button" class="btn btn-outline-danger w-100" onclick="eliminarFila(${i.id})"><ion-icon name="trash-outline" style="position:relative;top:3px;left:0px;"></ion-icon></button>  
-                                </div>
-                            </td>
-                        </tr>`; 
-                })
-                $('#tbody').append(body)  
-            }
+            // function showResponse(data, op){
+            //     let body = ''
+            //     total = 0;
+            //     // alert("este problema");
+            //     data.forEach( i =>{
+            //         console.log(i) 
+            //         tax(i.price * i.amount, op);
+            //         body += `<tr>
+            //                 <td data-label="Producto">
+            //                     ${i.name}
+            //                 </td>
+            //                 <td data-label="Cantidad" class="td-amount">
+            //                     <button class="btn btn-outline-secondary btn-amount" id="btn_add_${i.id}" onclick="modifyAmount(${i.id}, ${i.price}, 'add')" style="position:relative;top:2px;"><ion-icon name="add-outline"></ion-icon></button>
+            //                         <span id="amount_${i.id}">${i.amount}</span>
+            //                     <button class="btn btn-outline-secondary btn-amount" id="btn_sub_${i.id}" onclick="modifyAmount(${i.id}, ${i.price}, 'sub')" style="position:relative;top:2px;"> <ion-icon name="remove-outline"></ion-icon> </button>
+            //                 </td>
+            //                 <td data-label="Precio uni."> 
+            //                     ${i.price}
+            //                 </td>        
+            //                 <td data-label="Total" id="operation_${i.id}">
+            //                 ${i.price * i.amount}
+            //                 </td>
+            //                 <td>
+            //                     <div class="btn-group d-block">
+            //                         <button type="button" class="btn btn-outline-danger w-100" onclick="eliminarFila(${i.id})"><ion-icon name="trash-outline" style="position:relative;top:3px;left:0px;"></ion-icon></button>  
+            //                     </div>
+            //                 </td>
+            //             </tr>`; 
+            //     })
+            //     $('#tbody').append(body)  
+            // }
 
-            function tax(value, op){
-                // let total = 0;
-                switch (op) {
-                    case "nothy":
-                        total = 0;
-                        break;
-                    case "add":
-                        total += value; 
-                        break;
-                    case "sub":
-                        total -= value; 
-                        break;    
-                    default:
-                        total += value; 
-                }
-                igv = total * 0.18;
-                subtotal = total - igv;
-                $('#total').html(total.toFixed(2))
-                $('#subtotal').html(subtotal.toFixed(2))
-                $('#igv').html(igv.toFixed(2))
-            }
+            // function tax(value, op){
+            //     // let total = 0;
+            //     switch (op) {
+            //         case "nothy":
+            //             total = 0;
+            //             break;
+            //         case "add":
+            //             total += value; 
+            //             break;
+            //         case "sub":
+            //             total -= value; 
+            //             break;    
+            //         default:
+            //             total += value; 
+            //     }
+            //     igv = total * 0.18;
+            //     subtotal = total - igv;
+            //     $('#total').html(total.toFixed(2))
+            //     $('#subtotal').html(subtotal.toFixed(2))
+            //     $('#igv').html(igv.toFixed(2))
+            // }
         })
 
         // function cleanPayMethodCheck(detailed, detailed_number){

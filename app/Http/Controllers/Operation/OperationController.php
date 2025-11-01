@@ -27,7 +27,7 @@ class OperationController extends Controller
         $local = Session::get('local_id');
         $company = Session::get('company_id');
 
-        $model = $this->getopt(2);
+        $model = $this->getopt($req->format); //PARA VER QUE TIPO DE MODELO USAR
         $table = new $model()->getTable();
         
         $check = $model::where('company_id', $company)->where('local_id', $local)->where('code', $req->order['code'])
@@ -45,7 +45,7 @@ class OperationController extends Controller
     }
 
     public function modifyAmount(Request $req){
-        $model = $this->getopt(2);
+        $model = $this->getopt($req->format);
         if($req->amount < 1){
             return response()->json(['ok' => 0, 'orders' => []]);
         }
@@ -54,7 +54,7 @@ class OperationController extends Controller
     }
 
     public function delete(Request $req){
-        $model = $this->getopt(2);
+        $model = $this->getopt($req->format);
         $table = new $model()->getTable();
 
         $order = $model::find($req->id);
@@ -91,7 +91,7 @@ class OperationController extends Controller
         $local = Session::get('local_id');
         $company = Session::get('company_id');
 
-        $model = $this->getopt(3);
+        $model = $this->getopt($req->format);
         $table = new $model()->getTable();
         
         $check = $model::where('edit_code', $req->order['code'])->value('edit_code');
@@ -106,7 +106,7 @@ class OperationController extends Controller
     }
 
     public function modifyAmount_edit(Request $req){
-        $model = $this->getopt(3);
+        $model = $this->getopt($req->format);
         if($req->amount < 1){
             return response()->json(['ok' => 0, 'orders' => []]);
         }
@@ -115,7 +115,7 @@ class OperationController extends Controller
     }
 
     public function delete_edit(Request $req){
-        $model = $this->getopt(3);
+        $model = $this->getopt($req->format);
         $table = new $model()->getTable();
 
         $order = $model::find($req->id);

@@ -49,6 +49,7 @@ class QuoteController extends Controller
 
         $result = CompanyHelper::searchAll($query, $text, $join, $where, $orWhere);
         $quotes = $result->orderBy('quotes.id', 'desc')->paginate();
+        
 
         return view('biller.quote.index', compact('quotes', 'text', 'noty'))
             ->with('i', ($request->input('page', 1) - 1) * $quotes->perPage());    
@@ -61,9 +62,10 @@ class QuoteController extends Controller
         $parameter = false;
         $btn_txt = 'Generar Nueva Cotizacion';
         $btn_txt_edit = 'Editar esta Cotizacion.';
-        $url_add = 'add_order_quote';
-        $url_modify = 'modify_amount_2';
-        $url_delete = 'delete_order_2';
+        $url_add = 'add_order';
+        $url_modify = 'modify_amount';
+        $url_delete = 'delete_order';
+        $format = 2; // el formato de tabla para add delete modify sea quote
         // $quote = new Quote();
         $products = Product::select(DB::raw("CONCAT_WS(' ', products.name,' ',products.description, ' ',products.price) AS name"), 'products.id')
                     ->join('local_products as lp', 'products.id', '=', 'lp.product_id')
@@ -76,7 +78,7 @@ class QuoteController extends Controller
         $cash = Cash::where('seller', Session::get('user_id'))->where('status', 1)->exists();         
         // $payment_methods = PaymentMethod::where('company_id', Session::get('company_id'))->get();
 
-        return view('biller.quote.form', compact('url_add', 'url_modify', 'url_delete', 'products', 'code', 'customers', 'temps', 'route', 'btn_txt', 'btn_txt_edit', 'parameter', 'local', 'cash'));
+        return view('biller.quote.form', compact('url_add', 'url_modify', 'url_delete', 'products', 'code', 'customers', 'temps', 'route', 'btn_txt', 'btn_txt_edit', 'parameter', 'local', 'cash', 'format'));
     }
 
     /**
@@ -162,6 +164,7 @@ class QuoteController extends Controller
         $url_add = 'add_order_quote_edit';
         $url_modify = 'modify_amount_edit';
         $url_delete = 'delete_order_edit';
+        $format=3;
 
         $products = Product::select(DB::raw("CONCAT_WS(' ', products.name,' ',products.description, ' ',products.price) AS name"), 'products.id')
                     ->join('local_products as lp', 'products.id', '=', 'lp.product_id')
@@ -184,8 +187,10 @@ class QuoteController extends Controller
 
         // $temps = TempQuote::select('temp_quotes.id', 'p.name', 'temp_quotes.price', 'temp_quotes.amount')->join('products as p', 'temp_quotes.product_id', '=', 'p.id')->where('temp_quotes.code', $code)->get();
         $temps = EditQuote::select('edit_quotes.id', 'p.name', 'temp_id', 'edit_quotes.edit_price as price', 'edit_quotes.edit_amount as amount')->join('products as p', 'edit_quotes.edit_prod_id', '=', 'p.id')->where('edit_quotes.edit_code', $code)->get();
+        $local = Local::select('id', 'local_name')->where('id', Session::get('local_id'))->first();
+        $cash = Cash::where('seller', Session::get('user_id'))->where('status', 1)->exists();  
 
-        return view('biller.quote.form', compact('url_add', 'url_modify', 'url_delete', 'quote', 'code', 'products', 'customers', 'temps', 'route', 'btn_txt', 'btn_txt_edit', 'parameter'));
+        return view('biller.quote.form', compact('url_add', 'url_modify', 'url_delete', 'quote', 'code', 'products', 'customers', 'temps', 'route', 'btn_txt', 'btn_txt_edit', 'parameter', 'local', 'cash', 'format'));
     }
 
     /**
@@ -317,7 +322,7 @@ class QuoteController extends Controller
     }
 
     public function convert(Request $request, $quote_code){
-        
+        // dd($request, $quote_code);
         $code = date('YmdHis').''.Session::get('user_id');
 
         $products = Product::select(DB::raw("CONCAT_WS(' ', products.name,' ',products.description, ' ',products.price) AS name"), 'products.id')
@@ -345,8 +350,12 @@ class QuoteController extends Controller
                 'status' => 1
             ]);
         }
-        
-        return view('sectorr.shop.index', compact('payment_methods', 'products', 'code', 'customers', 'temps'));
+
+        $local = Local::select('id', 'local_name')->where('id', Session::get('local_id'))->first();
+        $cash = Cash::where('seller', Session::get('user_id'))->where('status', 1)->exists();
+        // dd($temps);
+        // return view('sectorr.shop.index', compact('payment_methods', 'products', 'code', 'customers', 'temps'));
+        return view('sectorr.shop.index', compact('payment_methods', 'products', 'code', 'customers', 'temps', 'local', 'cash'));
     }
 
     protected function setCorrelative($type){

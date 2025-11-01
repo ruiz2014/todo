@@ -153,7 +153,7 @@ class ShopController extends Controller
                     $combinado = $payMethod == false ? 1 : array_combine($request->input('payMethod'), $filteredArray);
                 }
                 // dd($request,$request->input('payMethod'),  $filteredArray, count($filteredArray),count($request->input('payMethod')));
-                dd($combinado , $total, $total_provi, $filteredArray, $request->input('payMethod'), $request);
+                // dd($combinado , $total, $total_provi, $filteredArray, $request->input('payMethod'), $request);
                 $numeration = $this->setCorrelative($request->receipt); 
                 $attention_id = Attention::create([
                     'local_id'=> Session::get('local_id'),

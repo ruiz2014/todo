@@ -114,7 +114,9 @@ class PdfController extends Controller
         $this->main_data = Quote::where('company_id', request()->session()->get('company_id'))->where('id', $id)->first();
         $this->name_document = 'Cotizacion';
         $this->total =  $this->main_data->total;//TempQuote::where('company_id', $request->session()->get('company_id'))->where('document_code', $code)->sum(DB::raw('price * amount'));
-        $this->temps = TempQuote::where('temp_quotes.code', $this->main_data->document_code)->get();
+        $this->temps = TempQuote::where('temp_quotes.code', $this->main_data->document_code)
+                ->join('products as pr', 'temp_quotes.product_id', '=', 'pr.id')
+                ->where('temp_quotes.code', $this->main_data->document_code)->get();
         $this->methods = [];
     }
 
